@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Téléconsultation / Video consultation</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tcPulse{0%{box-shadow:0 0 0 0 rgba(224,112,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,112,79,0)}100%{box-shadow:0 0 0 0 rgba(224,112,79,0)}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes tcGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+section:nth-of-type(4),article:nth-of-type(4){animation-delay:.26s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+.tc-pulse{animation:tcPulse 2s ease-out infinite}
+.tc-bar{transform-origin:left;animation:tcGrow 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #2F3A33; font-family: 'Poppins', sans-serif; color: #FFFFFF; position: relative; overflow: hidden">
+  <svg style="position: absolute; inset: 0" width="390" height="844" viewBox="0 0 390 844" aria-hidden="true">
+    <defs><linearGradient id="fade" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F3437" stop-opacity="0"/><stop offset="1" stop-color="#2F3437" stop-opacity="0.75"/></linearGradient></defs>
+    <rect width="390" height="844" fill="#DCE6D6"/>
+    <rect width="390" height="520" fill="#E9E3D6"/>
+    <rect x="34" y="120" width="110" height="150" rx="10" fill="#F6F1E7" stroke="#D5CBB8" stroke-width="4"/>
+    <path d="M60 240c10-40 30-70 60-80-4 40-24 70-60 80z" fill="#8FB394"/>
+    <rect x="290" y="300" width="60" height="90" rx="8" fill="#C97B4E"/>
+    <path d="M320 300c-30-40-20-90 0-110 20 20 30 70 0 110z" fill="#6E9A77"/>
+    <circle cx="195" cy="380" r="86" fill="#5A3826"/>
+    <path d="M100 360c0-80 50-120 95-120s95 40 95 120c-14-40-50-60-95-60s-81 20-95 60z" fill="#1F1714"/>
+    <path d="M120 300c10-50 40-70 75-70s65 20 75 70c-20-20-45-28-75-28s-55 8-75 28z" fill="#E0704F"/>
+    <path d="M40 844c10-190 80-280 155-280s145 90 155 280z" fill="#F4F1EA"/>
+    <rect x="0" y="600" width="390" height="244" fill="url(#fade)"/>
+  </svg>
+  <div style="position: absolute; left: 16px; right: 16px; top: 52px; display: flex; justify-content: space-between; align-items: flex-start">
+    <div style="padding: 10px 14px; border-radius: 18px; background: rgba(47,52,55,0.72)">
+      <div style="font-size: 15px; font-weight: 600">Estelle Mbarga</div>
+      <div style="font-size: 12px; display: flex; align-items: center; gap: 6px"><span class="tc-pulse" style="width: 8px; height: 8px; border-radius: 50%; background: #E8775F"></span>{{ t.live }} · 12:48</div>
+    </div>
+    <div style="width: 100px; height: 136px; border-radius: 20px; overflow: hidden; border: 3px solid #FFFFFF">
+      <svg width="100" height="136" viewBox="0 0 104 140" aria-hidden="true" style="display: block"><rect width="104" height="140" fill="#C9D6C3"/><circle cx="52" cy="62" r="24" fill="#7A5038"/><path d="M26 58c0-20 14-30 26-30s26 10 26 30c-5-10-14-14-26-14s-21 4-26 14z" fill="#2E2420"/><path d="M12 140c4-34 22-50 40-50s36 16 40 50z" fill="#E39A6F"/></svg>
+    </div>
+  </div>
+  <div style="position: absolute; left: 24px; right: 24px; bottom: 40px; display: flex; justify-content: space-between; align-items: center">
+    <button onClick="{{ toggleMic }}" aria-label="{{ t.mic }}" aria-pressed="{{ mic }}" style="{{ micStyle }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+    <button onClick="{{ toggleCam }}" aria-label="{{ t.camera }}" aria-pressed="{{ cam }}" style="{{ camStyle }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="13" height="10" rx="3"/><path d="M16 11l5-3v8l-5-3"/></svg></button>
+    <a href="Messages.dc.html" aria-label="{{ t.chat }}" style="width: 60px; height: 60px; border-radius: 22px; background: rgba(47,52,55,0.6); color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg></a>
+    <a href="Carnet.dc.html" aria-label="{{ t.hang }}" style="width: 76px; height: 60px; border-radius: 22px; background: #C4533A; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 14c5-5 13-5 18 0l-2 3-4-1v-3c-2-.6-4-.6-6 0v3l-4 1z"/></svg></a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { mic: true, cam: true }; }
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    const t = {
+      fr: { live: 'En cours', mic: 'Micro', camera: 'Caméra', chat: 'Messages', hang: 'Raccrocher' },
+      en: { live: 'Live', mic: 'Microphone', camera: 'Camera', chat: 'Messages', hang: 'Hang up' }
+    }[L];
+    const on = 'width: 60px; height: 60px; border-radius: 22px; border: none; background: rgba(47,52,55,0.6); color: #FFFFFF; display: flex; align-items: center; justify-content: center';
+    const off = 'width: 60px; height: 60px; border-radius: 22px; border: none; background: #FFFFFF; color: #C4533A; display: flex; align-items: center; justify-content: center';
+    return {
+      t, mic: this.state.mic, cam: this.state.cam,
+      micStyle: this.state.mic ? on : off, camStyle: this.state.cam ? on : off,
+      toggleMic: () => this.setState({ mic: !this.state.mic }),
+      toggleCam: () => this.setState({ cam: !this.state.cam })
+    };
+  }
+}
+</script>
+</body>
+</html>

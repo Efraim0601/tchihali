@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Questionnaire — objectif / Goal</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tcPulse{0%{box-shadow:0 0 0 0 rgba(224,112,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,112,79,0)}100%{box-shadow:0 0 0 0 rgba(224,112,79,0)}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes tcGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+section:nth-of-type(4),article:nth-of-type(4){animation-delay:.26s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+.tc-pulse{animation:tcPulse 2s ease-out infinite}
+.tc-bar{transform-origin:left;animation:tcGrow 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; padding: 56px 24px 36px; overflow: hidden">
+  <div style="display: flex; align-items: center; gap: 12px">
+    <a href="Inscription.dc.html" aria-label="{{ t.back }}" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #2F3437; box-shadow: 0 2px 10px rgba(47,52,55,0.06)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div style="flex: 1; height: 8px; border-radius: 8px; background: #E4DED4; overflow: hidden"><div class="tc-bar" style="width: 33%; height: 8px; border-radius: 8px; background: #4F7A5A"></div></div>
+    <span style="font-size: 13px; font-weight: 600; color: #646B6F">1 / 3</span>
+  </div>
+  <h1 style="margin: 28px 0 8px; font-size: 26px; line-height: 1.25; font-weight: 700">{{ t.title }}</h1>
+  <p style="margin: 0 0 22px; font-size: 15px; color: #646B6F; line-height: 1.5">{{ t.sub }}</p>
+  <div style="display: flex; flex-direction: column; gap: 12px">
+    <sc-for list="{{ options }}" as="o" hint-placeholder-count="4">
+      <button onClick="{{ o.pick }}" aria-pressed="{{ o.on }}" style="{{ o.style }}">
+        <span style="{{ o.icon }}"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ o.path }}"/></svg></span>
+        <span style="flex: 1; text-align: left; font-size: 16px; font-weight: 600; color: #2F3437">{{ o.label }}</span>
+        <span style="{{ o.radio }}"></span>
+      </button>
+    </sc-for>
+  </div>
+  <div style="flex: 1"></div>
+  <a href="Annuaire.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 18px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 17px; text-decoration: none">{{ t.next }}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { pick: 0 }; }
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    const t = {
+      fr: { back: 'Retour', title: 'Quel est votre objectif ?', sub: 'Choisissez celui qui compte le plus pour vous.', next: 'Continuer', opts: ['Perdre du poids', 'Mieux gérer mon diabète', 'Manger plus équilibré', 'Prendre du muscle'] },
+      en: { back: 'Back', title: 'What is your goal?', sub: 'Pick the one that matters most to you.', next: 'Continue', opts: ['Lose weight', 'Manage my diabetes', 'Eat a balanced diet', 'Build muscle'] }
+    }[L];
+    const paths = ['M4 18l5-6 4 3 7-9', 'M12 3c3 5 6 7 6 11a6 6 0 0 1-12 0c0-4 3-6 6-11z', 'M5 19c0-8 5-13 14-14-1 9-6 14-14 14zM5 19l7-7', 'M4 10v4M8 7v10M16 7v10M20 10v4M8 12h8'];
+    const tints = [['#E7EFE4', '#2F5238'], ['#FCE9E0', '#8A3A24'], ['#FBF0C9', '#5E4700'], ['#E3E8EE', '#34495E']];
+    return {
+      t,
+      options: t.opts.map((label, i) => {
+        const on = this.state.pick === i;
+        return {
+          label, path: paths[i], on,
+          pick: () => this.setState({ pick: i }),
+          style: 'width: 100%; display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-radius: 20px; background: #FFFFFF; border: 2px solid ' + (on ? '#4F7A5A' : '#EFEAE2') + '; box-shadow: 0 2px 10px rgba(47,52,55,0.04)',
+          icon: 'width: 46px; height: 46px; border-radius: 15px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: ' + tints[i][0] + '; color: ' + tints[i][1],
+          radio: 'width: 24px; height: 24px; border-radius: 50%; flex-shrink: 0; box-sizing: border-box; border: ' + (on ? '7px solid #4F7A5A' : '2px solid #C9C2B6')
+        };
+      })
+    };
+  }
+}
+</script>
+</body>
+</html>

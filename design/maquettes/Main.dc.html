@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Tchihali — Bienvenue / Welcome</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button{font-family:inherit;cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+button,a{transition:transform .18s ease,background-color .25s ease,color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; padding: 56px 28px 40px; overflow: hidden">
+  <div style="display: flex; justify-content: space-between; align-items: center">
+    <div style="display: flex; align-items: center; gap: 8px">
+      <svg width="30" height="30" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#4F7A5A"/><path d="M9 18c0-6 4-9 10-9 0 6-3 10-9 10" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+      <span style="font-weight: 700; font-size: 18px">Tchihali</span>
+    </div>
+    <div role="group" aria-label="{{ t.langLabel }}" style="display: flex; padding: 4px; border-radius: 14px; background: #EFEAE2; gap: 2px">
+      <button onClick="{{ setFr }}" aria-pressed="{{ isFr }}" style="{{ frStyle }}">FR</button>
+      <button onClick="{{ setEn }}" aria-pressed="{{ isEn }}" style="{{ enStyle }}">EN</button>
+    </div>
+  </div>
+  <div style="flex: 1; display: flex; align-items: center; justify-content: center">
+    <svg class="tc-float" width="280" height="280" viewBox="0 0 260 260" aria-hidden="true">
+      <circle cx="130" cy="130" r="122" fill="#E7EFE4"/>
+      <path d="M30 70c22-14 46-4 50 16-22 10-44 2-50-16z" fill="#8FB394"/>
+      <path d="M214 190c-18 14-40 8-46-10 18-12 40-8 46 10z" fill="#F6C7B4"/>
+      <circle cx="130" cy="138" r="88" fill="#FFFFFF"/>
+      <circle cx="130" cy="138" r="72" fill="#F7F3EC"/>
+      <ellipse cx="106" cy="122" rx="36" ry="27" fill="#F3E3B8"/>
+      <ellipse cx="152" cy="150" rx="32" ry="14" fill="#E39A6F" transform="rotate(-20 152 150)"/>
+      <circle cx="110" cy="172" r="15" fill="#8FB394"/><circle cx="128" cy="182" r="12" fill="#6E9A77"/>
+      <circle cx="160" cy="110" r="10" fill="#E8775F"/><circle cx="175" cy="124" r="8" fill="#E8775F"/>
+    </svg>
+  </div>
+  <h1 style="margin: 0 0 12px; font-size: 30px; line-height: 1.2; font-weight: 700; white-space: pre-line">{{ t.title }}</h1>
+  <p style="margin: 0 0 32px; font-size: 16px; line-height: 1.55; color: #646B6F">{{ t.text }}</p>
+  <a href="Onboarding2.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 18px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 17px; text-decoration: none">{{ t.start }}</a>
+  <a href="Inscription.dc.html" style="display: flex; align-items: center; justify-content: center; height: 48px; margin-top: 8px; color: #2F3437; font-weight: 500; font-size: 15px; text-decoration: none">{{ t.login }}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { lang: null }; }
+  renderVals() {
+    const L = this.state.lang || this.props.lang || 'fr';
+    const T = {
+      fr: { langLabel: 'Langue', title: 'Bien manger,\nsans vous priver.', text: 'Une diététicienne diplômée vous accompagne, à votre rythme.', start: 'Commencer', login: 'J\'ai déjà un compte' },
+      en: { langLabel: 'Language', title: 'Eat well,\nwithout going without.', text: 'A qualified dietitian supports you, at your own pace.', start: 'Get started', login: 'I already have an account' }
+    }[L];
+    const on = 'height: 36px; padding: 0 14px; border: none; border-radius: 11px; background: #FFFFFF; color: #2F3437; font-size: 13px; font-weight: 700; box-shadow: 0 2px 6px rgba(47,52,55,0.1)';
+    const off = 'height: 36px; padding: 0 14px; border: none; border-radius: 11px; background: transparent; color: #646B6F; font-size: 13px; font-weight: 500';
+    return {
+      t: T, isFr: L === 'fr', isEn: L === 'en',
+      frStyle: L === 'fr' ? on : off, enStyle: L === 'en' ? on : off,
+      setFr: () => this.setState({ lang: 'fr' }), setEn: () => this.setState({ lang: 'en' })
+    };
+  }
+}
+</script>
+</body>
+</html>

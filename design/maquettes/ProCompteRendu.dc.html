@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Praticien — Compte rendu / Practitioner — Report</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+button,a,input,textarea{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.97)}
+input:focus,textarea:focus{outline:none;border-color:#4F7A5A!important;box-shadow:0 0 0 4px rgba(79,122,90,.15)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-wrap: wrap">
+  <aside style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; padding: 28px 20px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border-right: 1px solid #EFEAE2">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="32" height="32" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#4F7A5A"/><path d="M9 18c0-6 4-9 10-9 0 6-3 10-9 10" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+      <div><div style="font-weight: 700; font-size: 15px">Tchihali</div><div style="font-size: 12px; color: #646B6F">{{ s.space }}</div></div>
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 4px">
+      <a href="ProAgenda.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; color: #4A5054; font-weight: 500; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>{{ s.agenda }}</a>
+      <a href="ProFichePatient.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; color: #4A5054; font-weight: 500; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6M16 4a4 4 0 0 1 0 8M22 21c-.5-3-2-5-4-5.5"/></svg>{{ s.patients }}</a>
+      <a href="ProCompteRendu.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; background: #E7EFE4; color: #2F5238; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>{{ s.reports }}</a>
+    </nav>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+      <div role="group" aria-label="{{ s.language }}" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #EFEAE2; gap: 2px">
+        <button onClick="{{ setFr }}" aria-pressed="{{ isFr }}" style="{{ frStyle }}">Français</button>
+        <button onClick="{{ setEn }}" aria-pressed="{{ isEn }}" style="{{ enStyle }}">English</button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 18px; background: #FAF7F2">
+        <div style="width: 42px; height: 42px; border-radius: 14px; background: #F6C7B4; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7A3522">EM</div>
+        <div style="flex: 1; min-width: 0"><div style="font-weight: 600; font-size: 14px">Estelle Mbarga</div><div style="font-size: 12px; color: #646B6F">{{ s.role }}</div></div>
+        <a href="Main.dc.html" aria-label="{{ s.logout }}" title="{{ s.logout }}" style="width: 40px; height: 40px; border-radius: 12px; color: #A9482F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></a>
+      </div>
+    </div>
+  </aside>
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px">
+    <header style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px">
+      <div>
+        <div style="font-size: 14px; color: #646B6F">{{ t.context }}</div>
+        <h1 style="margin: 2px 0 0; font-size: 28px; font-weight: 700">{{ t.title }}</h1>
+      </div>
+      <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap">
+        <span style="font-size: 13px; color: #646B6F">{{ saveLabel }}</span>
+        <button onClick="{{ send }}" style="{{ sendStyle }}">{{ sendLabel }}</button>
+      </div>
+    </header>
+    <div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+      <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 18px">
+        <section style="background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05)">
+          <h2 style="margin: 0 0 12px; font-size: 17px; font-weight: 600">{{ t.measures }}</h2>
+          <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+            <sc-for list="{{ fields }}" as="f" hint-placeholder-count="3">
+              <label style="display: flex; flex-direction: column; gap: 6px; font-size: 13px; font-weight: 500">{{ f.label }}<input value="{{ f.value }}" style="height: 48px; border-radius: 14px; border: 1.5px solid #E4DED4; background: #FAF7F2; padding: 0 12px; font-size: 16px; font-weight: 600; color: #2F3437; min-width: 0"></label>
+            </sc-for>
+          </div>
+        </section>
+        <section style="background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-direction: column; gap: 8px">
+          <label for="syn" style="font-size: 17px; font-weight: 600">{{ t.summary }}</label>
+          <textarea id="syn" rows="4" onInput="{{ touch }}" style="border-radius: 16px; border: 1.5px solid #E4DED4; background: #FAF7F2; padding: 12px 14px; font-size: 14px; line-height: 1.55; color: #2F3437; resize: vertical">{{ t.summaryText }}</textarea>
+        </section>
+        <section style="background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-direction: column; gap: 8px">
+          <h2 style="margin: 0 0 4px; font-size: 17px; font-weight: 600">{{ t.goals }}</h2>
+          <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+            <label style="display: flex; gap: 10px; align-items: center; padding: 12px; border-radius: 14px; background: #FAF7F2; font-size: 14px; font-weight: 500"><input type="checkbox" checked style="width: 20px; height: 20px; margin: 0; accent-color: #4F7A5A">{{ g }}</label>
+          </sc-for>
+        </section>
+      </div>
+      <section style="flex: 1 1 400px; min-width: 0; background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-direction: column; gap: 14px">
+        <h2 style="margin: 0; font-size: 17px; font-weight: 600">{{ t.plan }}</h2>
+        <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px">
+          <sc-for list="{{ days }}" as="d" hint-placeholder-count="7">
+            <button onClick="{{ d.pick }}" style="{{ d.style }}">{{ d.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <sc-for list="{{ meals }}" as="m" hint-placeholder-count="4">
+            <div style="display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 16px; background: #FAF7F2">
+              <div style="{{ m.badge }}">{{ m.time }}</div>
+              <div style="flex: 1; min-width: 0"><div style="font-size: 12px; color: #646B6F">{{ m.label }}</div><div style="font-size: 14px; font-weight: 500">{{ m.text }}</div></div>
+              <span style="font-size: 13px; font-weight: 600; color: #4A5054; white-space: nowrap">{{ m.kcal }} kcal</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding: 14px; border-radius: 18px; background: #E7EFE4; display: flex; justify-content: space-between; font-size: 15px; font-weight: 600; color: #24412D"><span>{{ t.total }}</span><span>{{ total }} / 1 700 kcal</span></div>
+      </section>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":1280,"height":1060}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { lang: null, day: 0, sent: false, saved: '10:52' }; }
+  renderVals() {
+    const L = this.state.lang || this.props.lang || 'fr';
+    const fr = L === 'fr';
+    const s = fr
+      ? { space: 'Espace praticien', agenda: 'Agenda', patients: 'Patients', reports: 'Comptes rendus', language: 'Langue', role: 'Diététicienne', logout: 'Se déconnecter' }
+      : { space: 'Practitioner space', agenda: 'Schedule', patients: 'Patients', reports: 'Reports', language: 'Language', role: 'Dietitian', logout: 'Log out' };
+    const t = fr
+      ? { context: 'Nadège Ngono · Séance 4 · 24 novembre', title: 'Compte rendu et plan', measures: 'Mesures du jour', summary: 'Ce qu\'il faut retenir', summaryText: 'La collation de 17 h a bien réduit le grignotage du soir. Poids en baisse régulière.', goals: 'Objectifs pour 2 semaines', plan: 'Plan alimentaire', total: 'Total du jour', send: 'Envoyer à la patiente', sentL: 'Envoyé', saved: 'Brouillon enregistré à ', sentAt: 'Envoyé à 11:04',
+          fields: [['Poids (kg)', '79,1'], ['Taille (cm)', '91,5'], ['Glycémie (g/L)', '1,05']],
+          gl: ['Garder la collation de 17 h', 'Marcher 30 min, 5 fois par semaine', 'Plantain bouilli plutôt que frit'],
+          wd: ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'], ml: ['Petit-déjeuner', 'Déjeuner', 'Collation', 'Dîner'],
+          plans: [['Bouillie de maïs, 1 œuf, papaye', 'Poisson braisé, miondo, crudités', '1 mangue', 'Soupe de légumes, poulet grillé'], ['Pain complet, avocat, thé', 'Ndolé léger, plantain bouilli', 'Yaourt de soja', 'Eru léger, poisson'], ['Koki, banane', 'Riz, sauce arachide légère, légumes', '1 orange, 10 arachides', 'Poulet DG allégé, légumes vapeur']] }
+      : { context: 'Nadège Ngono · Session 4 · November 24', title: 'Report and plan', measures: 'Today\'s measurements', summary: 'Key takeaways', summaryText: 'The 5 pm snack has cut evening snacking. Weight is going down steadily.', goals: 'Goals for 2 weeks', plan: 'Meal plan', total: 'Daily total', send: 'Send to patient', sentL: 'Sent', saved: 'Draft saved at ', sentAt: 'Sent at 11:04',
+          fields: [['Weight (kg)', '79.1'], ['Waist (cm)', '91.5'], ['Glucose (g/L)', '1.05']],
+          gl: ['Keep the 5 pm snack', 'Walk 30 min, 5 times a week', 'Boiled plantain instead of fried'],
+          wd: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], ml: ['Breakfast', 'Lunch', 'Snack', 'Dinner'],
+          plans: [['Corn porridge, 1 egg, papaya', 'Grilled fish, miondo, raw veggies', '1 mango', 'Vegetable soup, grilled chicken'], ['Wholemeal bread, avocado, tea', 'Light ndolé, boiled plantain', 'Soy yogurt', 'Light eru, fish'], ['Koki, banana', 'Rice, light peanut sauce, vegetables', '1 orange, 10 peanuts', 'Lighter chicken DG, steamed vegetables']] };
+    const kcals = [[330, 560, 140, 520], [340, 590, 150, 480], [320, 540, 130, 560]];
+    const times = fr ? ['7 h', '13 h', '17 h', '20 h'] : ['7 am', '1 pm', '5 pm', '8 pm'];
+    const tints = [['#FBF0C9', '#5E4700'], ['#E7EFE4', '#24412D'], ['#FCE9E0', '#8A3A24'], ['#E3E8EE', '#34495E']];
+    const p = this.state.day % 3;
+    const meals = t.plans[p].map((text, i) => ({ time: times[i], label: t.ml[i], text, kcal: kcals[p][i], badge: 'width: 52px; height: 46px; border-radius: 14px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; background: ' + tints[i][0] + '; color: ' + tints[i][1] }));
+    const total = meals.reduce((a, m) => a + m.kcal, 0);
+    const on = 'height: 36px; border: none; border-radius: 11px; background: #FFFFFF; color: #2F3437; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(47,52,55,0.1)';
+    const off = 'height: 36px; border: none; border-radius: 11px; background: transparent; color: #646B6F; font-size: 13px; font-weight: 500';
+    return {
+      s, t, isFr: fr, isEn: !fr,
+      frStyle: fr ? on : off, enStyle: fr ? off : on,
+      setFr: () => this.setState({ lang: 'fr' }), setEn: () => this.setState({ lang: 'en' }),
+      fields: t.fields.map((f) => ({ label: f[0], value: f[1] })),
+      goals: t.gl,
+      days: t.wd.map((label, i) => ({ label, pick: () => this.setState({ day: i }), style: 'height: 42px; border-radius: 13px; font-size: 13px; ' + (i === this.state.day ? 'border: none; background: #4F7A5A; color: #FFFFFF; font-weight: 600' : 'border: 1.5px solid #E4DED4; background: #FFFFFF; color: #2F3437; font-weight: 500') })),
+      meals, total: fr ? String(total).replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : String(total).replace(/\B(?=(\d{3})+(?!\d))/g, ','),
+      saveLabel: this.state.sent ? t.sentAt : t.saved + this.state.saved,
+      sendLabel: this.state.sent ? t.sentL : t.send,
+      sendStyle: 'height: 48px; padding: 0 20px; border-radius: 16px; border: none; font-weight: 600; font-size: 15px; ' + (this.state.sent ? 'background: #E7EFE4; color: #24412D' : 'background: #4F7A5A; color: #FFFFFF'),
+      send: () => this.setState({ sent: true }),
+      touch: () => this.setState({ saved: '10:53' })
+    };
+  }
+}
+</script>
+</body>
+</html>

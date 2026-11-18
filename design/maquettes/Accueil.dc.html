@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Accueil / Home</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tcPulse{0%{box-shadow:0 0 0 0 rgba(224,112,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,112,79,0)}100%{box-shadow:0 0 0 0 rgba(224,112,79,0)}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes tcGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+section:nth-of-type(4),article:nth-of-type(4){animation-delay:.26s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+.tc-pulse{animation:tcPulse 2s ease-out infinite}
+.tc-bar{transform-origin:left;animation:tcGrow 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; overflow: hidden">
+  <div style="flex: 1; overflow: hidden; padding: 56px 20px 0; display: flex; flex-direction: column; gap: 16px">
+    <div>
+      <div style="font-size: 14px; color: #646B6F">{{ t.date }}</div>
+      <h1 style="margin: 2px 0 0; font-size: 28px; font-weight: 700">{{ t.hello }}</h1>
+    </div>
+    <section style="background: #4F7A5A; color: #FFFFFF; border-radius: 24px; padding: 18px; display: flex; flex-direction: column; gap: 14px">
+      <div style="font-size: 13px; font-weight: 500; opacity: 0.92">{{ t.next }}</div>
+      <div style="display: flex; gap: 14px; align-items: center">
+        <div style="width: 58px; padding: 6px 0; border-radius: 16px; background: #FFFFFF; color: #2F3437; text-align: center">
+          <div style="font-size: 11px; font-weight: 600; color: #A9482F">{{ t.month }}</div>
+          <div style="font-size: 22px; font-weight: 700; line-height: 1.1">24</div>
+        </div>
+        <div>
+          <div style="font-size: 17px; font-weight: 600">{{ t.time }}</div>
+          <div style="font-size: 14px; opacity: 0.92">Estelle Mbarga · {{ t.video }}</div>
+        </div>
+      </div>
+      <a href="SalleAttente.dc.html" style="height: 46px; border-radius: 14px; background: #FFFFFF; color: #2F5238; font-weight: 600; font-size: 15px; text-decoration: none; display: flex; align-items: center; justify-content: center">{{ t.join }}</a>
+    </section>
+    <section style="background: #FFFFFF; border-radius: 24px; padding: 16px 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05)">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px">
+        <h2 style="margin: 0; font-size: 17px; font-weight: 600">{{ t.today }}</h2>
+        <span style="padding: 4px 10px; border-radius: 10px; background: #E7EFE4; color: #2F5238; font-size: 13px; font-weight: 600">{{ done }} / 3</span>
+      </div>
+      <sc-for list="{{ goals }}" as="g" hint-placeholder-count="3">
+        <button onClick="{{ g.toggle }}" aria-pressed="{{ g.on }}" style="width: 100%; display: flex; align-items: center; gap: 14px; padding: 12px 0; border: none; background: transparent; text-align: left">
+          <span style="{{ g.box }}"><sc-if value="{{ g.on }}" hint-placeholder-val="{{ true }}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg></sc-if></span>
+          <span style="flex: 1; font-size: 15px; font-weight: 500; color: #2F3437">{{ g.label }}</span>
+        </button>
+      </sc-for>
+    </section>
+    <a href="Messages.dc.html" style="display: flex; gap: 12px; padding: 16px; border-radius: 24px; background: #FCE9E0; text-decoration: none; color: #2F3437; align-items: center">
+      <div style="width: 44px; height: 44px; border-radius: 15px; background: #F6C7B4; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7A3522; flex-shrink: 0">EM</div>
+      <div style="flex: 1; font-size: 14px; line-height: 1.45">{{ t.msg }}</div>
+    </a>
+  </div>
+  <div style="position: relative">
+    <a class="tc-pulse" href="Journal.dc.html" aria-label="{{ t.add }}" style="position: absolute; right: 20px; top: -78px; width: 60px; height: 60px; border-radius: 22px; background: #E0704F; color: #FFFFFF; display: flex; align-items: center; justify-content: center"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg></a>
+  </div>
+  <nav style="display: flex; justify-content: space-around; padding: 8px 6px 24px; background: #FFFFFF; border-top: 1px solid #EFEAE2">
+    <a href="Accueil.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; padding: 6px 0; text-decoration: none; color: #3E6448; font-size: 11px; font-weight: 700"><span style="display: flex; padding: 2px 14px; border-radius: 12px; background: #E7EFE4"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg></span>{{ n.home }}</a>
+    <a href="Reservation.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; padding: 6px 0; text-decoration: none; color: #646B6F; font-size: 11px; font-weight: 500"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>{{ n.agenda }}</a>
+    <a href="Journal.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; padding: 6px 0; text-decoration: none; color: #646B6F; font-size: 11px; font-weight: 500"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M9 9h6M9 13h6"/></svg>{{ n.journal }}</a>
+    <a href="Messages.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; padding: 6px 0; text-decoration: none; color: #646B6F; font-size: 11px; font-weight: 500"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>{{ n.messages }}</a>
+    <a href="Profil.dc.html" style="display: flex; flex-direction: column; align-items: center; gap: 3px; min-width: 64px; padding: 6px 0; text-decoration: none; color: #646B6F; font-size: 11px; font-weight: 500"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>{{ n.profile }}</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { on: { 0: false, 1: true, 2: false } }; }
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    const fr = L === 'fr';
+    const t = fr
+      ? { date: 'Dimanche 15 novembre', hello: 'Bonjour Nadège', next: 'Prochain rendez-vous', month: 'NOV.', time: 'Mardi · 10:30', video: 'Vidéo', join: 'Salle d\'attente', today: 'Aujourd\'hui', msg: 'Bravo pour cette semaine ! Ce soir, moins d\'huile dans la sauce.', add: 'Ajouter un repas', goals: ['Boire 1,5 L d\'eau', 'Marcher 30 minutes', 'Manger 3 portions de légumes'] }
+      : { date: 'Sunday, November 15', hello: 'Hello Nadège', next: 'Next appointment', month: 'NOV', time: 'Tuesday · 10:30', video: 'Video', join: 'Waiting room', today: 'Today', msg: 'Well done this week! Tonight, a little less oil in the sauce.', add: 'Add a meal', goals: ['Drink 1.5 L of water', 'Walk for 30 minutes', 'Eat 3 servings of vegetables'] };
+    const n = fr ? { home: 'Accueil', agenda: 'Agenda', journal: 'Journal', messages: 'Messages', profile: 'Profil' } : { home: 'Home', agenda: 'Schedule', journal: 'Journal', messages: 'Messages', profile: 'Profile' };
+    const on = this.state.on;
+    return {
+      t, n,
+      done: Object.values(on).filter(Boolean).length,
+      goals: t.goals.map((label, i) => ({
+        label, on: !!on[i],
+        box: 'width: 28px; height: 28px; border-radius: 10px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; box-sizing: border-box; ' + (on[i] ? 'background: #4F7A5A; border: none' : 'background: #FFFFFF; border: 2px solid #C9C2B6'),
+        toggle: () => this.setState({ on: Object.assign({}, on, { [i]: !on[i] }) })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

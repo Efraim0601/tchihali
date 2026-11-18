@@ -1,0 +1,111 @@
+import 'package:material_ui/material_ui.dart';
+import 'package:go_router/go_router.dart';
+import '../core/widgets/tch_bottom_nav.dart';
+import '../features/auth/auth_screens.dart';
+import '../features/questionnaire/questionnaire_screen.dart';
+import '../features/booking/booking_screen.dart';
+import '../features/directory/directory_screen.dart';
+import '../features/payment/payment_screen.dart';
+import '../features/pro/pro_agenda_screen.dart';
+import '../features/pro/pro_patient_screen.dart';
+import '../features/pro/pro_report_screen.dart';
+import '../features/pro/pro_shell.dart';
+import '../features/video/call_screen.dart';
+import '../features/video/waiting_room_screen.dart';
+import '../features/home/home_screen.dart';
+import '../features/journal/journal_screen.dart';
+import '../features/messages/messages_screen.dart';
+import '../features/progress/progress_screen.dart';
+import '../features/recipes/recipe_detail_screen.dart';
+import '../features/recipes/recipes_screen.dart';
+import '../features/record/record_screen.dart';
+import '../features/profile/profile_screen.dart';
+import '../features/onboarding/onboarding_screens.dart';
+
+final router = GoRouter(
+  initialLocation: '/onboarding/1',
+  routes: [
+    GoRoute(path: '/onboarding/1', builder: (_, _) => const WelcomeScreen()),
+    GoRoute(path: '/onboarding/2', builder: (_, _) => const Onboarding2Screen()),
+    GoRoute(path: '/onboarding/3', builder: (_, _) => const Onboarding3Screen()),
+    GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
+    GoRoute(path: '/signup/code', builder: (_, _) => const SmsCodeScreen()),
+    GoRoute(path: '/questionnaire', redirect: (_, _) => '/questionnaire/1'),
+    GoRoute(
+      path: '/questionnaire/:step',
+      builder: (_, state) => QuestionnaireScreen(
+          step: (int.tryParse(state.pathParameters['step'] ?? '') ?? 1).clamp(1, 3)),
+    ),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, shell) => Scaffold(
+        body: shell,
+        bottomNavigationBar: TchBottomNav(
+          currentIndex: shell.currentIndex,
+          onTap: (i) => shell.goBranch(i, initialLocation: i == shell.currentIndex),
+        ),
+      ),
+      branches: [
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/home', builder: (_, _) => const HomeScreen()),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/directory', builder: (_, _) => const DirectoryScreen()),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(
+            path: '/journal',
+            builder: (_, _) => const JournalScreen(),
+            routes: [
+              GoRoute(
+                path: 'recipes',
+                builder: (_, _) => const RecipesScreen(),
+              ),
+            ],
+          ),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(path: '/messages', builder: (_, _) => const MessagesScreen()),
+        ]),
+        StatefulShellBranch(routes: [
+          GoRoute(
+            path: '/profile',
+            builder: (_, _) => const ProfileScreen(),
+            routes: [
+              GoRoute(
+                path: 'progress',
+                builder: (_, _) => const ProgressScreen(),
+              ),
+              GoRoute(
+                path: 'record',
+                builder: (_, _) => const RecordScreen(),
+              ),
+            ],
+          ),
+        ]),
+      ],
+    ),
+    GoRoute(
+      path: '/journal/recipes/:id',
+      builder: (_, state) => RecipeDetailScreen(id: state.pathParameters['id']!),
+    ),
+    // Espace praticien (tablette / web) : menu latéral commun.
+    ShellRoute(
+      builder: (_, state, child) => ProShell(location: state.uri.path, child: child),
+      routes: [
+        GoRoute(path: '/pro/agenda', builder: (_, _) => const ProAgendaScreen()),
+        GoRoute(
+          path: '/pro/patients/:id',
+          builder: (_, state) => ProPatientScreen(id: state.pathParameters['id']!),
+        ),
+        GoRoute(
+          path: '/pro/reports/:id',
+          builder: (_, state) => ProReportScreen(id: state.pathParameters['id']!),
+        ),
+      ],
+    ),
+    GoRoute(path: '/booking', builder: (_, _) => const BookingScreen()),
+    GoRoute(path: '/booking/payment', builder: (_, _) => const PaymentScreen()),
+    GoRoute(path: '/video/waiting', builder: (_, _) => const WaitingRoomScreen()),
+    GoRoute(path: '/video/call', builder: (_, _) => const CallScreen()),
+  ],
+);

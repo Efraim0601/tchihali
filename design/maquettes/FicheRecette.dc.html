@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Fiche recette / Recipe</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tcPulse{0%{box-shadow:0 0 0 0 rgba(224,112,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,112,79,0)}100%{box-shadow:0 0 0 0 rgba(224,112,79,0)}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes tcGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+section:nth-of-type(4),article:nth-of-type(4){animation-delay:.26s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+.tc-pulse{animation:tcPulse 2s ease-out infinite}
+.tc-bar{transform-origin:left;animation:tcGrow 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; overflow: hidden">
+  <div style="height: 270px; position: relative; flex-shrink: 0; overflow: hidden">
+    <svg style="position: absolute; inset: 0" width="390" height="270" viewBox="0 0 390 270" aria-hidden="true">
+      <rect width="390" height="270" fill="#D9C7AB"/>
+      <rect y="200" width="390" height="70" fill="#C9B391"/>
+      <circle cx="195" cy="150" r="104" fill="#FFFFFF"/>
+      <circle cx="195" cy="150" r="88" fill="#F5EFE4"/>
+      <circle cx="180" cy="140" r="56" fill="#6E8F36"/>
+      <circle cx="160" cy="124" r="7" fill="#536F24"/><circle cx="186" cy="118" r="6" fill="#536F24"/><circle cx="200" cy="148" r="7" fill="#536F24"/>
+      <ellipse cx="190" cy="132" rx="16" ry="12" fill="#D9A06B"/><ellipse cx="160" cy="146" rx="13" ry="10" fill="#D9A06B"/>
+      <ellipse cx="236" cy="186" rx="34" ry="22" fill="#F2EAD6"/>
+      <circle cx="244" cy="104" r="10" fill="#E8775F"/>
+    </svg>
+    <div style="position: absolute; left: 20px; right: 20px; top: 52px; display: flex; justify-content: space-between">
+      <a href="Recettes.dc.html" aria-label="{{ t.back }}" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #2F3437"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+      <button onClick="{{ toggleFav }}" aria-label="{{ t.fav }}" aria-pressed="{{ fav }}" style="width: 44px; height: 44px; border-radius: 14px; border: none; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #E0704F"><svg width="22" height="22" viewBox="0 0 24 24" fill="{{ favFill }}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/></svg></button>
+    </div>
+  </div>
+  <div style="flex: 1; overflow: hidden; margin-top: -26px; background: #FAF7F2; border-radius: 28px 28px 0 0; position: relative; padding: 24px 20px 0; display: flex; flex-direction: column; gap: 18px">
+    <div>
+      <h1 style="margin: 0; font-size: 24px; font-weight: 700; line-height: 1.2">{{ t.title }}</h1>
+      <div style="margin-top: 6px; font-size: 14px; color: #646B6F">{{ t.meta }}</div>
+    </div>
+    <section style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; text-align: center">
+      <div style="padding: 12px 0; border-radius: 16px; background: #FFFFFF; box-shadow: 0 2px 10px rgba(47,52,55,0.05)"><div style="font-size: 17px; font-weight: 700">420</div><div style="font-size: 11px; color: #646B6F">kcal</div></div>
+      <div style="padding: 12px 0; border-radius: 16px; background: #E7EFE4"><div style="font-size: 17px; font-weight: 700; color: #2F5238">34 g</div><div style="font-size: 11px; color: #3E4F43">{{ t.p }}</div></div>
+      <div style="padding: 12px 0; border-radius: 16px; background: #FBF0C9"><div style="font-size: 17px; font-weight: 700; color: #5E4700">28 g</div><div style="font-size: 11px; color: #5E4700">{{ t.c }}</div></div>
+      <div style="padding: 12px 0; border-radius: 16px; background: #FCE9E0"><div style="font-size: 17px; font-weight: 700; color: #8A3A24">16 g</div><div style="font-size: 11px; color: #8A3A24">{{ t.f }}</div></div>
+    </section>
+    <section>
+      <h2 style="margin: 0 0 10px; font-size: 16px; font-weight: 600">{{ t.ingredients }}</h2>
+      <sc-for list="{{ items }}" as="i" hint-placeholder-count="4">
+        <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #EFEAE2; font-size: 15px"><span>{{ i.name }}</span><span style="font-weight: 600">{{ i.qty }}</span></div>
+      </sc-for>
+    </section>
+  </div>
+  <div style="padding: 14px 20px 32px">
+    <a href="Journal.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 18px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 16px; text-decoration: none">{{ t.add }}</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { fav: true }; }
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    const fr = L === 'fr';
+    const t = fr
+      ? { back: 'Retour', fav: 'Favori', title: 'Ndolé léger aux crevettes', meta: '50 min · 4 portions · Facile', p: 'Prot.', c: 'Gluc.', f: 'Lip.', ingredients: 'Ingrédients', add: 'Ajouter à mon journal', items: [['Feuilles de ndolé', '500 g'], ['Crevettes', '300 g'], ['Arachides', '100 g'], ['Huile', '1 c. à soupe']] }
+      : { back: 'Back', fav: 'Favorite', title: 'Light ndolé with prawns', meta: '50 min · 4 servings · Easy', p: 'Prot.', c: 'Carbs', f: 'Fat', ingredients: 'Ingredients', add: 'Add to my journal', items: [['Ndolé leaves', '500 g'], ['Prawns', '300 g'], ['Peanuts', '100 g'], ['Oil', '1 tbsp']] };
+    return {
+      t, fav: this.state.fav,
+      items: t.items.map((x) => ({ name: x[0], qty: x[1] })),
+      favFill: this.state.fav ? '#E0704F' : 'none',
+      toggleFav: () => this.setState({ fav: !this.state.fav })
+    };
+  }
+}
+</script>
+</body>
+</html>

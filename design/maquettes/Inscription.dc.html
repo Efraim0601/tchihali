@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Inscription / Sign up</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes tcPulse{0%{box-shadow:0 0 0 0 rgba(224,112,79,.5)}70%{box-shadow:0 0 0 12px rgba(224,112,79,0)}100%{box-shadow:0 0 0 0 rgba(224,112,79,0)}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+@keyframes tcGrow{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+h1{animation-delay:.05s}p{animation-delay:.12s}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+section:nth-of-type(4),article:nth-of-type(4){animation-delay:.26s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.95)}
+input:focus{outline:none;border-color:#4F7A5A!important;box-shadow:0 0 0 4px rgba(79,122,90,.15)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+.tc-float{animation:tcFloat 5s ease-in-out infinite}
+.tc-pulse{animation:tcPulse 2s ease-out infinite}
+.tc-bar{transform-origin:left;animation:tcGrow 1s cubic-bezier(.2,.8,.2,1) .3s both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; padding: 56px 24px 36px; overflow: hidden">
+  <a href="Onboarding3.dc.html" aria-label="{{ t.back }}" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #2F3437; box-shadow: 0 2px 10px rgba(47,52,55,0.06)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+  <h1 style="margin: 28px 0 8px; font-size: 28px; line-height: 1.2; font-weight: 700">{{ t.title }}</h1>
+  <p style="margin: 0 0 28px; font-size: 15px; color: #646B6F; line-height: 1.5">{{ t.sub }}</p>
+  <section style="display: flex; flex-direction: column; gap: 18px">
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="nom" style="font-size: 14px; font-weight: 600">{{ t.name }}</label>
+      <input id="nom" value="Nadège Ngono" style="height: 56px; border-radius: 16px; border: 1.5px solid #E4DED4; background: #FFFFFF; padding: 0 16px; font-size: 16px; color: #2F3437">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="tel" style="font-size: 14px; font-weight: 600">{{ t.phone }}</label>
+      <div style="display: flex; gap: 8px">
+        <div style="height: 56px; padding: 0 14px; border-radius: 16px; border: 1.5px solid #E4DED4; background: #FFFFFF; display: flex; align-items: center; font-size: 16px; font-weight: 500">+237</div>
+        <input id="tel" inputmode="tel" value="677 21 36 90" style="flex: 1; min-width: 0; height: 56px; border-radius: 16px; border: 1.5px solid #E4DED4; background: #FFFFFF; padding: 0 16px; font-size: 16px; color: #2F3437">
+      </div>
+      <span style="font-size: 13px; color: #646B6F">{{ t.hint }}</span>
+    </div>
+  </section>
+  <div style="flex: 1"></div>
+  <label style="display: flex; gap: 12px; align-items: flex-start; margin-bottom: 18px; font-size: 13px; line-height: 1.45; color: #4A5054">
+    <input type="checkbox" checked style="width: 22px; height: 22px; margin: 0; accent-color: #4F7A5A; flex-shrink: 0">
+    {{ t.terms }}
+  </label>
+  <a href="Questionnaire.dc.html" style="display: flex; align-items: center; justify-content: center; height: 56px; border-radius: 18px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 17px; text-decoration: none">{{ t.cta }}</a>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    return { t: {
+      fr: { back: 'Retour', title: 'Créons votre compte', sub: 'Pas de mot de passe : un simple code par SMS.', name: 'Votre nom', phone: 'Votre numéro de téléphone', hint: 'Nous vous envoyons un code à 6 chiffres.', terms: 'J\'accepte les conditions d\'utilisation et la protection de mes données de santé.', cta: 'Recevoir mon code' },
+      en: { back: 'Back', title: 'Let\'s create your account', sub: 'No password: just a code by text message.', name: 'Your name', phone: 'Your phone number', hint: 'We\'ll text you a 6-digit code.', terms: 'I accept the terms of use and the protection of my health data.', cta: 'Get my code' }
+    }[L] };
+  }
+}
+</script>
+</body>
+</html>

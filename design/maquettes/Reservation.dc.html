@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Rendez-vous / Booking</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+button:disabled{cursor:default}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+button,a,input{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active:not(:disabled),a:active{transform:scale(.95)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-direction: column; overflow: hidden">
+  <div style="padding: 52px 20px 8px; display: flex; align-items: center; gap: 12px">
+    <a href="Annuaire.dc.html" aria-label="{{ t.back }}" style="width: 44px; height: 44px; border-radius: 14px; background: #FFFFFF; display: flex; align-items: center; justify-content: center; color: #2F3437; box-shadow: 0 2px 10px rgba(47,52,55,0.06)"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></a>
+    <div style="flex: 1">
+      <div style="font-size: 13px; color: #646B6F">{{ t.with }}</div>
+      <div style="font-size: 17px; font-weight: 700">Estelle Mbarga</div>
+    </div>
+    <div style="width: 46px; height: 46px; border-radius: 15px; background: #F6C7B4; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7A3522">EM</div>
+  </div>
+  <div style="flex: 1; overflow: hidden; padding: 6px 20px 0; display: flex; flex-direction: column; gap: 14px">
+    <section style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+      <button onClick="{{ setVideo }}" aria-pressed="{{ video }}" style="{{ vidStyle }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="7" width="13" height="10" rx="3"/><path d="M16 11l5-3v8l-5-3"/></svg>{{ t.video }}</button>
+      <button onClick="{{ setCabinet }}" aria-pressed="{{ office }}" style="{{ cabStyle }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9H3z"/><path d="M10 20v-5h4v5"/></svg>{{ t.office }}</button>
+    </section>
+    <section style="background: #FFFFFF; border-radius: 22px; padding: 10px 12px 12px; box-shadow: 0 4px 16px rgba(47,52,55,0.05)">
+      <div style="display: flex; justify-content: space-between; align-items: center">
+        <button onClick="{{ prevMonth }}" disabled="{{ prevDisabled }}" aria-label="{{ t.prev }}" style="{{ prevStyle }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <h2 style="margin: 0; font-size: 16px; font-weight: 600">{{ monthLabel }}</h2>
+        <button onClick="{{ nextMonth }}" disabled="{{ nextDisabled }}" aria-label="{{ t.next }}" style="{{ nextStyle }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); text-align: center; font-size: 12px; font-weight: 500; color: #646B6F; margin: 2px 0 4px">
+        <sc-for list="{{ weekdays }}" as="w" hint-placeholder-count="7"><span>{{ w }}</span></sc-for>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 3px">
+        <sc-for list="{{ cells }}" as="c" hint-placeholder-count="35">
+          <button onClick="{{ c.pick }}" disabled="{{ c.disabled }}" aria-label="{{ c.aria }}" aria-pressed="{{ c.selected }}" style="{{ c.style }}">{{ c.n }}</button>
+        </sc-for>
+      </div>
+    </section>
+    <section style="display: flex; flex-direction: column; gap: 8px">
+      <h2 style="margin: 0; font-size: 15px; font-weight: 600">{{ dayTitle }}</h2>
+      <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px">
+        <sc-for list="{{ slots }}" as="s" hint-placeholder-count="6">
+          <button onClick="{{ s.pick }}" disabled="{{ s.disabled }}" style="{{ s.style }}">{{ s.t }}</button>
+        </sc-for>
+      </div>
+    </section>
+  </div>
+  <div style="padding: 14px 20px 30px; background: #FFFFFF; border-radius: 28px 28px 0 0; box-shadow: 0 -6px 20px rgba(47,52,55,0.06); display: flex; align-items: center; gap: 14px">
+    <div style="flex: 1; min-width: 0">
+      <div style="font-size: 13px; color: #646B6F">{{ summary }}</div>
+      <div style="font-size: 20px; font-weight: 700">{{ price }}</div>
+    </div>
+    <a href="Paiement.dc.html" style="height: 54px; padding: 0 24px; border-radius: 18px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 16px; text-decoration: none; display: flex; align-items: center">{{ t.cta }}</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { video: true, month: 0, day: 24, slot: '10:30' }; }
+  renderVals() {
+    const L = this.props.lang || 'fr';
+    const fr = L === 'fr';
+    const t = fr
+      ? { back: 'Retour', with: 'Rendez-vous avec', video: 'Vidéo', office: 'Cabinet', prev: 'Mois précédent', next: 'Mois suivant', cta: 'Continuer', slotsOf: 'Créneaux du', full: 'complet',
+          months: ['Novembre 2026', 'Décembre 2026'], mshort: ['nov.', 'déc.'], wk: ['L', 'M', 'M', 'J', 'V', 'S', 'D'], wd: ['dimanche', 'lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi'], wds: ['Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam'] }
+      : { back: 'Back', with: 'Appointment with', video: 'Video', office: 'In person', prev: 'Previous month', next: 'Next month', cta: 'Continue', slotsOf: 'Slots for', full: 'full',
+          months: ['November 2026', 'December 2026'], mshort: ['Nov', 'Dec'], wk: ['M', 'T', 'W', 'T', 'F', 'S', 'S'], wd: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], wds: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'] };
+    const s = this.state;
+    // Nov 1 2026 = Sunday (0), Dec 1 2026 = Tuesday (2)
+    const firstDow = s.month === 0 ? 0 : 2;
+    const len = s.month === 0 ? 30 : 31;
+    const dow = (n) => (firstDow + n - 1) % 7;
+    const today = 17;
+    const isOpen = (n) => {
+      const d = dow(n);
+      if (d === 0 || d === 6) return false;
+      if (s.month === 0) return n >= today;
+      return n !== 25;
+    };
+    const lead = (firstDow + 6) % 7;
+    const cells = [];
+    for (let i = 0; i < lead; i++) cells.push({ n: '', disabled: true, selected: false, aria: '', style: 'height: 38px; border: none; background: transparent' });
+    for (let n = 1; n <= len; n++) {
+      const open = isOpen(n);
+      const sel = n === s.day && open;
+      const isToday = s.month === 0 && n === today;
+      let st = 'height: 38px; border-radius: 12px; font-size: 14px; ';
+      if (sel) st += 'border: none; background: #4F7A5A; color: #FFFFFF; font-weight: 700';
+      else if (open) st += 'border: ' + (isToday ? '1.5px solid #4F7A5A' : 'none') + '; background: #E7EFE4; color: #24412D; font-weight: 600';
+      else st += 'border: none; background: transparent; color: #B4B7B3; font-weight: 400';
+      cells.push({ n: String(n), disabled: !open, selected: sel, aria: n + ' ' + t.months[s.month], style: st, pick: () => this.setState({ day: n }) });
+    }
+    const dayOk = isOpen(s.day);
+    const full = { '15:30': 1 };
+    const slots = ['09:00', '10:30', '11:30', '14:00', '15:30', '17:00'].map((x) => {
+      const off = !!full[x];
+      const sel = x === s.slot && !off;
+      return {
+        t: off ? x + ' · ' + t.full : x, disabled: off, pick: () => this.setState({ slot: x }),
+        style: 'height: 46px; border-radius: 14px; font-size: 14px; ' + (sel ? 'border: none; background: #4F7A5A; color: #FFFFFF; font-weight: 600' : off ? 'border: 1.5px dashed #DCD5CA; background: transparent; color: #A7AAA6; font-weight: 400' : 'border: 1.5px solid #EFEAE2; background: #FFFFFF; color: #2F3437; font-weight: 500')
+      };
+    });
+    const big = (on) => 'height: 52px; border-radius: 16px; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; ' + (on ? 'border: 2px solid #4F7A5A; background: #E7EFE4; color: #2F5238; font-weight: 600' : 'border: 2px solid #EFEAE2; background: #FFFFFF; color: #2F3437; font-weight: 500');
+    const arrow = (dis) => 'width: 40px; height: 40px; border: none; border-radius: 12px; background: transparent; display: flex; align-items: center; justify-content: center; color: ' + (dis ? '#D5D0C6' : '#2F3437');
+    const d = dow(s.day);
+    const dateLong = fr ? (t.wd[d] + ' ' + s.day + ' ' + t.months[s.month].split(' ')[0].toLowerCase()) : (t.wd[d] + ', ' + t.months[s.month].split(' ')[0] + ' ' + s.day);
+    return {
+      t, cells, slots,
+      weekdays: t.wk,
+      monthLabel: t.months[s.month],
+      prevDisabled: s.month === 0, nextDisabled: s.month === 1,
+      prevStyle: arrow(s.month === 0), nextStyle: arrow(s.month === 1),
+      prevMonth: () => this.setState({ month: 0, day: 24 }),
+      nextMonth: () => this.setState({ month: 1, day: 1 }),
+      video: s.video, office: !s.video,
+      vidStyle: big(s.video), cabStyle: big(!s.video),
+      setVideo: () => this.setState({ video: true }), setCabinet: () => this.setState({ video: false }),
+      dayTitle: dayOk ? t.slotsOf + ' ' + dateLong : t.slotsOf + ' —',
+      summary: t.wds[d] + ' ' + s.day + ' ' + t.mshort[s.month] + ' · ' + s.slot + ' · ' + (s.video ? t.video : t.office),
+      price: s.video ? '12 000 FCFA' : '15 000 FCFA'
+    };
+  }
+}
+</script>
+</body>
+</html>

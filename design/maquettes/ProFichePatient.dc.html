@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<title>Praticien — Fiche patient / Patient file</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+button{cursor:pointer}
+@keyframes tcRise{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes tcDraw{from{stroke-dashoffset:1000}to{stroke-dashoffset:0}}
+h1,h2,p,section,article{animation:tcRise .6s cubic-bezier(.2,.8,.2,1) both}
+section:nth-of-type(2),article:nth-of-type(2){animation-delay:.1s}
+section:nth-of-type(3),article:nth-of-type(3){animation-delay:.18s}
+button,a,input,textarea{transition:transform .18s ease,background-color .25s ease,color .25s ease,border-color .25s ease,box-shadow .25s ease}
+button:active,a:active{transform:scale(.97)}
+polyline{stroke-dasharray:1000;animation:tcDraw 1.6s ease-out both}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</helmet>
+<div style="min-height: 100vh; box-sizing: border-box; background: #FAF7F2; font-family: 'Poppins', sans-serif; color: #2F3437; display: flex; flex-wrap: wrap">
+  <aside style="flex: 1 1 220px; max-width: 100%; box-sizing: border-box; padding: 28px 20px; display: flex; flex-direction: column; gap: 24px; background: #FFFFFF; border-right: 1px solid #EFEAE2">
+    <div style="display: flex; align-items: center; gap: 10px">
+      <svg width="32" height="32" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="14" fill="#4F7A5A"/><path d="M9 18c0-6 4-9 10-9 0 6-3 10-9 10" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/></svg>
+      <div><div style="font-weight: 700; font-size: 15px">Tchihali</div><div style="font-size: 12px; color: #646B6F">{{ s.space }}</div></div>
+    </div>
+    <nav style="display: flex; flex-direction: column; gap: 4px">
+      <a href="ProAgenda.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; color: #4A5054; font-weight: 500; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>{{ s.agenda }}</a>
+      <a href="ProFichePatient.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; background: #E7EFE4; color: #2F5238; font-weight: 600; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="9" cy="8" r="4"/><path d="M2 21c1-4 4-6 7-6s6 2 7 6M16 4a4 4 0 0 1 0 8M22 21c-.5-3-2-5-4-5.5"/></svg>{{ s.patients }}</a>
+      <a href="ProCompteRendu.dc.html" style="display: flex; align-items: center; gap: 12px; height: 48px; padding: 0 14px; border-radius: 14px; color: #4A5054; font-weight: 500; font-size: 15px; text-decoration: none"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M9 12h7M9 16h5"/></svg>{{ s.reports }}</a>
+    </nav>
+    <div style="margin-top: auto; display: flex; flex-direction: column; gap: 10px">
+      <div role="group" aria-label="{{ s.language }}" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); padding: 4px; border-radius: 14px; background: #EFEAE2; gap: 2px">
+        <button onClick="{{ setFr }}" aria-pressed="{{ isFr }}" style="{{ frStyle }}">Français</button>
+        <button onClick="{{ setEn }}" aria-pressed="{{ isEn }}" style="{{ enStyle }}">English</button>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px; padding: 12px; border-radius: 18px; background: #FAF7F2">
+        <div style="width: 42px; height: 42px; border-radius: 14px; background: #F6C7B4; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #7A3522">EM</div>
+        <div style="flex: 1; min-width: 0"><div style="font-weight: 600; font-size: 14px">Estelle Mbarga</div><div style="font-size: 12px; color: #646B6F">{{ s.role }}</div></div>
+        <a href="Main.dc.html" aria-label="{{ s.logout }}" title="{{ s.logout }}" style="width: 40px; height: 40px; border-radius: 12px; color: #A9482F; display: flex; align-items: center; justify-content: center"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg></a>
+      </div>
+    </div>
+  </aside>
+  <main style="flex: 999 1 560px; min-width: 0; box-sizing: border-box; padding: 28px 32px; display: flex; flex-direction: column; gap: 18px">
+    <section style="background: #FFFFFF; border-radius: 24px; padding: 20px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-wrap: wrap; gap: 18px; align-items: center">
+      <div style="width: 68px; height: 68px; border-radius: 22px; background: #F6C7B4; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 22px; color: #7A3522">NN</div>
+      <div style="flex: 1 1 260px; min-width: 0">
+        <h1 style="margin: 0; font-size: 24px; font-weight: 700">Nadège Ngono</h1>
+        <div style="font-size: 14px; color: #646B6F; margin-top: 2px">{{ t.info }}</div>
+        <div style="display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px">
+          <span style="padding: 5px 10px; border-radius: 10px; background: #FCE9E0; color: #8A3A24; font-size: 12px; font-weight: 500">{{ t.tag1 }}</span>
+          <span style="padding: 5px 10px; border-radius: 10px; background: #FBF0C9; color: #5E4700; font-size: 12px; font-weight: 500">{{ t.tag2 }}</span>
+        </div>
+      </div>
+      <a href="ProCompteRendu.dc.html" style="height: 48px; padding: 0 18px; border-radius: 16px; background: #4F7A5A; color: #FFFFFF; font-weight: 600; font-size: 14px; text-decoration: none; display: flex; align-items: center">{{ t.write }}</a>
+    </section>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px">
+      <sc-for list="{{ kpis }}" as="k" hint-placeholder-count="3">
+        <div style="background: #FFFFFF; border-radius: 20px; padding: 16px; box-shadow: 0 4px 16px rgba(47,52,55,0.05)"><div style="font-size: 13px; color: #646B6F">{{ k.label }}</div><div style="font-size: 24px; font-weight: 700">{{ k.value }}</div><div style="font-size: 13px; color: #2F5238; font-weight: 500">{{ k.delta }}</div></div>
+      </sc-for>
+    </div>
+    <div style="display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start">
+      <section style="flex: 999 1 460px; min-width: 0; background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05)">
+        <h2 style="margin: 0 0 8px; font-size: 17px; font-weight: 600">{{ t.chart }}</h2>
+        <svg viewBox="0 0 600 200" style="width: 100%; height: auto; display: block" role="img" aria-label="{{ t.chartAria }}">
+          <line x1="0" y1="25" x2="600" y2="25" stroke="#F0EBE3"/><line x1="0" y1="95" x2="600" y2="95" stroke="#F0EBE3"/><line x1="0" y1="164.5" x2="600" y2="164.5" stroke="#E0704F" stroke-dasharray="6 6" stroke-width="1.5"/>
+          <text x="596" y="157" text-anchor="end" font-size="12" font-weight="600" fill="#A9482F" font-family="Poppins, sans-serif">{{ t.goal }}</text>
+          <path d="M10,25.5 L62.7,34.7 L115.5,39.4 L168.2,48.6 L220.9,53.3 L273.6,62.5 L326.4,65.6 L379.1,73.3 L431.8,79.5 L484.5,84.2 L537.3,88.8 L590,93.5 L590,180 L10,180 Z" fill="#E7EFE4"/>
+          <polyline points="10,25.5 62.7,34.7 115.5,39.4 168.2,48.6 220.9,53.3 273.6,62.5 326.4,65.6 379.1,73.3 431.8,79.5 484.5,84.2 537.3,88.8 590,93.5" fill="none" stroke="#4F7A5A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="590" cy="93.5" r="6" fill="#4F7A5A"/>
+          <text x="10" y="196" font-size="11" fill="#646B6F" font-family="Poppins, sans-serif">{{ t.start }}</text>
+          <text x="590" y="196" text-anchor="end" font-size="11" fill="#646B6F" font-family="Poppins, sans-serif">{{ t.end }}</text>
+        </svg>
+      </section>
+      <section style="flex: 1 1 300px; min-width: 0; background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-direction: column; gap: 10px">
+        <h2 style="margin: 0; font-size: 17px; font-weight: 600">{{ t.meals }}</h2>
+        <sc-for list="{{ meals }}" as="m" hint-placeholder-count="3">
+          <div style="{{ m.style }}"><div style="flex: 1; min-width: 0"><div style="font-size: 14px; font-weight: 500">{{ m.text }}</div><div style="font-size: 12px; color: #646B6F">{{ m.when }}</div></div><span style="font-size: 13px; font-weight: 600">{{ m.kcal }}</span></div>
+        </sc-for>
+      </section>
+    </div>
+    <section style="background: #FFFFFF; border-radius: 24px; padding: 18px; box-shadow: 0 4px 16px rgba(47,52,55,0.05); display: flex; flex-direction: column; gap: 10px">
+      <label for="notes" style="font-size: 17px; font-weight: 600">{{ t.notes }}</label>
+      <textarea id="notes" rows="3" style="border-radius: 16px; border: 1.5px solid #E4DED4; background: #FAF7F2; padding: 12px 14px; font-size: 14px; line-height: 1.5; color: #2F3437; resize: vertical">{{ t.noteText }}</textarea>
+      <span style="font-size: 12px; color: #646B6F">{{ t.private }}</span>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"lang":{"editor":"enum","options":["fr","en"],"default":"fr","section":"Langue"},"$preview":{"width":1280,"height":1000}}'>
+class Component extends DCLogic {
+  constructor(p) { super(p); this.state = { lang: null }; }
+  renderVals() {
+    const L = this.state.lang || this.props.lang || 'fr';
+    const fr = L === 'fr';
+    const s = fr
+      ? { space: 'Espace praticien', agenda: 'Agenda', patients: 'Patients', reports: 'Comptes rendus', language: 'Langue', role: 'Diététicienne', logout: 'Se déconnecter' }
+      : { space: 'Practitioner space', agenda: 'Schedule', patients: 'Patients', reports: 'Reports', language: 'Language', role: 'Dietitian', logout: 'Log out' };
+    const t = fr
+      ? { info: '38 ans · 1,65 m · Suivie depuis le 24 août', tag1: 'Prédiabète', tag2: 'Intolérance au lactose', write: 'Rédiger le compte rendu', chart: 'Évolution du poids', chartAria: 'Poids de 84 à 79,6 kg en 12 semaines', goal: 'Objectif 75 kg', start: '24 août', end: '15 nov.', meals: 'Derniers repas', notes: 'Notes privées', noteText: 'Stress en fin de mois, grignotage le soir. Proposer une collation à 17 h.', private: 'Visible uniquement par vous',
+          kpis: [['Poids', '79,6 kg', '−4,4 kg'], ['Tour de taille', '92 cm', '−6 cm'], ['Glycémie à jeun', '1,08 g/L', '−0,18 g/L']],
+          ml: [['Poisson braisé, miondo', 'Aujourd\'hui · 13:05', '540', false], ['Bouillie de mil, papaye', 'Aujourd\'hui · 07:20', '280', false], ['Biscuits, soda', 'Hier · 22:10', '330', true]] }
+      : { info: '38 years · 1.65 m · Followed since Aug 24', tag1: 'Prediabetes', tag2: 'Lactose intolerance', write: 'Write the report', chart: 'Weight over time', chartAria: 'Weight from 84 to 79.6 kg over 12 weeks', goal: 'Goal 75 kg', start: 'Aug 24', end: 'Nov 15', meals: 'Latest meals', notes: 'Private notes', noteText: 'Stress at month end, evening snacking. Suggest a snack at 5 pm.', private: 'Only visible to you',
+          kpis: [['Weight', '79.6 kg', '−4.4 kg'], ['Waist', '92 cm', '−6 cm'], ['Fasting glucose', '1.08 g/L', '−0.18 g/L']],
+          ml: [['Grilled fish, miondo', 'Today · 13:05', '540', false], ['Millet porridge, papaya', 'Today · 07:20', '280', false], ['Biscuits, soda', 'Yesterday · 22:10', '330', true]] };
+    const on = 'height: 36px; border: none; border-radius: 11px; background: #FFFFFF; color: #2F3437; font-size: 13px; font-weight: 600; box-shadow: 0 2px 6px rgba(47,52,55,0.1)';
+    const off = 'height: 36px; border: none; border-radius: 11px; background: transparent; color: #646B6F; font-size: 13px; font-weight: 500';
+    return {
+      s, t, isFr: fr, isEn: !fr,
+      frStyle: fr ? on : off, enStyle: fr ? off : on,
+      setFr: () => this.setState({ lang: 'fr' }), setEn: () => this.setState({ lang: 'en' }),
+      kpis: t.kpis.map((k) => ({ label: k[0], value: k[1], delta: k[2] })),
+      meals: t.ml.map((m) => ({ text: m[0], when: m[1], kcal: m[2] + ' kcal', style: 'display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: ' + (m[3] ? '#FCE9E0' : '#FAF7F2') }))
+    };
+  }
+}
+</script>
+</body>
+</html>
