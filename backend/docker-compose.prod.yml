@@ -1,0 +1,64 @@
+# Production : API + PostgreSQL + HTTPS (Caddy, certificats Let's Encrypt automatiques).
+# Voir DEPLOY.md. Aucun port de base de données n'est exposé.
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: tchihali
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+      POSTGRES_DB: tchihali
+    secrets: [db_password]
+    volumes:
+      - tchihali_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tchihali"]
+      interval: 10s
+      retries: 10
+    networks: [internal]
+
+  api:
+    build: .
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      TCHIHALI_ENV: production
+      TCHIHALI_DEV_RETURN_CODE: "false"
+      TCHIHALI_FILES_DIR: /data/files
+    # L'URL de la base est assemblée au démarrage à partir du secret.
+    command: >
+      sh -c 'export TCHIHALI_DATABASE_URL="postgresql://tchihali:$$(cat /run/secrets/db_password)@db:5432/tchihali"
+      && python -m app.migrate && exec uvicorn app.main:app --host 0.0.0.0 --port 8080 --proxy-headers --forwarded-allow-ips="*"'
+    secrets: [db_password]
+    volumes:
+      - tchihali_files:/data/files
+    depends_on:
+      db:
+        condition: service_healthy
+    networks: [internal]
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      TCHIHALI_DOMAIN: ${TCHIHALI_DOMAIN:?indiquez le nom de domaine, ex. api.exemple.cm}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+    depends_on: [api]
+    networks: [internal]
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt
+
+volumes:
+  tchihali_pg:
+  tchihali_files:
+  caddy_data:
+
+networks:
+  internal:
