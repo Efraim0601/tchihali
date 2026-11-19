@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     refresh_ttl_days: int = 30
     sms_provider: str = "console"
     dev_return_code: bool = False
+    # Développement seulement : code SMS fixe (6 chiffres) pour tester sans fournisseur SMS.
+    dev_fixed_code: str = ""
     payment_provider: str = "simulated"
     cors_origins: str = ""
     files_dir: str = "./data/files"
@@ -33,6 +35,8 @@ class Settings(BaseSettings):
             problems.append("secrets trop courts (32 caractères minimum)")
         if self.dev_return_code:
             problems.append("TCHIHALI_DEV_RETURN_CODE doit être false")
+        if self.dev_fixed_code:
+            problems.append("TCHIHALI_DEV_FIXED_CODE doit être vide")
         if self.sms_provider == "console":
             problems.append("aucun fournisseur SMS réel configuré")
         if problems:

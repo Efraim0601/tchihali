@@ -81,3 +81,30 @@ def test_security_headers_and_no_cache(client, login):
     big = client.post("/v1/files", data={"kind": "meal_photo"}, headers={**h, "content-length": str(50 * 1024 * 1024)},
                       files={"file": ("a.jpg", io.BytesIO(JPEG), "image/jpeg")})
     assert big.status_code in (413, 422)
+
+
+# ---------- Code SMS fixe de développement ----------
+def test_fixed_dev_code_is_used_only_when_configured(client, monkeypatch):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "dev_fixed_code", "123456")
+    phone = "+237600077001"
+    r = client.post("/v1/auth/request-code", json={"phone": phone, "terms_version": "2026-11"})
+    assert r.json()["dev_code"] == "123456"
+    assert client.post("/v1/auth/verify", json={"phone": phone, "code": "123456"}).status_code == 200
+    # un code fixe n'enlève pas les protections : essais limités
+    phone2 = "+237600077002"
+    client.post("/v1/auth/request-code", json={"phone": phone2, "terms_version": "2026-11"})
+    for _ in range(5):
+        client.post("/v1/auth/verify", json={"phone": phone2, "code": "000000"})
+    assert client.post("/v1/auth/verify", json={"phone": phone2, "code": "123456"}).status_code == 429
+
+
+def test_production_refuses_fixed_code():
+    import pytest
+    from app.config import Settings
+
+    s = Settings(env="production", jwt_secret="x" * 40, otp_secret="y" * 40, sms_provider="twilio",
+                 dev_return_code=False, dev_fixed_code="123456")
+    with pytest.raises(RuntimeError, match="DEV_FIXED_CODE"):
+        s.check_production()

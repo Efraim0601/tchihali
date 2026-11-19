@@ -91,7 +91,9 @@ def request_code(body: CodeRequest, conn=Depends(get_conn)):
     if not exists and body.terms_version != settings.terms_version:
         raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
                             "Acceptez les conditions d'utilisation pour créer un compte")
-    code = new_code()
+    # Code fixe de test : uniquement en développement (refusé au démarrage en production).
+    fixed = settings.dev_fixed_code if settings.env == "dev" else ""
+    code = fixed if re.fullmatch(r"\d{6}", fixed) else new_code()
     conn.execute(
         "insert into otp_codes (phone, name, code_hash, expires_at, terms_version) values (%s, %s, %s, %s, %s)",
         (body.phone, body.name, hash_code(body.phone, code), datetime.now(UTC) + CODE_TTL, body.terms_version),
