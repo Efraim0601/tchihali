@@ -689,4 +689,26 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proWeekdaysShort => 'Mon,Tue,Wed,Thu,Fri,Sat,Sun';
+
+  @override
+  String get errorNetwork => 'Can\'t connect. Check your network.';
+
+  @override
+  String get errorGeneric => 'Something went wrong. Please try again.';
+
+  @override
+  String get errorSlotTaken =>
+      'This slot was just booked. Please pick another one.';
+
+  @override
+  String get errorCode => 'Wrong or expired code.';
+
+  @override
+  String get errorTooMany => 'Too many attempts. Try again in a few minutes.';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get dirNoSlot => '—';
 }

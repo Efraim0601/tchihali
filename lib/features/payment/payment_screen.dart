@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
+import '../../core/api_errors.dart';
 import '../../core/format.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_avatar.dart';
@@ -11,6 +12,8 @@ import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_radio.dart';
 import '../../core/widgets/tch_text_field.dart';
+import '../../data/api/api_client.dart';
+import '../../data/dietitian_repository.dart';
 import '../../data/models.dart';
 import '../../data/payment_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -43,14 +46,32 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   Future<void> _pay(BookingState b) async {
     setState(() => _paying = true);
-    final ok = await ref.read(paymentRepositoryProvider).pay(
-          method: _method,
-          amount: b.price,
-          phone: _mobile ? _number.text.trim() : null,
-        );
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(paymentRepositoryProvider).payAndBook(BookingPayment(
+            dietitianId: b.dietitian.id,
+            day: b.day,
+            time: b.slot,
+            mode: b.mode,
+            method: _method,
+            phone: _mobile ? _number.text.trim() : null,
+          ));
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _paying = false);
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+      // Créneau pris entre-temps : on revient choisir un autre créneau.
+      if (e.isConflict) {
+        ref.invalidate(dietitiansProvider);
+        context.go('/booking');
+      }
+      return;
+    }
     if (!mounted) return;
     setState(() => _paying = false);
-    if (ok) context.go('/home');
+    ref.invalidate(dietitiansProvider);
+    context.go('/home');
   }
 
   @override

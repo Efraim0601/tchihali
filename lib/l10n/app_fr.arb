@@ -274,5 +274,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorNetwork": "Connexion impossible. Vérifiez votre réseau.",
+  "errorGeneric": "Une erreur est survenue. Réessayez.",
+  "errorSlotTaken": "Ce créneau vient d'être réservé. Choisissez-en un autre.",
+  "errorCode": "Code incorrect ou expiré.",
+  "errorTooMany": "Trop de tentatives. Réessayez dans quelques minutes.",
+  "retry": "Réessayer",
+  "dirNoSlot": "—"
 }

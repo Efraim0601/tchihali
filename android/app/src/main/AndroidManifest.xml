@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Accès à l'API Tchihali (HTTPS en production). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="tchihali"
         android:name="${applicationName}"

@@ -3,11 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
+import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_back_button.dart';
 import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_checkbox.dart';
 import '../../core/widgets/tch_text_field.dart';
+import '../../data/api/api_client.dart';
+import '../../data/auth_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'signup_state.dart';
 
@@ -98,7 +101,25 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
       _phone.text.replaceAll(RegExp(r'\D'), '').length >= 9 &&
       _terms;
 
-  void _submit() {
+  bool _busy = false;
+
+  Future<void> _submit() async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _busy = true);
+    try {
+      await ref.read(authRepositoryProvider).requestCode(
+            phone: toE164(_phone.text),
+            name: _name.text.trim(),
+          );
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() => _busy = false);
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
     ref.read(signupProvider.notifier).set(_name.text.trim(), _phone.text.trim());
     context.go('/signup/code');
   }
@@ -175,7 +196,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             ),
           ),
           const SizedBox(height: 18),
-          TchButton(label: l.signupCta, onPressed: _valid ? _submit : null),
+          TchButton(label: l.signupCta, onPressed: _valid && !_busy ? _submit : null),
         ],
       ),
     );
@@ -195,11 +216,53 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
   final _code = TextEditingController();
   final _focus = FocusNode();
 
+  bool _busy = false;
+
   @override
   void dispose() {
     _code.dispose();
     _focus.dispose();
     super.dispose();
+  }
+
+  Future<void> _verify(String code) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final signup = ref.read(signupProvider);
+    setState(() => _busy = true);
+    try {
+      final user = await ref
+          .read(authRepositoryProvider)
+          .verify(phone: toE164(signup.phone), code: code);
+      if (user.fullName.isNotEmpty) {
+        ref.read(signupProvider.notifier).set(user.fullName, signup.phone);
+      }
+    } on ApiException catch (e) {
+      if (!mounted) return;
+      setState(() {
+        _busy = false;
+        _code.clear();
+      });
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e, codeContext: true))));
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
+    context.go('/questionnaire/1');
+  }
+
+  Future<void> _resend() async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final signup = ref.read(signupProvider);
+    setState(_code.clear);
+    try {
+      await ref
+          .read(authRepositoryProvider)
+          .requestCode(phone: toE164(signup.phone), name: signup.name);
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    }
   }
 
   @override
@@ -259,11 +322,11 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
         children: [
           TchButton(
             label: l.codeCta,
-            onPressed: value.length == 6 ? () => context.go('/questionnaire/1') : null,
+            onPressed: value.length == 6 && !_busy ? () => _verify(value) : null,
           ),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
-            onTap: () => setState(_code.clear),
+            onTap: _resend,
             child: Container(
               height: 48,
               margin: const EdgeInsets.only(top: 8),

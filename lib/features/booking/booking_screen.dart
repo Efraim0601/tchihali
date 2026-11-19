@@ -5,16 +5,16 @@ import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../core/widgets/animations.dart';
+import '../../core/widgets/async_view.dart';
 import '../../core/widgets/tch_avatar.dart';
 import '../../core/widgets/tch_back_button.dart';
 import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_icons.dart';
+import '../../data/dietitian_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'booking_state.dart';
 
-const _slots = ['09:00', '10:30', '11:30', '14:00', '15:30', '17:00'];
-const _fullSlots = {'15:30'}; // créneau complet dans les données de test
 
 // Jours fériés fixes au Cameroun (mois, jour).
 const _holidays = {(1, 1), (2, 11), (5, 1), (5, 20), (8, 15), (12, 25)};
@@ -60,7 +60,8 @@ class BookingScreen extends ConsumerWidget {
     }
 
     final open = _isOpen(b.day, today);
-    final slotOk = _slots.contains(b.slot) && !_fullSlots.contains(b.slot);
+    final slotsAsync = ref.watch(slotsProvider((id: b.dietitian.id, day: b.day)));
+    final slotOk = (slotsAsync.value ?? const <Slot>[]).any((s) => s.time == b.slot && !s.taken);
     final dayLabel = open
         ? l.bookSlotsOf(formatLongDay(b.day, locale))
         : l.bookSlotsNone;
@@ -157,24 +158,29 @@ class BookingScreen extends ConsumerWidget {
                       children: [
                         Text(dayLabel, style: Tch.style(15, weight: FontWeight.w600)),
                         const SizedBox(height: 8),
-                        GridView(
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 3,
-                            mainAxisSpacing: 8,
-                            crossAxisSpacing: 8,
-                            mainAxisExtent: 46,
+                        AsyncView<List<Slot>>(
+                          value: slotsAsync,
+                          onRetry: () =>
+                              ref.invalidate(slotsProvider((id: b.dietitian.id, day: b.day))),
+                          builder: (slots) => GridView(
+                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 3,
+                              mainAxisSpacing: 8,
+                              crossAxisSpacing: 8,
+                              mainAxisExtent: 46,
+                            ),
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            children: [
+                              for (final s in slots)
+                                _SlotButton(
+                                  label: s.taken ? '${s.time} · ${l.bookFull}' : s.time,
+                                  selected: s.time == b.slot && !s.taken,
+                                  full: s.taken,
+                                  onTap: () => n.setSlot(s.time),
+                                ),
+                            ],
                           ),
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          children: [
-                            for (final s in _slots)
-                              _SlotButton(
-                                label: _fullSlots.contains(s) ? '$s · ${l.bookFull}' : s,
-                                selected: s == b.slot && !_fullSlots.contains(s),
-                                full: _fullSlots.contains(s),
-                                onTap: () => n.setSlot(s),
-                              ),
-                          ],
                         ),
                       ],
                     ),

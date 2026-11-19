@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
+import '../../core/widgets/async_view.dart';
+import '../../core/widgets/tch_back_button.dart';
 import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../data/recipes.dart';
@@ -23,9 +25,38 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final recipe = ref.watch(recipeProvider(widget.id));
+    return recipe.when(
+      data: (r) => _content(context, r),
+      loading: () => const Scaffold(
+        backgroundColor: Tch.background,
+        body: Center(child: CircularProgressIndicator(color: Tch.green)),
+      ),
+      error: (e, _) => Scaffold(
+        backgroundColor: Tch.background,
+        body: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.all(Tch.pagePadding),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TchBackButton(onTap: () => context.go('/journal/recipes')),
+                AsyncView<void>(
+                  value: AsyncError<void>(e, StackTrace.empty),
+                  onRetry: () => ref.invalidate(recipeProvider(widget.id)),
+                  builder: (_) => const SizedBox.shrink(),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _content(BuildContext context, Recipe r) {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
-    final r = ref.watch(recipeRepositoryProvider).byId(widget.id);
     final title = (r.detailTitle ?? r.name).of(locale);
     final difficulty = r.difficulty == Difficulty.easy ? l.recipeEasy : l.recipeMedium;
     final meta = '${r.time} · ${l.recipeServings(r.servings)} · $difficulty';

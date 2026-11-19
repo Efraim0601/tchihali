@@ -1411,6 +1411,48 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Lun,Mar,Mer,Jeu,Ven,Sam,Dim'**
   String get proWeekdaysShort;
+
+  /// No description provided for @errorNetwork.
+  ///
+  /// In fr, this message translates to:
+  /// **'Connexion impossible. Vérifiez votre réseau.'**
+  String get errorNetwork;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In fr, this message translates to:
+  /// **'Une erreur est survenue. Réessayez.'**
+  String get errorGeneric;
+
+  /// No description provided for @errorSlotTaken.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ce créneau vient d\'être réservé. Choisissez-en un autre.'**
+  String get errorSlotTaken;
+
+  /// No description provided for @errorCode.
+  ///
+  /// In fr, this message translates to:
+  /// **'Code incorrect ou expiré.'**
+  String get errorCode;
+
+  /// No description provided for @errorTooMany.
+  ///
+  /// In fr, this message translates to:
+  /// **'Trop de tentatives. Réessayez dans quelques minutes.'**
+  String get errorTooMany;
+
+  /// No description provided for @retry.
+  ///
+  /// In fr, this message translates to:
+  /// **'Réessayer'**
+  String get retry;
+
+  /// No description provided for @dirNoSlot.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get dirNoSlot;
 }
 
 class _AppLocalizationsDelegate

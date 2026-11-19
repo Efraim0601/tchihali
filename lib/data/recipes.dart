@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'api/api_client.dart';
+import 'api/api_config.dart';
+import 'api/api_providers.dart';
 import 'models.dart';
 
 enum Difficulty { easy, medium }
@@ -50,8 +53,8 @@ class Recipe {
 
 /// Recettes. Le backend viendra plus tard derrière cette interface.
 abstract class RecipeRepository {
-  List<Recipe> all();
-  Recipe byId(String id);
+  Future<List<Recipe>> all();
+  Future<Recipe> byId(String id);
 }
 
 class MockRecipeRepository implements RecipeRepository {
@@ -195,10 +198,59 @@ class MockRecipeRepository implements RecipeRepository {
   ];
 
   @override
-  List<Recipe> all() => _items;
+  Future<List<Recipe>> all() async => _items;
 
   @override
-  Recipe byId(String id) => _items.firstWhere((r) => r.id == id);
+  Future<Recipe> byId(String id) async => _items.firstWhere((r) => r.id == id);
 }
 
-final recipeRepositoryProvider = Provider<RecipeRepository>((_) => MockRecipeRepository());
+class ApiRecipeRepository implements RecipeRepository {
+  ApiRecipeRepository(this._api);
+  final ApiClient _api;
+
+  static Color _color(String hex) => Color(0xFF000000 | int.parse(hex.substring(1), radix: 16));
+  static LText _t(Map<String, dynamic> j) => LText(j['fr'] as String, j['en'] as String);
+
+  static Recipe _recipe(Map<String, dynamic> j) => Recipe(
+        id: j['id'] as String,
+        name: _t(j['name'] as Map<String, dynamic>),
+        detailTitle: j['detail_title'] == null ? null : _t(j['detail_title'] as Map<String, dynamic>),
+        kcal: j['kcal'] as int,
+        detailKcal: j['detail_kcal'] as int?,
+        time: j['time'] as String,
+        tags: (j['tags'] as List).cast<int>(),
+        c1: _color(j['c1'] as String),
+        c2: _color(j['c2'] as String),
+        c3: _color(j['c3'] as String),
+        tint: _color(j['tint'] as String),
+        servings: j['servings'] as int,
+        difficulty: j['difficulty'] == 'easy' ? Difficulty.easy : Difficulty.medium,
+        protein: j['protein'] as int,
+        carbs: j['carbs'] as int,
+        fat: j['fat'] as int,
+        ingredients: [
+          for (final i in (j['ingredients'] as List).cast<Map<String, dynamic>>())
+            Ingredient(_t(i['name'] as Map<String, dynamic>), _t(i['qty'] as Map<String, dynamic>)),
+        ],
+      );
+
+  @override
+  Future<List<Recipe>> all() async {
+    final list = await _api.get('/recipes', auth: false) as List;
+    return [for (final j in list.cast<Map<String, dynamic>>()) _recipe(j)];
+  }
+
+  @override
+  Future<Recipe> byId(String id) async =>
+      _recipe(await _api.get('/recipes/$id', auth: false) as Map<String, dynamic>);
+}
+
+final recipeRepositoryProvider = Provider<RecipeRepository>((ref) => ApiConfig.isConfigured
+    ? ApiRecipeRepository(ref.watch(apiClientProvider))
+    : MockRecipeRepository());
+
+final recipesProvider = FutureProvider.autoDispose<List<Recipe>>(
+    (ref) => ref.watch(recipeRepositoryProvider).all());
+
+final recipeProvider = FutureProvider.autoDispose.family<Recipe, String>(
+    (ref, id) => ref.watch(recipeRepositoryProvider).byId(id));

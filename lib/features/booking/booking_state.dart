@@ -27,14 +27,16 @@ class BookingState {
 
 class BookingNotifier extends Notifier<BookingState> {
   @override
-  BookingState build() => _initial(ref.read(dietitianRepositoryProvider).all().first);
+  BookingState build() => _initial(MockDietitianRepository.fallback);
 
   static BookingState _initial(Dietitian d) => BookingState(
         dietitian: d,
         mode: d.video ? ConsultMode.video : ConsultMode.office,
-        day: DateTime(d.nextSlot.year, d.nextSlot.month, d.nextSlot.day),
-        slot: hhmm(d.nextSlot),
+        day: _dateOnly(d.nextSlot ?? DateTime.now()),
+        slot: d.nextSlot == null ? '' : hhmm(d.nextSlot!),
       );
+
+  static DateTime _dateOnly(DateTime d) => DateTime(d.year, d.month, d.day);
 
   /// Démarre une réservation sur le prochain créneau du diététicien.
   void start(Dietitian d) => state = _initial(d);

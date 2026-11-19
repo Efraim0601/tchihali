@@ -2,11 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
+import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
+import '../../core/widgets/async_view.dart';
 import '../../core/widgets/tch_avatar.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_text_field.dart';
+import '../../data/api/api_client.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'chat_state.dart';
 
@@ -35,10 +39,20 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
     super.dispose();
   }
 
-  void _send() {
-    ref.read(chatProvider.notifier).send(_draft.text);
+  Future<void> _send() async {
+    final text = _draft.text;
+    if (text.trim().isEmpty) return;
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(chatProvider.notifier).send(text);
+    } on ApiException catch (e) {
+      // Le texte reste dans le champ pour pouvoir réessayer.
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+      return;
+    }
     _draft.clear();
-    setState(() {});
+    if (mounted) setState(() {});
     // La liste est inversée : 0 = dernier message.
     if (_scroll.hasClients) _scroll.jumpTo(0);
   }
@@ -46,12 +60,13 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    final messages = ref.watch(chatProvider);
+    final chat = ref.watch(chatProvider);
+    final messages = chat.value ?? const <ChatMessage>[];
     String textOf(ChatMessage m) => switch (m.seed) {
-          1 => l.msgM1,
-          2 => l.msgM2,
-          _ => m.text ?? '',
-        };
+      1 => l.msgM1,
+      2 => l.msgM2,
+      _ => m.text ?? '',
+    };
 
     return Column(
       children: [
@@ -61,7 +76,11 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
             color: Tch.surface,
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(26)),
             boxShadow: [
-              BoxShadow(color: Color(0x0D2F3437), blurRadius: 16, offset: Offset(0, 4))
+              BoxShadow(
+                color: Color(0x0D2F3437),
+                blurRadius: 16,
+                offset: Offset(0, 4),
+              ),
             ],
           ),
           child: Row(
@@ -90,8 +109,14 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Estelle Mbarga', style: Tch.style(16, weight: FontWeight.w600)),
-                    Text(l.msgOnline, style: Tch.style(12, color: Tch.greenDark2)),
+                    Text(
+                      'Estelle Mbarga',
+                      style: Tch.style(16, weight: FontWeight.w600),
+                    ),
+                    Text(
+                      l.msgOnline,
+                      style: Tch.style(12, color: Tch.greenDark2),
+                    ),
                   ],
                 ),
               ),
@@ -106,40 +131,65 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Center(
-                      child: TchIcon(TchIcons.video, size: 22, color: Tch.greenDark2)),
+                    child: TchIcon(
+                      TchIcons.video,
+                      size: 22,
+                      color: Tch.greenDark2,
+                    ),
+                  ),
                 ),
               ),
             ],
           ),
         ),
         Expanded(
-          child: ListView.separated(
-            controller: _scroll,
-            reverse: true,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            // Index 0 = dernier message ; le dernier index = pastille « Aujourd'hui ».
-            itemCount: messages.length + 1,
-            separatorBuilder: (_, _) => const SizedBox(height: 10),
-            itemBuilder: (_, i) {
-              if (i == messages.length) {
-                return Align(
-                  alignment: Alignment.center,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Tch.segmented,
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Text(l.today,
-                        style: Tch.style(12,
-                            weight: FontWeight.w500, color: Tch.textSecondary)),
+          child: !chat.hasValue
+              ? SingleChildScrollView(
+                  padding: const EdgeInsets.all(Tch.pagePadding),
+                  child: AsyncView<List<ChatMessage>>(
+                    value: chat,
+                    onRetry: () => ref.invalidate(chatProvider),
+                    builder: (_) => const SizedBox.shrink(),
                   ),
-                );
-              }
-              final m = messages[messages.length - 1 - i];
-              return _Bubble(message: m, text: textOf(m));
-            },
-          ),
+                )
+              : ListView.separated(
+                  controller: _scroll,
+                  reverse: true,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  // Index 0 = dernier message ; le dernier index = pastille « Aujourd'hui ».
+                  itemCount: messages.length + 1,
+                  separatorBuilder: (_, _) => const SizedBox(height: 10),
+                  itemBuilder: (_, i) {
+                    if (i == messages.length) {
+                      return Align(
+                        alignment: Alignment.center,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 5,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Tch.segmented,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Text(
+                            l.today,
+                            style: Tch.style(
+                              12,
+                              weight: FontWeight.w500,
+                              color: Tch.textSecondary,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    final m = messages[messages.length - 1 - i];
+                    return _Bubble(message: m, text: textOf(m));
+                  },
+                ),
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(12, 8, 12, 10),
@@ -156,12 +206,19 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                     borderRadius: BorderRadius.circular(16),
                     boxShadow: const [
                       BoxShadow(
-                          color: Color(0x0D2F3437), blurRadius: 8, offset: Offset(0, 2))
+                        color: Color(0x0D2F3437),
+                        blurRadius: 8,
+                        offset: Offset(0, 2),
+                      ),
                     ],
                   ),
                   child: const Center(
-                      child:
-                          TchIcon(TchIcons.camera, size: 22, color: Tch.textSecondary)),
+                    child: TchIcon(
+                      TchIcons.camera,
+                      size: 22,
+                      color: Tch.textSecondary,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
@@ -189,8 +246,13 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: const Center(
-                      child: TchIcon(TchIcons.send,
-                          size: 20, color: Colors.white, strokeWidth: 2.2)),
+                    child: TchIcon(
+                      TchIcons.send,
+                      size: 20,
+                      color: Colors.white,
+                      strokeWidth: 2.2,
+                    ),
+                  ),
                 ),
               ),
             ],
@@ -223,11 +285,21 @@ class _Bubble extends StatelessWidget {
         boxShadow: mine
             ? null
             : const [
-                BoxShadow(color: Color(0x0D2F3437), blurRadius: 8, offset: Offset(0, 2))
+                BoxShadow(
+                  color: Color(0x0D2F3437),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
               ],
       ),
-      child: Text(text,
-          style: Tch.style(15, color: mine ? Colors.white : Tch.text, height: 1.45)),
+      child: Text(
+        text,
+        style: Tch.style(
+          15,
+          color: mine ? Colors.white : Tch.text,
+          height: 1.45,
+        ),
+      ),
     );
     return FadeSlideIn(
       child: Align(
@@ -235,7 +307,9 @@ class _Bubble extends StatelessWidget {
         child: ConstrainedBox(
           constraints: BoxConstraints(maxWidth: maxW),
           child: Column(
-            crossAxisAlignment: mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+            crossAxisAlignment: mine
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
             children: [
               if (message.photo) ...[
                 ClipRRect(
@@ -256,7 +330,10 @@ class _Bubble extends StatelessWidget {
               bubble,
               if (message.time != null) ...[
                 const SizedBox(height: 4),
-                Text(message.time!, style: Tch.style(11, color: Tch.textSecondary)),
+                Text(
+                  message.time!,
+                  style: Tch.style(11, color: Tch.textSecondary),
+                ),
               ],
             ],
           ),

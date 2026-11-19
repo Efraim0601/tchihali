@@ -6,6 +6,7 @@ import '../../core/format.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_segmented.dart';
+import '../../core/widgets/async_view.dart';
 import '../../data/dietitian_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
@@ -28,13 +29,14 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final q = _query.trim().toLowerCase();
-    final list = ref.watch(dietitianRepositoryProvider).all().where((d) {
-      final modeOk = _mode == 0 || (_mode == 1 && d.video) || (_mode == 2 && d.inPerson);
-      final textOk = q.isEmpty ||
-          d.name.toLowerCase().contains(q) ||
-          d.specialties.of(locale).toLowerCase().contains(q);
-      return modeOk && textOk;
-    }).toList();
+    final dietitians = ref.watch(dietitiansProvider);
+    List<Dietitian> filter(List<Dietitian> all) => all.where((d) {
+          final modeOk = _mode == 0 || (_mode == 1 && d.video) || (_mode == 2 && d.inPerson);
+          final textOk = q.isEmpty ||
+              d.name.toLowerCase().contains(q) ||
+              d.specialties.of(locale).toLowerCase().contains(q);
+          return modeOk && textOk;
+        }).toList();
 
     return SingleChildScrollView(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
@@ -68,23 +70,35 @@ class _DirectoryScreenState extends ConsumerState<DirectoryScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          for (var i = 0; i < list.length; i++) ...[
-            if (i > 0) const SizedBox(height: 12),
-            FadeSlideIn(
-              key: ValueKey(list[i].id),
-              index: 3 + i,
-              child: _DietitianCard(
-                d: list[i],
-                locale: locale,
-                nextLabel: l.dirNext,
-                bookLabel: l.dirBook,
-                onBook: () {
-                  ref.read(bookingProvider.notifier).start(list[i]);
-                  context.go('/booking');
-                },
-              ),
-            ),
-          ],
+          AsyncView<List<Dietitian>>(
+            value: dietitians,
+            onRetry: () => ref.invalidate(dietitiansProvider),
+            builder: (all) {
+              final list = filter(all);
+              return Column(
+                children: [
+                  for (var i = 0; i < list.length; i++) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    FadeSlideIn(
+                      key: ValueKey(list[i].id),
+                      index: 3 + i,
+                      child: _DietitianCard(
+                        d: list[i],
+                        locale: locale,
+                        nextLabel: l.dirNext,
+                        noSlot: l.dirNoSlot,
+                        bookLabel: l.dirBook,
+                        onBook: () {
+                          ref.read(bookingProvider.notifier).start(list[i]);
+                          context.go('/booking');
+                        },
+                      ),
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
         ],
       ),
     );
@@ -161,12 +175,14 @@ class _DietitianCard extends StatelessWidget {
     required this.d,
     required this.locale,
     required this.nextLabel,
+    required this.noSlot,
     required this.bookLabel,
     required this.onBook,
   });
   final Dietitian d;
   final String locale;
   final String nextLabel;
+  final String noSlot;
   final String bookLabel;
   final VoidCallback onBook;
 
@@ -219,7 +235,7 @@ class _DietitianCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(nextLabel, style: Tch.style(12, color: Tch.textSecondary)),
-                      Text('${formatSlotDay(d.nextSlot, locale)} · ${hhmm(d.nextSlot)}',
+                      Text(d.nextSlot == null ? noSlot : '${formatSlotDay(d.nextSlot!, locale)} · ${hhmm(d.nextSlot!)}',
                           style: Tch.style(14,
                               weight: FontWeight.w600, color: Tch.coralText)),
                     ],

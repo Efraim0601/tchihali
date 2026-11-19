@@ -10,6 +10,7 @@ import '../../core/widgets/tch_card.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_pill_switch.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../data/auth_repository.dart';
 import '../auth/signup_state.dart';
 
 const _menuPaths = [
@@ -45,7 +46,7 @@ String _initials(String name) {
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
-  Future<void> _askLogout(BuildContext context) async {
+  Future<void> _askLogout(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
     final confirmed = await showModalBottomSheet<bool>(
       context: context,
@@ -94,7 +95,10 @@ class ProfileScreen extends ConsumerWidget {
         ),
       ),
     );
-    if (confirmed == true && context.mounted) context.go('/onboarding/1');
+    if (confirmed == true) {
+      await ref.read(authRepositoryProvider).signOut();
+      if (context.mounted) context.go('/onboarding/1');
+    }
   }
 
   @override
@@ -215,7 +219,7 @@ class ProfileScreen extends ConsumerWidget {
               style: TchButtonStyle.outlineSoft,
               height: 54,
               icon: const TchIcon(TchIcons.logout, size: 20, color: Tch.coralText),
-              onPressed: () => _askLogout(context),
+              onPressed: () => _askLogout(context, ref),
             ),
           ),
         ],

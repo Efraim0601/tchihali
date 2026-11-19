@@ -22,7 +22,7 @@ class Dietitian {
     required this.name,
     required this.specialties,
     required this.languages,
-    required this.nextSlot,
+    this.nextSlot,
     required this.video,
     required this.inPerson,
     required this.avatarBg,
@@ -33,11 +33,18 @@ class Dietitian {
   final String name;
   final LText specialties; // « Ville · spécialités »
   final LText languages;
-  final DateTime nextSlot;
+  final DateTime? nextSlot;
   final bool video;
   final bool inPerson;
   final Color avatarBg;
   final Color avatarFg;
 
   bool supports(ConsultMode m) => m == ConsultMode.video ? video : inPerson;
+}
+
+/// Créneau d'un jour (heure locale « 10:30 ») et s'il est déjà réservé.
+class Slot {
+  const Slot(this.time, {required this.taken});
+  final String time;
+  final bool taken;
 }

@@ -4,4 +4,6 @@
          to allow setting breakpoints, to provide hot reload, etc.
     -->
     <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Développement seulement : autorise http://127.0.0.1 (API locale via adb reverse). Absent en release. -->
+    <application android:usesCleartextTraffic="true"/>
 </manifest>

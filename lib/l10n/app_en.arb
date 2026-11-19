@@ -274,5 +274,12 @@
         "type": "String"
       }
     }
-  }
+  },
+  "errorNetwork": "Can't connect. Check your network.",
+  "errorGeneric": "Something went wrong. Please try again.",
+  "errorSlotTaken": "This slot was just booked. Please pick another one.",
+  "errorCode": "Wrong or expired code.",
+  "errorTooMany": "Too many attempts. Try again in a few minutes.",
+  "retry": "Retry",
+  "dirNoSlot": "—"
 }

@@ -2,10 +2,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
+import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_back_button.dart';
 import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_icons.dart';
+import '../../data/api/api_client.dart';
+import '../../data/health_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 /// Réponses : objectif (choix unique), santé et allergies (choix multiples).
@@ -154,8 +157,25 @@ class QuestionnaireScreen extends ConsumerWidget {
                     const SizedBox(height: 18),
                     TchButton(
                       label: step == 3 ? l.qFinish : l.qNext,
-                      onPressed: () => context
-                          .go(step == 3 ? '/directory' : '/questionnaire/${step + 1}'),
+                      onPressed: () async {
+                        if (step < 3) {
+                          context.go('/questionnaire/${step + 1}');
+                          return;
+                        }
+                        final messenger = ScaffoldMessenger.of(context);
+                        try {
+                          await ref.read(healthRepositoryProvider).save(
+                                goal: q.goal,
+                                conditions: q.health,
+                                allergies: q.allergies,
+                              );
+                        } on ApiException catch (e) {
+                          messenger.showSnackBar(
+                              SnackBar(content: Text(apiErrorMessage(l, e))));
+                          return;
+                        }
+                        if (context.mounted) context.go('/directory');
+                      },
                     ),
                   ],
                 ),

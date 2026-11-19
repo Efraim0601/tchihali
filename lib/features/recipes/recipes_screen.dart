@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
+import '../../core/widgets/async_view.dart';
 import '../../core/widgets/tch_back_button.dart';
 import '../../core/widgets/tch_chip.dart';
 import '../../data/recipes.dart';
@@ -25,11 +26,7 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final filters = [l.recipesAll, l.recipesSlim, l.recipesDiabetes, l.recipesVeg];
-    final list = ref
-        .watch(recipeRepositoryProvider)
-        .all()
-        .where((r) => _filter == 0 || r.tags.contains(_filter))
-        .toList();
+    final recipes = ref.watch(recipesProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
@@ -67,6 +64,12 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
             ),
           ),
           const SizedBox(height: 16),
+          AsyncView<List<Recipe>>(
+            value: recipes,
+            onRetry: () => ref.invalidate(recipesProvider),
+            builder: (all) {
+              final list = all.where((r) => _filter == 0 || r.tags.contains(_filter)).toList();
+              return Column(children: [
           for (var i = 0; i < list.length; i += 2) ...[
             if (i > 0) const SizedBox(height: 12),
             IntrinsicHeight(
@@ -94,6 +97,9 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
               ),
             ),
           ],
+              ]);
+            },
+          ),
         ],
       ),
     );

@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import '../core/widgets/tch_bottom_nav.dart';
+import '../data/api/api_config.dart';
+import 'auth_gate.dart';
 import '../features/auth/auth_screens.dart';
 import '../features/questionnaire/questionnaire_screen.dart';
 import '../features/booking/booking_screen.dart';
@@ -22,8 +24,22 @@ import '../features/record/record_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
 
+/// Mode API : il faut être connecté (sauf onboarding / inscription) ; l'espace praticien
+/// est réservé au rôle « dietitian ». En mode démo, tout est accessible.
+String? _guard(BuildContext context, GoRouterState state) {
+  if (!ApiConfig.isConfigured) return null;
+  final loc = state.uri.path;
+  final isPublic = loc.startsWith('/onboarding') || loc.startsWith('/signup');
+  if (!authGate.signedIn) return isPublic ? null : '/onboarding/1';
+  if (loc.startsWith('/onboarding')) return '/home';
+  if (loc.startsWith('/pro') && authGate.role != 'dietitian') return '/home';
+  return null;
+}
+
 final router = GoRouter(
   initialLocation: '/onboarding/1',
+  refreshListenable: authGate,
+  redirect: _guard,
   routes: [
     GoRoute(path: '/onboarding/1', builder: (_, _) => const WelcomeScreen()),
     GoRoute(path: '/onboarding/2', builder: (_, _) => const Onboarding2Screen()),

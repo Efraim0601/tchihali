@@ -1,14 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'api/api_client.dart';
+import 'api/api_config.dart';
+import 'api/api_providers.dart';
 import 'models.dart';
 
-/// Annuaire des diététiciens. Le backend viendra plus tard derrière cette interface.
+/// Annuaire des diététiciens et créneaux.
 abstract class DietitianRepository {
-  List<Dietitian> all();
-  Dietitian byId(String id);
+  Future<List<Dietitian>> all();
+
+  /// Créneaux d'un jour ; liste vide si week-end, jour férié ou passé.
+  Future<List<Slot>> slots(String dietitianId, DateTime day);
 }
 
+/// Mode démo : données fictives.
 class MockDietitianRepository implements DietitianRepository {
+  static const _times = ['09:00', '10:30', '11:30', '14:00', '15:30', '17:00'];
+  static const _holidays = {(1, 1), (2, 11), (5, 1), (5, 20), (8, 15), (12, 25)};
+
   static final _items = [
     Dietitian(
       id: 'estelle',
@@ -48,12 +57,65 @@ class MockDietitianRepository implements DietitianRepository {
     ),
   ];
 
-  @override
-  List<Dietitian> all() => _items;
+  /// Diététicien utilisé tant qu'aucune réservation n'a été démarrée depuis l'annuaire.
+  static Dietitian get fallback => _items.first;
 
   @override
-  Dietitian byId(String id) => _items.firstWhere((d) => d.id == id);
+  Future<List<Dietitian>> all() async => _items;
+
+  @override
+  Future<List<Slot>> slots(String dietitianId, DateTime day) async {
+    final today = DateTime.now();
+    final d = DateTime(day.year, day.month, day.day);
+    final past = d.isBefore(DateTime(today.year, today.month, today.day));
+    if (past || d.weekday > DateTime.friday || _holidays.contains((d.month, d.day))) return [];
+    return [for (final t in _times) Slot(t, taken: t == '15:30')];
+  }
 }
 
-final dietitianRepositoryProvider =
-    Provider<DietitianRepository>((_) => MockDietitianRepository());
+class ApiDietitianRepository implements DietitianRepository {
+  ApiDietitianRepository(this._api);
+  final ApiClient _api;
+
+  static Color _color(String hex) => Color(0xFF000000 | int.parse(hex.substring(1), radix: 16));
+
+  @override
+  Future<List<Dietitian>> all() async {
+    final list = await _api.get('/dietitians') as List;
+    return [
+      for (final j in list.cast<Map<String, dynamic>>())
+        Dietitian(
+          id: j['id'] as String,
+          initials: j['initials'] as String,
+          name: j['name'] as String,
+          specialties: LText(j['specialties']['fr'] as String, j['specialties']['en'] as String),
+          languages: LText(j['languages']['fr'] as String, j['languages']['en'] as String),
+          nextSlot: j['next_slot'] == null ? null : DateTime.parse(j['next_slot'] as String).toLocal(),
+          video: j['video'] as bool,
+          inPerson: j['in_person'] as bool,
+          avatarBg: _color(j['avatar_bg'] as String),
+          avatarFg: _color(j['avatar_fg'] as String),
+        ),
+    ];
+  }
+
+  @override
+  Future<List<Slot>> slots(String dietitianId, DateTime day) async {
+    final d = '${day.year.toString().padLeft(4, '0')}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+    final list = await _api.get('/dietitians/$dietitianId/slots', query: {'day': d}) as List;
+    return [
+      for (final j in list.cast<Map<String, dynamic>>()) Slot(j['time'] as String, taken: j['taken'] as bool),
+    ];
+  }
+}
+
+final dietitianRepositoryProvider = Provider<DietitianRepository>((ref) =>
+    ApiConfig.isConfigured
+        ? ApiDietitianRepository(ref.watch(apiClientProvider))
+        : MockDietitianRepository());
+
+final dietitiansProvider = FutureProvider.autoDispose<List<Dietitian>>(
+    (ref) => ref.watch(dietitianRepositoryProvider).all());
+
+final slotsProvider = FutureProvider.autoDispose.family<List<Slot>, ({String id, DateTime day})>(
+    (ref, a) => ref.watch(dietitianRepositoryProvider).slots(a.id, a.day));

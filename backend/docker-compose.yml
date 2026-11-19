@@ -1,0 +1,29 @@
+# Développement local. En production : mettre un reverse proxy TLS (Caddy / Nginx) devant l'API,
+# ne jamais exposer PostgreSQL, chiffrer le disque et programmer des sauvegardes chiffrées.
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: tchihali
+      POSTGRES_PASSWORD: ${TCHIHALI_DB_PASSWORD:-tchihali}
+      POSTGRES_DB: tchihali
+    ports:
+      - "127.0.0.1:55432:5432"   # local seulement
+    volumes:
+      - tchihali_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tchihali"]
+      interval: 5s
+      retries: 10
+  api:
+    build: .
+    env_file: .env
+    environment:
+      TCHIHALI_DATABASE_URL: postgresql://tchihali:${TCHIHALI_DB_PASSWORD:-tchihali}@db:5432/tchihali
+    ports:
+      - "127.0.0.1:8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+volumes:
+  tchihali_pg:

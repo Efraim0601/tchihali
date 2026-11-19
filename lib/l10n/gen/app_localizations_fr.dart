@@ -690,4 +690,27 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get proWeekdaysShort => 'Lun,Mar,Mer,Jeu,Ven,Sam,Dim';
+
+  @override
+  String get errorNetwork => 'Connexion impossible. Vérifiez votre réseau.';
+
+  @override
+  String get errorGeneric => 'Une erreur est survenue. Réessayez.';
+
+  @override
+  String get errorSlotTaken =>
+      'Ce créneau vient d\'être réservé. Choisissez-en un autre.';
+
+  @override
+  String get errorCode => 'Code incorrect ou expiré.';
+
+  @override
+  String get errorTooMany =>
+      'Trop de tentatives. Réessayez dans quelques minutes.';
+
+  @override
+  String get retry => 'Réessayer';
+
+  @override
+  String get dirNoSlot => '—';
 }
