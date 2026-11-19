@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 
 /// Courbe de suivi : ligne verte, zone remplie, objectif en pointillés corail,
@@ -10,8 +11,8 @@ class TchCurve extends StatelessWidget {
     required this.data,
     required this.min,
     required this.max,
-    required this.goal,
-    required this.goalLabel,
+    this.goal,
+    this.goalLabel,
     required this.semanticLabel,
     this.height = 160,
     this.hollowDot = true,
@@ -20,8 +21,8 @@ class TchCurve extends StatelessWidget {
   final List<double> data;
   final double min;
   final double max;
-  final double goal;
-  final String goalLabel;
+  final double? goal;
+  final String? goalLabel;
   final String semanticLabel;
   final double height;
 
@@ -32,7 +33,9 @@ class TchCurve extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reduced = MediaQuery.of(context).disableAnimations;
-    final spots = [for (var i = 0; i < data.length; i++) FlSpot(i.toDouble(), data[i])];
+    final spots = [
+      for (var i = 0; i < data.length; i++) FlSpot(i.toDouble(), data[i]),
+    ];
     final step = (max - min) / 4;
     final chart = LineChart(
       duration: Duration.zero,
@@ -56,22 +59,28 @@ class TchCurve extends StatelessWidget {
         titlesData: const FlTitlesData(show: false),
         borderData: FlBorderData(show: false),
         lineTouchData: const LineTouchData(enabled: false),
-        extraLinesData: ExtraLinesData(horizontalLines: [
-          HorizontalLine(
-            y: goal,
-            color: Tch.coral,
-            strokeWidth: 1.5,
-            dashArray: [5, 5],
-            label: HorizontalLineLabel(
-              show: true,
-              alignment: Alignment.topRight,
-              padding: const EdgeInsets.only(bottom: 4),
-              style: Tch.style(labelSize,
-                  weight: FontWeight.w600, color: Tch.coralText),
-              labelResolver: (_) => goalLabel,
-            ),
-          ),
-        ]),
+        extraLinesData: ExtraLinesData(
+          horizontalLines: [
+            if (goal != null && goalLabel != null)
+              HorizontalLine(
+                y: goal!,
+                color: Tch.coral,
+                strokeWidth: 1.5,
+                dashArray: [5, 5],
+                label: HorizontalLineLabel(
+                  show: true,
+                  alignment: Alignment.topRight,
+                  padding: const EdgeInsets.only(bottom: 4),
+                  style: Tch.style(
+                    labelSize,
+                    weight: FontWeight.w600,
+                    color: Tch.coralText,
+                  ),
+                  labelResolver: (_) => goalLabel!,
+                ),
+              ),
+          ],
+        ),
         lineBarsData: [
           LineChartBarData(
             spots: spots,
@@ -101,7 +110,9 @@ class TchCurve extends StatelessWidget {
         height: height,
         child: TweenAnimationBuilder<double>(
           tween: Tween(begin: reduced ? 1 : 0, end: 1),
-          duration: reduced ? Duration.zero : const Duration(milliseconds: 1600),
+          duration: reduced
+              ? Duration.zero
+              : const Duration(milliseconds: 1600),
           curve: Curves.easeOut,
           builder: (_, t, child) => ClipRect(clipper: _Reveal(t), child: child),
           child: Padding(
@@ -120,7 +131,8 @@ class _Reveal extends CustomClipper<Rect> {
   final double t;
 
   @override
-  Rect getClip(Size size) => Rect.fromLTWH(-8, -8, (size.width + 16) * t, size.height + 16);
+  Rect getClip(Size size) =>
+      Rect.fromLTWH(-8, -8, (size.width + 16) * t, size.height + 16);
 
   @override
   bool shouldReclip(_Reveal old) => old.t != t;

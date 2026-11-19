@@ -15,12 +15,15 @@ import '../features/pro/pro_shell.dart';
 import '../features/video/call_screen.dart';
 import '../features/video/waiting_room_screen.dart';
 import '../features/home/home_screen.dart';
+import '../data/recipes.dart';
+import '../features/journal/add_meal_screen.dart';
 import '../features/journal/journal_screen.dart';
 import '../features/messages/messages_screen.dart';
 import '../features/progress/progress_screen.dart';
 import '../features/recipes/recipe_detail_screen.dart';
 import '../features/recipes/recipes_screen.dart';
 import '../features/record/record_screen.dart';
+import '../features/profile/notifications_screen.dart';
 import '../features/profile/profile_screen.dart';
 import '../features/onboarding/onboarding_screens.dart';
 
@@ -73,6 +76,10 @@ final router = GoRouter(
             builder: (_, _) => const JournalScreen(),
             routes: [
               GoRoute(
+                path: 'add',
+                builder: (_, state) => AddMealScreen(recipe: state.extra as Recipe?),
+              ),
+              GoRoute(
                 path: 'recipes',
                 builder: (_, _) => const RecipesScreen(),
               ),
@@ -91,6 +98,7 @@ final router = GoRouter(
                 path: 'progress',
                 builder: (_, _) => const ProgressScreen(),
               ),
+              GoRoute(path: 'notifications', builder: (_, _) => const NotificationsScreen()),
               GoRoute(
                 path: 'record',
                 builder: (_, _) => const RecordScreen(),

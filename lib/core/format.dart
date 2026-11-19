@@ -33,3 +33,6 @@ String formatLongDay(DateTime d, String locale, {bool capital = false}) {
 }
 
 String hhmm(DateTime d) => DateFormat('HH:mm').format(d);
+
+/// Entier avec séparateur de milliers : « 1 700 » (fr, espace insécable) ou « 1,700 » (en).
+String formatInt(int n, String locale) => formatFcfa(n, locale).replaceAll(' FCFA', '');

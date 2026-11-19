@@ -2,7 +2,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Jetons de session, chiffrés sur le téléphone (Keystore Android).
 class TokenStore {
-  TokenStore([FlutterSecureStorage? storage]) : _s = storage ?? const FlutterSecureStorage();
+  TokenStore([FlutterSecureStorage? storage])
+    : _s = storage ?? const FlutterSecureStorage();
   final FlutterSecureStorage _s;
 
   String? access;

@@ -1453,6 +1453,270 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'—'**
   String get dirNoSlot;
+
+  /// No description provided for @homeNoAppointment.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun rendez-vous prévu'**
+  String get homeNoAppointment;
+
+  /// No description provided for @homeBookNow.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre rendez-vous'**
+  String get homeBookNow;
+
+  /// No description provided for @homePending.
+  ///
+  /// In fr, this message translates to:
+  /// **'En attente de validation'**
+  String get homePending;
+
+  /// No description provided for @journalEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun repas enregistré ce jour-là.'**
+  String get journalEmpty;
+
+  /// No description provided for @journalAddMeal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un repas'**
+  String get journalAddMeal;
+
+  /// No description provided for @journalDeleteMeal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer ce repas'**
+  String get journalDeleteMeal;
+
+  /// No description provided for @mealBreakfast.
+  ///
+  /// In fr, this message translates to:
+  /// **'Petit-déjeuner'**
+  String get mealBreakfast;
+
+  /// No description provided for @mealLunch.
+  ///
+  /// In fr, this message translates to:
+  /// **'Déjeuner'**
+  String get mealLunch;
+
+  /// No description provided for @mealSnack.
+  ///
+  /// In fr, this message translates to:
+  /// **'Collation'**
+  String get mealSnack;
+
+  /// No description provided for @mealDinner.
+  ///
+  /// In fr, this message translates to:
+  /// **'Dîner'**
+  String get mealDinner;
+
+  /// No description provided for @addMealTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un repas'**
+  String get addMealTitle;
+
+  /// No description provided for @addMealPhoto.
+  ///
+  /// In fr, this message translates to:
+  /// **'Photo du repas'**
+  String get addMealPhoto;
+
+  /// No description provided for @photoCamera.
+  ///
+  /// In fr, this message translates to:
+  /// **'Prendre une photo'**
+  String get photoCamera;
+
+  /// No description provided for @photoGallery.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir dans la galerie'**
+  String get photoGallery;
+
+  /// No description provided for @photoRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer la photo'**
+  String get photoRemove;
+
+  /// No description provided for @addMealType.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repas'**
+  String get addMealType;
+
+  /// No description provided for @addMealName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nom du plat'**
+  String get addMealName;
+
+  /// No description provided for @addMealKcal.
+  ///
+  /// In fr, this message translates to:
+  /// **'Calories (kcal)'**
+  String get addMealKcal;
+
+  /// No description provided for @addMealProtein.
+  ///
+  /// In fr, this message translates to:
+  /// **'Protéines (g)'**
+  String get addMealProtein;
+
+  /// No description provided for @addMealCarbs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Glucides (g)'**
+  String get addMealCarbs;
+
+  /// No description provided for @addMealFat.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lipides (g)'**
+  String get addMealFat;
+
+  /// No description provided for @addMealSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer le repas'**
+  String get addMealSave;
+
+  /// No description provided for @addMealInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez le nom du plat et les calories.'**
+  String get addMealInvalid;
+
+  /// No description provided for @progSinceWeeks.
+  ///
+  /// In fr, this message translates to:
+  /// **'en {n} sem.'**
+  String progSinceWeeks(int n);
+
+  /// No description provided for @progNoData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore de mesures. Ajoutez votre poids pour suivre votre évolution.'**
+  String get progNoData;
+
+  /// No description provided for @progAddMeasure.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter une mesure'**
+  String get progAddMeasure;
+
+  /// No description provided for @progWeightLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Poids (kg)'**
+  String get progWeightLabel;
+
+  /// No description provided for @progWaistLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Tour de taille (cm)'**
+  String get progWaistLabel;
+
+  /// No description provided for @progSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get progSave;
+
+  /// No description provided for @progMeasureInvalid.
+  ///
+  /// In fr, this message translates to:
+  /// **'Indiquez au moins une mesure valide.'**
+  String get progMeasureInvalid;
+
+  /// No description provided for @recNoSession.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun compte rendu pour le moment.'**
+  String get recNoSession;
+
+  /// No description provided for @recNoPlan.
+  ///
+  /// In fr, this message translates to:
+  /// **'Pas encore de plan alimentaire.'**
+  String get recNoPlan;
+
+  /// No description provided for @recNoDocs.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun document.'**
+  String get recNoDocs;
+
+  /// No description provided for @recOpenError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'ouvrir le document.'**
+  String get recOpenError;
+
+  /// No description provided for @recSessionLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Séance {n} · {mode}'**
+  String recSessionLabel(int n, String mode);
+
+  /// No description provided for @notifTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Notifications'**
+  String get notifTitle;
+
+  /// No description provided for @notifEmpty.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune notification.'**
+  String get notifEmpty;
+
+  /// No description provided for @notifAppointmentConfirmed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre rendez-vous du {date} avec {dietitian} est confirmé.'**
+  String notifAppointmentConfirmed(String date, String dietitian);
+
+  /// No description provided for @notifAppointmentRefused.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre demande du {date} n\'a pas pu être acceptée. Choisissez un autre créneau.'**
+  String notifAppointmentRefused(String date);
+
+  /// No description provided for @notifReportSent.
+  ///
+  /// In fr, this message translates to:
+  /// **'Votre compte rendu de la séance {n} est disponible dans votre carnet.'**
+  String notifReportSent(int n);
+
+  /// No description provided for @notifNewMessage.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouveau message de {who}.'**
+  String notifNewMessage(String who);
+
+  /// No description provided for @notifAppointmentRequest.
+  ///
+  /// In fr, this message translates to:
+  /// **'Nouvelle demande de {who} pour le {date}.'**
+  String notifAppointmentRequest(String who, String date);
+
+  /// No description provided for @profileEditName.
+  ///
+  /// In fr, this message translates to:
+  /// **'Modifier mon nom'**
+  String get profileEditName;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrer'**
+  String get profileSave;
 }
 
 class _AppLocalizationsDelegate

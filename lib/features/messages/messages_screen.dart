@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -7,10 +8,12 @@ import '../../app/theme.dart';
 import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/async_view.dart';
+import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_avatar.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_text_field.dart';
 import '../../data/api/api_client.dart';
+import '../../data/patient_repositories.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'chat_state.dart';
 
@@ -37,6 +40,60 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
     _draft.dispose();
     _scroll.dispose();
     super.dispose();
+  }
+
+  Future<void> _sendPhoto() async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final source = await showModalBottomSheet<ImageSource>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: Tch.surface,
+      barrierColor: const Color(0x732F3437),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheet) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 20, 28),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TchButton(
+              label: l.photoCamera,
+              onPressed: () => Navigator.of(sheet).pop(ImageSource.camera),
+            ),
+            const SizedBox(height: 12),
+            TchButton(
+              label: l.photoGallery,
+              style: TchButtonStyle.secondary,
+              onPressed: () => Navigator.of(sheet).pop(ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null) return;
+    try {
+      final x = await ImagePicker().pickImage(
+        source: source,
+        maxWidth: 1600,
+        imageQuality: 80,
+      );
+      if (x == null) return;
+      final id = await ref
+          .read(journalRepositoryProvider)
+          .uploadPhoto(
+            await x.readAsBytes(),
+            kind: 'chat_photo',
+            filename: x.name,
+          );
+      await ref.read(chatProvider.notifier).send('', photoFileId: id);
+      if (_scroll.hasClients) _scroll.jumpTo(0);
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    } catch (_) {
+      // Permission refusée ou appareil photo indisponible : rien n'est envoyé.
+    }
   }
 
   Future<void> _send() async {
@@ -197,7 +254,7 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
             children: [
               PressScale(
                 semanticLabel: l.msgPhoto,
-                onTap: () {}, // Choix de photo : à brancher avec le backend / image_picker
+                onTap: _sendPhoto,
                 child: Container(
                   width: 48,
                   height: 48,
@@ -263,13 +320,13 @@ class _MessagesScreenState extends ConsumerState<MessagesScreen> {
   }
 }
 
-class _Bubble extends StatelessWidget {
+class _Bubble extends ConsumerWidget {
   const _Bubble({required this.message, required this.text});
   final ChatMessage message;
   final String text;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mine = message.fromMe;
     final maxW = MediaQuery.of(context).size.width * (mine ? 0.78 : 0.80);
     final bubble = Container(
@@ -311,7 +368,7 @@ class _Bubble extends StatelessWidget {
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: [
-              if (message.photo) ...[
+              if (message.photo || message.photoFileId != null) ...[
                 ClipRRect(
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
@@ -322,12 +379,29 @@ class _Bubble extends StatelessWidget {
                   child: SizedBox(
                     width: 190,
                     height: 112,
-                    child: SvgPicture.string(_photoSvg, fit: BoxFit.cover),
+                    child: message.photoFileId == null
+                        ? SvgPicture.string(_photoSvg, fit: BoxFit.cover)
+                        : ref
+                              .watch(photoProvider(message.photoFileId!))
+                              .maybeWhen(
+                                data: (b) => b.isEmpty
+                                    ? SvgPicture.string(
+                                        _photoSvg,
+                                        fit: BoxFit.cover,
+                                      )
+                                    : Image.memory(
+                                        b,
+                                        fit: BoxFit.cover,
+                                        gaplessPlayback: true,
+                                      ),
+                                orElse: () =>
+                                    const ColoredBox(color: Tch.segmented),
+                              ),
                   ),
                 ),
                 const SizedBox(height: 4),
               ],
-              bubble,
+              if (text.isNotEmpty) bubble,
               if (message.time != null) ...[
                 const SizedBox(height: 4),
                 Text(

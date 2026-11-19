@@ -1,12 +1,21 @@
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
 import '../../app/theme.dart';
+import '../../core/api_errors.dart';
+import '../../core/format.dart';
 import '../../core/widgets/animations.dart';
+import '../../core/widgets/async_view.dart';
+import '../../core/widgets/tch_button.dart';
 import '../../core/widgets/tch_card.dart';
 import '../../core/widgets/tch_chip.dart';
 import '../../core/widgets/tch_icons.dart';
+import '../../data/api/api_client.dart';
+import '../../data/patient_models.dart';
+import '../../data/patient_repositories.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 const _mealSvg = '''
@@ -26,29 +35,58 @@ const _mouths = [
   'M9 17c3 4 9 4 12 0',
 ];
 
+String mealTypeLabel(AppLocalizations l, MealType t) => switch (t) {
+      MealType.breakfast => l.mealBreakfast,
+      MealType.lunch => l.mealLunch,
+      MealType.snack => l.mealSnack,
+      MealType.dinner => l.mealDinner,
+    };
+
 /// 10. Journal alimentaire.
-class JournalScreen extends StatefulWidget {
+class JournalScreen extends ConsumerStatefulWidget {
   const JournalScreen({super.key});
 
   @override
-  State<JournalScreen> createState() => _JournalScreenState();
+  ConsumerState<JournalScreen> createState() => _JournalScreenState();
 }
 
-class _JournalScreenState extends State<JournalScreen> {
+class _JournalScreenState extends ConsumerState<JournalScreen> {
   int _dayOffset = 0; // 0 = aujourd'hui, négatif = jours passés
-  int _mood = 3;
-  final _symptoms = <int>{0};
+
+  DateTime get _day => dateOnly(DateTime.now().add(Duration(days: _dayOffset)));
+
+  Future<void> _saveFeeling(Meal meal, int? mood, Set<int> symptoms) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(journalRepositoryProvider).setFeeling(meal.id, mood: mood, symptoms: symptoms);
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    }
+  }
+
+  Future<void> _delete(Meal meal) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(journalRepositoryProvider).deleteMeal(meal.id);
+      ref.invalidate(journalDayProvider(_day));
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
-    final moods = [l.mood1, l.mood2, l.mood3, l.mood4, l.mood5];
-    final syms = [l.sym1, l.sym2, l.sym3, l.sym4];
-    final day = DateTime.now().add(Duration(days: _dayOffset));
-    final dayLabel = _dayOffset == 0
-        ? l.today
-        : DateFormat.MMMEd(locale).format(day);
+    final day = _day;
+    final journal = ref.watch(journalDayProvider(day));
+    final dayLabel = _dayOffset == 0 ? l.today : DateFormat.MMMEd(locale).format(day);
+    final kcalText = journal.maybeWhen(
+      data: (j) => '${formatInt(j.totalKcal, locale)} / ${formatInt(j.targetKcal, locale)} kcal',
+      orElse: () => ' ',
+    );
 
     return SingleChildScrollView(
       padding: const EdgeInsets.only(bottom: 24),
@@ -106,8 +144,7 @@ class _JournalScreenState extends State<JournalScreen> {
                 Column(
                   children: [
                     Text(dayLabel, style: Tch.style(15, weight: FontWeight.w600)),
-                    Text(l.journalKcalDay,
-                        style: Tch.style(13, color: Tch.textSecondary)),
+                    Text(kcalText, style: Tch.style(13, color: Tch.textSecondary)),
                   ],
                 ),
                 _DayArrow(
@@ -121,139 +158,52 @@ class _JournalScreenState extends State<JournalScreen> {
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(Tch.pagePadding, 4, Tch.pagePadding, 0),
-            child: Column(
-              children: [
-                FadeSlideIn(
-                  index: 1,
-                  child: TchCard(
-                    padding: const EdgeInsets.all(12),
-                    child: Column(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(18),
-                          child: SizedBox(
-                            height: 150,
-                            width: double.infinity,
-                            child: Stack(
-                              fit: StackFit.expand,
-                              children: [
-                                SvgPicture.string(_mealSvg, fit: BoxFit.cover),
-                                Positioned(
-                                  left: 10,
-                                  top: 10,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.95),
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    child: Text('${l.journalLunch} · 13:05',
-                                        style: Tch.style(12,
-                                            weight: FontWeight.w600,
-                                            color: Tch.greenDark)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
+            child: AsyncView<DayJournal>(
+              value: journal,
+              onRetry: () => ref.invalidate(journalDayProvider(day)),
+              builder: (j) => Column(
+                children: [
+                  if (j.meals.isEmpty)
+                    FadeSlideIn(
+                      index: 1,
+                      child: SizedBox(
+                        width: double.infinity,
+                        child: TchCard(
+                          padding: const EdgeInsets.all(20),
+                          child: Text(l.journalEmpty,
+                              textAlign: TextAlign.center,
+                              style: Tch.style(15, color: Tch.textSecondary, height: 1.5)),
                         ),
-                        const SizedBox(height: 12),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 4),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(l.journalDish,
-                                    style: Tch.style(16, weight: FontWeight.w600)),
-                              ),
-                              Text.rich(TextSpan(
-                                text: '540 ',
-                                style: Tch.style(18, weight: FontWeight.w700),
-                                children: [
-                                  TextSpan(
-                                    text: 'kcal',
-                                    style: Tch.style(12,
-                                        weight: FontWeight.w500,
-                                        color: Tch.textSecondary),
-                                  ),
-                                ],
-                              )),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(height: 12),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                  child: _Macro(l.journalProt, '32 g', 0.72, Tch.green)),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                  child: _Macro(l.journalCarbs, '68 g', 0.58,
-                                      const Color(0xFFE9B949))),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                  child: _Macro(l.journalFat, '14 g', 0.34, Tch.coral)),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 14),
-                FadeSlideIn(
-                  index: 2,
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: TchCard(
-                      padding: const EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(l.journalMood,
-                              style: Tch.style(15, weight: FontWeight.w600)),
-                          const SizedBox(height: 12),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              for (var i = 0; i < 5; i++)
-                                _MoodFace(
-                                  mouth: _mouths[i],
-                                  label: moods[i],
-                                  on: i == _mood,
-                                  onTap: () => setState(() => _mood = i),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16),
-                          Text(l.journalSymptoms,
-                              style: Tch.style(15, weight: FontWeight.w600)),
-                          const SizedBox(height: 12),
-                          Wrap(
-                            spacing: 8,
-                            runSpacing: 6,
-                            children: [
-                              for (var i = 0; i < syms.length; i++)
-                                TchChip(
-                                  label: syms[i],
-                                  selected: _symptoms.contains(i),
-                                  background: Tch.background,
-                                  onTap: () => setState(() => _symptoms.contains(i)
-                                      ? _symptoms.remove(i)
-                                      : _symptoms.add(i)),
-                                ),
-                            ],
-                          ),
-                        ],
                       ),
                     ),
-                  ),
-                ),
-              ],
+                  for (var i = 0; i < j.meals.length; i++) ...[
+                    FadeSlideIn(
+                      key: ValueKey(j.meals[i].id),
+                      index: 1 + i,
+                      child: _MealCard(meal: j.meals[i], onDelete: () => _delete(j.meals[i])),
+                    ),
+                    const SizedBox(height: 14),
+                  ],
+                  if (_dayOffset == 0 || j.meals.isNotEmpty) ...[
+                    if (j.meals.isNotEmpty)
+                      FadeSlideIn(
+                        index: 2,
+                        child: _Feeling(
+                          key: ValueKey(j.meals.last.id),
+                          meal: j.meals.last,
+                          onChanged: (mood, symptoms) => _saveFeeling(j.meals.last, mood, symptoms),
+                        ),
+                      ),
+                    const SizedBox(height: 14),
+                  ],
+                  if (_dayOffset == 0)
+                    TchButton(
+                      label: l.journalAddMeal,
+                      style: TchButtonStyle.secondary,
+                      onPressed: () => context.go('/journal/add'),
+                    ),
+                ],
+              ),
             ),
           ),
         ],
@@ -287,6 +237,131 @@ class _DayArrow extends StatelessWidget {
       );
 }
 
+class _MealCard extends ConsumerWidget {
+  const _MealCard({required this.meal, required this.onDelete});
+  final Meal meal;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = AppLocalizations.of(context);
+    final locale = Localizations.localeOf(context).toString();
+    final photoId = meal.photoFileId;
+    Widget image = SvgPicture.string(_mealSvg, fit: BoxFit.cover);
+    if (photoId != null) {
+      final bytes = ref.watch(photoProvider(photoId));
+      image = bytes.maybeWhen(
+        data: (b) => b.isEmpty ? image : Image.memory(b, fit: BoxFit.cover, gaplessPlayback: true),
+        orElse: () => const ColoredBox(color: Tch.segmented),
+      );
+    }
+    return TchCard(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(18),
+            child: SizedBox(
+              height: 150,
+              width: double.infinity,
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  image,
+                  Positioned(
+                    left: 10,
+                    top: 10,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.95),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                          '${mealTypeLabel(l, meal.type)} · ${DateFormat('HH:mm', locale).format(meal.eatenAt)}',
+                          style: Tch.style(12, weight: FontWeight.w600, color: Tch.greenDark)),
+                    ),
+                  ),
+                  Positioned(
+                    right: 4,
+                    top: 4,
+                    child: Semantics(
+                      button: true,
+                      label: l.journalDeleteMeal,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: onDelete,
+                        child: SizedBox(
+                          width: 44,
+                          height: 44,
+                          child: Center(
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: BoxDecoration(
+                                color: Colors.white.withValues(alpha: 0.95),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                  child: TchIcon(TchIcons.close,
+                                      size: 16, color: Tch.coralText, strokeWidth: 2.4)),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(meal.name, style: Tch.style(16, weight: FontWeight.w600)),
+                ),
+                Text.rich(TextSpan(
+                  text: '${meal.kcal} ',
+                  style: Tch.style(18, weight: FontWeight.w700),
+                  children: [
+                    TextSpan(
+                      text: 'kcal',
+                      style: Tch.style(12, weight: FontWeight.w500, color: Tch.textSecondary),
+                    ),
+                  ],
+                )),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+            child: Row(
+              children: [
+                Expanded(
+                    child: _Macro(l.journalProt, '${meal.protein} g',
+                        (meal.protein / 45).clamp(0, 1).toDouble(), Tch.green)),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: _Macro(l.journalCarbs, '${meal.carbs} g',
+                        (meal.carbs / 117).clamp(0, 1).toDouble(), const Color(0xFFE9B949))),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: _Macro(l.journalFat, '${meal.fat} g',
+                        (meal.fat / 41).clamp(0, 1).toDouble(), Tch.coral)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _Macro extends StatelessWidget {
   const _Macro(this.label, this.value, this.fraction, this.color);
   final String label;
@@ -310,6 +385,75 @@ class _Macro extends StatelessWidget {
       );
 }
 
+/// Humeur (choix unique) et symptômes « après le repas » (choix multiples) du dernier repas.
+class _Feeling extends StatefulWidget {
+  const _Feeling({super.key, required this.meal, required this.onChanged});
+  final Meal meal;
+  final void Function(int? mood, Set<int> symptoms) onChanged;
+
+  @override
+  State<_Feeling> createState() => _FeelingState();
+}
+
+class _FeelingState extends State<_Feeling> {
+  late int? _mood = widget.meal.mood;
+  late final Set<int> _symptoms = {...widget.meal.symptoms};
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    final moods = [l.mood1, l.mood2, l.mood3, l.mood4, l.mood5];
+    final syms = [l.sym1, l.sym2, l.sym3, l.sym4];
+    return SizedBox(
+      width: double.infinity,
+      child: TchCard(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l.journalMood, style: Tch.style(15, weight: FontWeight.w600)),
+            const SizedBox(height: 12),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (var i = 0; i < 5; i++)
+                  _MoodFace(
+                    mouth: _mouths[i],
+                    label: moods[i],
+                    on: i == _mood,
+                    onTap: () {
+                      setState(() => _mood = i);
+                      widget.onChanged(_mood, _symptoms);
+                    },
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Text(l.journalSymptoms, style: Tch.style(15, weight: FontWeight.w600)),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 6,
+              children: [
+                for (var i = 0; i < syms.length; i++)
+                  TchChip(
+                    label: syms[i],
+                    selected: _symptoms.contains(i),
+                    background: Tch.background,
+                    onTap: () {
+                      setState(() => _symptoms.contains(i) ? _symptoms.remove(i) : _symptoms.add(i));
+                      widget.onChanged(_mood, _symptoms);
+                    },
+                  ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _MoodFace extends StatelessWidget {
   const _MoodFace(
       {required this.mouth, required this.label, required this.on, required this.onTap});
@@ -329,7 +473,10 @@ class _MoodFace extends StatelessWidget {
       label: label,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: onTap,
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
         child: AnimatedScale(
           scale: on ? 1.08 : 1,
           duration: reduced ? Duration.zero : Tch.selectDuration,

@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+
 import 'api/api_client.dart';
 import 'api/api_config.dart';
 import 'api/api_providers.dart';
@@ -64,7 +65,10 @@ class MockRecipeRepository implements RecipeRepository {
     Recipe(
       id: 'ndole',
       name: const LText('Ndolé léger', 'Light ndolé'),
-      detailTitle: const LText('Ndolé léger aux crevettes', 'Light ndolé with prawns'),
+      detailTitle: const LText(
+        'Ndolé léger aux crevettes',
+        'Light ndolé with prawns',
+      ),
       kcal: 450,
       detailKcal: 420,
       time: '50 min',
@@ -79,10 +83,16 @@ class MockRecipeRepository implements RecipeRepository {
       carbs: 28,
       fat: 16,
       ingredients: [
-        Ingredient(const LText('Feuilles de ndolé', 'Ndolé leaves'), _s('500 g')),
+        Ingredient(
+          const LText('Feuilles de ndolé', 'Ndolé leaves'),
+          _s('500 g'),
+        ),
         Ingredient(const LText('Crevettes', 'Prawns'), _s('300 g')),
         Ingredient(const LText('Arachides', 'Peanuts'), _s('100 g')),
-        Ingredient(const LText('Huile', 'Oil'), const LText('1 c. à soupe', '1 tbsp')),
+        Ingredient(
+          const LText('Huile', 'Oil'),
+          const LText('1 c. à soupe', '1 tbsp'),
+        ),
       ],
     ),
     Recipe(
@@ -101,8 +111,14 @@ class MockRecipeRepository implements RecipeRepository {
       carbs: 68,
       fat: 14,
       ingredients: [
-        Ingredient(const LText('Poisson (bar)', 'Fish (sea bass)'), _s('600 g')),
-        Ingredient(const LText('Miondo', 'Miondo'), const LText('4 bâtons', '4 sticks')),
+        Ingredient(
+          const LText('Poisson (bar)', 'Fish (sea bass)'),
+          _s('600 g'),
+        ),
+        Ingredient(
+          const LText('Miondo', 'Miondo'),
+          const LText('4 bâtons', '4 sticks'),
+        ),
         Ingredient(const LText('Tomates', 'Tomatoes'), _s('2')),
         Ingredient(const LText('Citron', 'Lemon'), _s('1')),
       ],
@@ -126,7 +142,10 @@ class MockRecipeRepository implements RecipeRepository {
         Ingredient(const LText('Avocat', 'Avocado'), _s('1')),
         Ingredient(const LText('Mangue', 'Mango'), _s('1')),
         Ingredient(const LText('Citron vert', 'Lime'), _s('1')),
-        Ingredient(const LText('Huile', 'Oil'), const LText('1 c. à café', '1 tsp')),
+        Ingredient(
+          const LText('Huile', 'Oil'),
+          const LText('1 c. à café', '1 tsp'),
+        ),
       ],
     ),
     Recipe(
@@ -189,9 +208,18 @@ class MockRecipeRepository implements RecipeRepository {
       carbs: 40,
       fat: 14,
       ingredients: [
-        Ingredient(const LText('Haricots niébé', 'Black-eyed beans'), _s('400 g')),
-        Ingredient(const LText('Huile de palme', 'Palm oil'), const LText('2 c. à soupe', '2 tbsp')),
-        Ingredient(const LText('Feuilles de bananier', 'Banana leaves'), _s('4')),
+        Ingredient(
+          const LText('Haricots niébé', 'Black-eyed beans'),
+          _s('400 g'),
+        ),
+        Ingredient(
+          const LText('Huile de palme', 'Palm oil'),
+          const LText('2 c. à soupe', '2 tbsp'),
+        ),
+        Ingredient(
+          const LText('Feuilles de bananier', 'Banana leaves'),
+          _s('4'),
+        ),
         Ingredient(const LText('Piment', 'Chili'), _s('1')),
       ],
     ),
@@ -208,31 +236,38 @@ class ApiRecipeRepository implements RecipeRepository {
   ApiRecipeRepository(this._api);
   final ApiClient _api;
 
-  static Color _color(String hex) => Color(0xFF000000 | int.parse(hex.substring(1), radix: 16));
-  static LText _t(Map<String, dynamic> j) => LText(j['fr'] as String, j['en'] as String);
+  static Color _color(String hex) =>
+      Color(0xFF000000 | int.parse(hex.substring(1), radix: 16));
+  static LText _t(Map<String, dynamic> j) =>
+      LText(j['fr'] as String, j['en'] as String);
 
   static Recipe _recipe(Map<String, dynamic> j) => Recipe(
-        id: j['id'] as String,
-        name: _t(j['name'] as Map<String, dynamic>),
-        detailTitle: j['detail_title'] == null ? null : _t(j['detail_title'] as Map<String, dynamic>),
-        kcal: j['kcal'] as int,
-        detailKcal: j['detail_kcal'] as int?,
-        time: j['time'] as String,
-        tags: (j['tags'] as List).cast<int>(),
-        c1: _color(j['c1'] as String),
-        c2: _color(j['c2'] as String),
-        c3: _color(j['c3'] as String),
-        tint: _color(j['tint'] as String),
-        servings: j['servings'] as int,
-        difficulty: j['difficulty'] == 'easy' ? Difficulty.easy : Difficulty.medium,
-        protein: j['protein'] as int,
-        carbs: j['carbs'] as int,
-        fat: j['fat'] as int,
-        ingredients: [
-          for (final i in (j['ingredients'] as List).cast<Map<String, dynamic>>())
-            Ingredient(_t(i['name'] as Map<String, dynamic>), _t(i['qty'] as Map<String, dynamic>)),
-        ],
-      );
+    id: j['id'] as String,
+    name: _t(j['name'] as Map<String, dynamic>),
+    detailTitle: j['detail_title'] == null
+        ? null
+        : _t(j['detail_title'] as Map<String, dynamic>),
+    kcal: j['kcal'] as int,
+    detailKcal: j['detail_kcal'] as int?,
+    time: j['time'] as String,
+    tags: (j['tags'] as List).cast<int>(),
+    c1: _color(j['c1'] as String),
+    c2: _color(j['c2'] as String),
+    c3: _color(j['c3'] as String),
+    tint: _color(j['tint'] as String),
+    servings: j['servings'] as int,
+    difficulty: j['difficulty'] == 'easy' ? Difficulty.easy : Difficulty.medium,
+    protein: j['protein'] as int,
+    carbs: j['carbs'] as int,
+    fat: j['fat'] as int,
+    ingredients: [
+      for (final i in (j['ingredients'] as List).cast<Map<String, dynamic>>())
+        Ingredient(
+          _t(i['name'] as Map<String, dynamic>),
+          _t(i['qty'] as Map<String, dynamic>),
+        ),
+    ],
+  );
 
   @override
   Future<List<Recipe>> all() async {
@@ -241,16 +276,21 @@ class ApiRecipeRepository implements RecipeRepository {
   }
 
   @override
-  Future<Recipe> byId(String id) async =>
-      _recipe(await _api.get('/recipes/$id', auth: false) as Map<String, dynamic>);
+  Future<Recipe> byId(String id) async => _recipe(
+    await _api.get('/recipes/$id', auth: false) as Map<String, dynamic>,
+  );
 }
 
-final recipeRepositoryProvider = Provider<RecipeRepository>((ref) => ApiConfig.isConfigured
-    ? ApiRecipeRepository(ref.watch(apiClientProvider))
-    : MockRecipeRepository());
+final recipeRepositoryProvider = Provider<RecipeRepository>(
+  (ref) => ApiConfig.isConfigured
+      ? ApiRecipeRepository(ref.watch(apiClientProvider))
+      : MockRecipeRepository(),
+);
 
 final recipesProvider = FutureProvider.autoDispose<List<Recipe>>(
-    (ref) => ref.watch(recipeRepositoryProvider).all());
+  (ref) => ref.watch(recipeRepositoryProvider).all(),
+);
 
 final recipeProvider = FutureProvider.autoDispose.family<Recipe, String>(
-    (ref, id) => ref.watch(recipeRepositoryProvider).byId(id));
+  (ref, id) => ref.watch(recipeRepositoryProvider).byId(id),
+);

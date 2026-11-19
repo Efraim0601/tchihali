@@ -215,7 +215,7 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                 20, 14, 20, 14 + MediaQuery.of(context).padding.bottom.clamp(18, 40)),
             child: TchButton(
               label: l.recipeAdd,
-              onPressed: () => context.go('/journal'),
+              onPressed: () => context.go('/journal/add', extra: r),
             ),
           ),
         ],

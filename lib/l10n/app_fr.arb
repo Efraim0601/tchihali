@@ -281,5 +281,107 @@
   "errorCode": "Code incorrect ou expiré.",
   "errorTooMany": "Trop de tentatives. Réessayez dans quelques minutes.",
   "retry": "Réessayer",
-  "dirNoSlot": "—"
+  "dirNoSlot": "—",
+  "homeNoAppointment": "Aucun rendez-vous prévu",
+  "homeBookNow": "Prendre rendez-vous",
+  "homePending": "En attente de validation",
+  "journalEmpty": "Aucun repas enregistré ce jour-là.",
+  "journalAddMeal": "Ajouter un repas",
+  "journalDeleteMeal": "Supprimer ce repas",
+  "mealBreakfast": "Petit-déjeuner",
+  "mealLunch": "Déjeuner",
+  "mealSnack": "Collation",
+  "mealDinner": "Dîner",
+  "addMealTitle": "Ajouter un repas",
+  "addMealPhoto": "Photo du repas",
+  "photoCamera": "Prendre une photo",
+  "photoGallery": "Choisir dans la galerie",
+  "photoRemove": "Retirer la photo",
+  "addMealType": "Repas",
+  "addMealName": "Nom du plat",
+  "addMealKcal": "Calories (kcal)",
+  "addMealProtein": "Protéines (g)",
+  "addMealCarbs": "Glucides (g)",
+  "addMealFat": "Lipides (g)",
+  "addMealSave": "Enregistrer le repas",
+  "addMealInvalid": "Indiquez le nom du plat et les calories.",
+  "progSinceWeeks": "en {n} sem.",
+  "progNoData": "Pas encore de mesures. Ajoutez votre poids pour suivre votre évolution.",
+  "progAddMeasure": "Ajouter une mesure",
+  "progWeightLabel": "Poids (kg)",
+  "progWaistLabel": "Tour de taille (cm)",
+  "progSave": "Enregistrer",
+  "progMeasureInvalid": "Indiquez au moins une mesure valide.",
+  "recNoSession": "Aucun compte rendu pour le moment.",
+  "recNoPlan": "Pas encore de plan alimentaire.",
+  "recNoDocs": "Aucun document.",
+  "recOpenError": "Impossible d'ouvrir le document.",
+  "recSessionLabel": "Séance {n} · {mode}",
+  "notifTitle": "Notifications",
+  "notifEmpty": "Aucune notification.",
+  "notifAppointmentConfirmed": "Votre rendez-vous du {date} avec {dietitian} est confirmé.",
+  "notifAppointmentRefused": "Votre demande du {date} n'a pas pu être acceptée. Choisissez un autre créneau.",
+  "notifReportSent": "Votre compte rendu de la séance {n} est disponible dans votre carnet.",
+  "notifNewMessage": "Nouveau message de {who}.",
+  "notifAppointmentRequest": "Nouvelle demande de {who} pour le {date}.",
+  "profileEditName": "Modifier mon nom",
+  "profileSave": "Enregistrer",
+  "@progSinceWeeks": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@recSessionLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentConfirmed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "dietitian": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentRefused": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifReportSent": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@notifNewMessage": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentRequest": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }

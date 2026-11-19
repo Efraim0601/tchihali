@@ -14,7 +14,20 @@ class ProgressSeries {
   final double max;
 }
 
-const _weight = [84.0, 83.4, 83.1, 82.5, 82.2, 81.6, 81.4, 80.9, 80.5, 80.2, 79.9, 79.6];
+const _weight = [
+  84.0,
+  83.4,
+  83.1,
+  82.5,
+  82.2,
+  81.6,
+  81.4,
+  80.9,
+  80.5,
+  80.2,
+  79.9,
+  79.6,
+];
 
 final progressSeries = [
   const ProgressSeries(unit: 'kg', data: _weight, goal: 75, min: 74, max: 85),

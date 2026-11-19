@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../app/auth_gate.dart';
 import '../features/auth/signup_state.dart';
 import 'api/api_client.dart';
@@ -6,18 +7,23 @@ import 'api/api_config.dart';
 import 'api/api_providers.dart';
 
 class AuthUser {
-  const AuthUser({required this.id, required this.phone, required this.fullName, required this.role});
+  const AuthUser({
+    required this.id,
+    required this.phone,
+    required this.fullName,
+    required this.role,
+  });
   final String id;
   final String phone;
   final String fullName;
   final String role;
 
   factory AuthUser.fromJson(Map<String, dynamic> j) => AuthUser(
-        id: j['id'] as String,
-        phone: j['phone'] as String,
-        fullName: j['full_name'] as String,
-        role: j['role'] as String,
-      );
+    id: j['id'] as String,
+    phone: j['phone'] as String,
+    fullName: j['full_name'] as String,
+    role: j['role'] as String,
+  );
 }
 
 /// Connexion par code SMS (pas de mot de passe).
@@ -34,10 +40,16 @@ class MockAuthRepository implements AuthRepository {
   final String Function() _name;
 
   @override
-  Future<void> requestCode({required String phone, required String name}) async {}
+  Future<void> requestCode({
+    required String phone,
+    required String name,
+  }) async {}
 
   @override
-  Future<AuthUser> verify({required String phone, required String code}) async =>
+  Future<AuthUser> verify({
+    required String phone,
+    required String code,
+  }) async =>
       AuthUser(id: 'demo', phone: phone, fullName: _name(), role: 'patient');
 
   @override
@@ -52,15 +64,28 @@ class ApiAuthRepository implements AuthRepository {
   final ApiClient _api;
 
   @override
-  Future<void> requestCode({required String phone, required String name}) async {
-    await _api.post('/auth/request-code', body: {'phone': phone, 'name': name}, auth: false);
+  Future<void> requestCode({
+    required String phone,
+    required String name,
+  }) async {
+    await _api.post(
+      '/auth/request-code',
+      body: {'phone': phone, 'name': name},
+      auth: false,
+    );
   }
 
   @override
   Future<AuthUser> verify({required String phone, required String code}) async {
-    final j = await _api.post('/auth/verify', body: {'phone': phone, 'code': code}, auth: false)
-        as Map<String, dynamic>;
-    await _api.tokens.save(j['access_token'] as String, j['refresh_token'] as String);
+    final j = await _api.post(
+      '/auth/verify',
+      body: {'phone': phone, 'code': code},
+      auth: false,
+    ) as Map<String, dynamic>;
+    await _api.tokens.save(
+      j['access_token'] as String,
+      j['refresh_token'] as String,
+    );
     final user = AuthUser.fromJson(j['user'] as Map<String, dynamic>);
     authGate.set(signedIn: true, role: user.role);
     return user;

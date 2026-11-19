@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/locale_provider.dart';
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
@@ -10,7 +11,11 @@ import '../../core/widgets/tch_card.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_pill_switch.dart';
 import '../../l10n/gen/app_localizations.dart';
+import '../../core/api_errors.dart';
+import '../../core/widgets/tch_text_field.dart';
+import '../../data/api/api_client.dart';
 import '../../data/auth_repository.dart';
+import '../../data/patient_repositories.dart';
 import '../auth/signup_state.dart';
 
 const _menuPaths = [
@@ -32,19 +37,48 @@ const _menuRoutes = [
   '/profile/progress',
   '/profile/record',
   '/questionnaire/1',
-  null,
+  '/profile/notifications',
   '/messages',
 ];
 
 String _initials(String name) {
-  final parts = name.trim().split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+  final parts = name
+      .trim()
+      .split(RegExp(r'\s+'))
+      .where((p) => p.isNotEmpty)
+      .toList();
   if (parts.isEmpty) return '';
-  return (parts.first[0] + (parts.length > 1 ? parts.last[0] : '')).toUpperCase();
+  return (parts.first[0] + (parts.length > 1 ? parts.last[0] : ''))
+      .toUpperCase();
 }
 
 /// 18. Profil : identité, langue, liste, déconnexion.
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
+
+  Future<void> _editName(BuildContext context, WidgetRef ref) async {
+    final user = ref.read(signupProvider);
+    final name = await showModalBottomSheet<String>(
+      context: context,
+      isScrollControlled: true,
+      useRootNavigator: true,
+      backgroundColor: Tch.surface,
+      barrierColor: const Color(0x732F3437),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (_) => _EditNameSheet(initial: user.name),
+    );
+    if (name == null || name == user.name || !context.mounted) return;
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(profileRepositoryProvider).updateName(name);
+      ref.read(signupProvider.notifier).set(name, user.phone);
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    }
+  }
 
   Future<void> _askLogout(BuildContext context, WidgetRef ref) async {
     final l = AppLocalizations.of(context);
@@ -70,13 +104,17 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 14),
-            Text(l.profileSureTitle,
-                textAlign: TextAlign.center,
-                style: Tch.style(20, weight: FontWeight.w700)),
+            Text(
+              l.profileSureTitle,
+              textAlign: TextAlign.center,
+              style: Tch.style(20, weight: FontWeight.w700),
+            ),
             const SizedBox(height: 14),
-            Text(l.profileSureText,
-                textAlign: TextAlign.center,
-                style: Tch.style(15, color: Tch.textSecondary, height: 1.5)),
+            Text(
+              l.profileSureText,
+              textAlign: TextAlign.center,
+              style: Tch.style(15, color: Tch.textSecondary, height: 1.5),
+            ),
             const SizedBox(height: 14),
             TchButton(
               label: l.profileLogout,
@@ -106,6 +144,7 @@ class ProfileScreen extends ConsumerWidget {
     final l = AppLocalizations.of(context);
     final user = ref.watch(signupProvider);
     final lang = ref.watch(localeProvider).languageCode;
+    final unread = ref.watch(unreadCountProvider).value ?? 0;
     final labels = [
       l.profileProgress,
       l.profileRecord,
@@ -116,12 +155,19 @@ class ProfileScreen extends ConsumerWidget {
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-          Tch.pagePadding, Tch.topInset(context), Tch.pagePadding, 24),
+        Tch.pagePadding,
+        Tch.topInset(context),
+        Tch.pagePadding,
+        24,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           FadeSlideIn(
-            child: Text(l.profileTitle, style: Tch.style(28, weight: FontWeight.w700)),
+            child: Text(
+              l.profileTitle,
+              style: Tch.style(28, weight: FontWeight.w700),
+            ),
           ),
           const SizedBox(height: 16),
           FadeSlideIn(
@@ -131,21 +177,29 @@ class ProfileScreen extends ConsumerWidget {
               child: Row(
                 children: [
                   TchAvatar(
-                      initials: _initials(user.name), size: 60, radius: 20),
+                    initials: _initials(user.name),
+                    size: 60,
+                    radius: 20,
+                  ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(user.name, style: Tch.style(17, weight: FontWeight.w600)),
-                        Text('+237 ${user.phone}',
-                            style: Tch.style(13, color: Tch.textSecondary)),
+                        Text(
+                          user.name,
+                          style: Tch.style(17, weight: FontWeight.w600),
+                        ),
+                        Text(
+                          '+237 ${user.phone}',
+                          style: Tch.style(13, color: Tch.textSecondary),
+                        ),
                       ],
                     ),
                   ),
                   PressScale(
                     semanticLabel: l.profileEdit,
-                    onTap: () => context.go('/signup'),
+                    onTap: () => _editName(context, ref),
                     child: Container(
                       width: 44,
                       height: 44,
@@ -154,7 +208,12 @@ class ProfileScreen extends ConsumerWidget {
                         borderRadius: BorderRadius.circular(14),
                       ),
                       child: const Center(
-                          child: TchIcon(TchIcons.edit, size: 20, color: Tch.text)),
+                        child: TchIcon(
+                          TchIcons.edit,
+                          size: 20,
+                          color: Tch.text,
+                        ),
+                      ),
                     ),
                   ),
                 ],
@@ -171,11 +230,16 @@ class ProfileScreen extends ConsumerWidget {
                 children: [
                   Row(
                     children: [
-                      _IconBox(TchIcons.globe, const Color(0xFFE3E8EE),
-                          const Color(0xFF34495E)),
+                      _IconBox(
+                        TchIcons.globe,
+                        const Color(0xFFE3E8EE),
+                        const Color(0xFF34495E),
+                      ),
                       const SizedBox(width: 12),
-                      Text(l.profileLanguage,
-                          style: Tch.style(15, weight: FontWeight.w500)),
+                      Text(
+                        l.profileLanguage,
+                        style: Tch.style(15, weight: FontWeight.w500),
+                      ),
                     ],
                   ),
                   TchPillSwitch(
@@ -203,9 +267,8 @@ class ProfileScreen extends ConsumerWidget {
                       path: _menuPaths[i],
                       tint: _menuTints[i],
                       last: i == labels.length - 1,
-                      onTap: _menuRoutes[i] == null
-                          ? null
-                          : () => context.go(_menuRoutes[i]!),
+                      badge: i == 3 ? unread : 0,
+                  onTap: () => context.go(_menuRoutes[i]),
                     ),
                 ],
               ),
@@ -218,7 +281,11 @@ class ProfileScreen extends ConsumerWidget {
               label: l.profileLogout,
               style: TchButtonStyle.outlineSoft,
               height: 54,
-              icon: const TchIcon(TchIcons.logout, size: 20, color: Tch.coralText),
+              icon: const TchIcon(
+                TchIcons.logout,
+                size: 20,
+                color: Tch.coralText,
+              ),
               onPressed: () => _askLogout(context, ref),
             ),
           ),
@@ -236,12 +303,15 @@ class _IconBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 40,
-        height: 40,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(color: bg, borderRadius: BorderRadius.circular(13)),
-        child: TchIcon(inner, size: 20, color: fg),
-      );
+    width: 40,
+    height: 40,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(13),
+    ),
+    child: TchIcon(inner, size: 20, color: fg),
+  );
 }
 
 class _MenuRow extends StatelessWidget {
@@ -251,32 +321,107 @@ class _MenuRow extends StatelessWidget {
     required this.tint,
     required this.last,
     required this.onTap,
+    this.badge = 0,
   });
   final String label;
   final String path;
   final (Color, Color) tint;
   final bool last;
   final VoidCallback? onTap;
+  final int badge;
 
   @override
   Widget build(BuildContext context) => PressScale(
-        onTap: onTap,
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 56),
-          decoration: BoxDecoration(
-            border: last
+    onTap: onTap,
+    child: Container(
+      constraints: const BoxConstraints(minHeight: 56),
+      decoration: BoxDecoration(
+        border: last
+            ? null
+            : const Border(bottom: BorderSide(color: Color(0xFFF0EBE3))),
+      ),
+      child: Row(
+        children: [
+          _IconBox('<path d="$path"/>', tint.$1, tint.$2),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(label, style: Tch.style(15, weight: FontWeight.w500)),
+          ),
+          if (badge > 0)
+            Container(
+              margin: const EdgeInsets.only(right: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: Tch.coral,
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Text(
+                '$badge',
+                style: Tch.style(12, weight: FontWeight.w600, color: Colors.white),
+              ),
+            ),
+          const TchIcon(
+            TchIcons.chevronRight,
+            size: 18,
+            color: Color(0xFFA7AAA6),
+            strokeWidth: 2.2,
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
+class _EditNameSheet extends StatefulWidget {
+  const _EditNameSheet({required this.initial});
+  final String initial;
+
+  @override
+  State<_EditNameSheet> createState() => _EditNameSheetState();
+}
+
+class _EditNameSheetState extends State<_EditNameSheet> {
+  late final _c = TextEditingController(text: widget.initial);
+
+  @override
+  void dispose() {
+    _c.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
+    return Padding(
+      padding: EdgeInsets.fromLTRB(
+        20,
+        20,
+        20,
+        24 + MediaQuery.of(context).viewInsets.bottom,
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l.profileEditName,
+            style: Tch.style(20, weight: FontWeight.w700),
+          ),
+          const SizedBox(height: 16),
+          TchTextField(
+            controller: _c,
+            semanticLabel: l.fieldName,
+            onChanged: (_) => setState(() {}),
+          ),
+          const SizedBox(height: 20),
+          TchButton(
+            label: l.profileSave,
+            onPressed: _c.text.trim().isEmpty
                 ? null
-                : const Border(bottom: BorderSide(color: Color(0xFFF0EBE3))),
+                : () => Navigator.of(context).pop(_c.text.trim()),
           ),
-          child: Row(
-            children: [
-              _IconBox('<path d="$path"/>', tint.$1, tint.$2),
-              const SizedBox(width: 12),
-              Expanded(child: Text(label, style: Tch.style(15, weight: FontWeight.w500))),
-              const TchIcon(TchIcons.chevronRight,
-                  size: 18, color: Color(0xFFA7AAA6), strokeWidth: 2.2),
-            ],
-          ),
-        ),
-      );
+        ],
+      ),
+    );
+  }
 }

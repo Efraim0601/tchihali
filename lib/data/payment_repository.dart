@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import 'api/api_client.dart';
 import 'api/api_config.dart';
 import 'api/api_providers.dart';
@@ -8,10 +9,10 @@ enum PayMethod { orangeMoney, mtnMomo, card }
 
 extension on PayMethod {
   String get wire => switch (this) {
-        PayMethod.orangeMoney => 'orange_money',
-        PayMethod.mtnMomo => 'mtn_momo',
-        PayMethod.card => 'card',
-      };
+    PayMethod.orangeMoney => 'orange_money',
+    PayMethod.mtnMomo => 'mtn_momo',
+    PayMethod.card => 'card',
+  };
 }
 
 /// Réservation + paiement d'un rendez-vous.
@@ -52,18 +53,23 @@ class ApiPaymentRepository implements PaymentRepository {
   @override
   Future<void> payAndBook(BookingPayment b) async {
     final d = b.day;
-    await _api.post('/appointments', body: {
-      'dietitian_id': b.dietitianId,
-      'day': '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}',
-      'time': b.time,
-      'mode': b.mode == ConsultMode.video ? 'video' : 'office',
-      'method': b.method.wire,
-      'phone': b.phone,
-    });
+    await _api.post(
+      '/appointments',
+      body: {
+        'dietitian_id': b.dietitianId,
+        'day':
+            '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}',
+        'time': b.time,
+        'mode': b.mode == ConsultMode.video ? 'video' : 'office',
+        'method': b.method.wire,
+        'phone': b.phone,
+      },
+    );
   }
 }
 
-final paymentRepositoryProvider = Provider<PaymentRepository>((ref) =>
-    ApiConfig.isConfigured
-        ? ApiPaymentRepository(ref.watch(apiClientProvider))
-        : MockPaymentRepository());
+final paymentRepositoryProvider = Provider<PaymentRepository>(
+  (ref) => ApiConfig.isConfigured
+      ? ApiPaymentRepository(ref.watch(apiClientProvider))
+      : MockPaymentRepository(),
+);

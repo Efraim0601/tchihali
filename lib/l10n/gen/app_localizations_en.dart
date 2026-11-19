@@ -711,4 +711,151 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dirNoSlot => '—';
+
+  @override
+  String get homeNoAppointment => 'No appointment scheduled';
+
+  @override
+  String get homeBookNow => 'Book an appointment';
+
+  @override
+  String get homePending => 'Awaiting confirmation';
+
+  @override
+  String get journalEmpty => 'No meal logged for this day.';
+
+  @override
+  String get journalAddMeal => 'Add a meal';
+
+  @override
+  String get journalDeleteMeal => 'Delete this meal';
+
+  @override
+  String get mealBreakfast => 'Breakfast';
+
+  @override
+  String get mealLunch => 'Lunch';
+
+  @override
+  String get mealSnack => 'Snack';
+
+  @override
+  String get mealDinner => 'Dinner';
+
+  @override
+  String get addMealTitle => 'Add a meal';
+
+  @override
+  String get addMealPhoto => 'Meal photo';
+
+  @override
+  String get photoCamera => 'Take a photo';
+
+  @override
+  String get photoGallery => 'Choose from gallery';
+
+  @override
+  String get photoRemove => 'Remove photo';
+
+  @override
+  String get addMealType => 'Meal';
+
+  @override
+  String get addMealName => 'Dish name';
+
+  @override
+  String get addMealKcal => 'Calories (kcal)';
+
+  @override
+  String get addMealProtein => 'Protein (g)';
+
+  @override
+  String get addMealCarbs => 'Carbs (g)';
+
+  @override
+  String get addMealFat => 'Fat (g)';
+
+  @override
+  String get addMealSave => 'Save meal';
+
+  @override
+  String get addMealInvalid => 'Enter the dish name and calories.';
+
+  @override
+  String progSinceWeeks(int n) {
+    return 'in $n wks';
+  }
+
+  @override
+  String get progNoData =>
+      'No measurements yet. Add your weight to track your progress.';
+
+  @override
+  String get progAddMeasure => 'Add a measurement';
+
+  @override
+  String get progWeightLabel => 'Weight (kg)';
+
+  @override
+  String get progWaistLabel => 'Waist (cm)';
+
+  @override
+  String get progSave => 'Save';
+
+  @override
+  String get progMeasureInvalid => 'Enter at least one valid measurement.';
+
+  @override
+  String get recNoSession => 'No report yet.';
+
+  @override
+  String get recNoPlan => 'No meal plan yet.';
+
+  @override
+  String get recNoDocs => 'No documents.';
+
+  @override
+  String get recOpenError => 'Could not open the document.';
+
+  @override
+  String recSessionLabel(int n, String mode) {
+    return 'Session $n · $mode';
+  }
+
+  @override
+  String get notifTitle => 'Notifications';
+
+  @override
+  String get notifEmpty => 'No notifications.';
+
+  @override
+  String notifAppointmentConfirmed(String date, String dietitian) {
+    return 'Your appointment on $date with $dietitian is confirmed.';
+  }
+
+  @override
+  String notifAppointmentRefused(String date) {
+    return 'Your request for $date could not be accepted. Please pick another slot.';
+  }
+
+  @override
+  String notifReportSent(int n) {
+    return 'Your report for session $n is available in your record.';
+  }
+
+  @override
+  String notifNewMessage(String who) {
+    return 'New message from $who.';
+  }
+
+  @override
+  String notifAppointmentRequest(String who, String date) {
+    return 'New request from $who for $date.';
+  }
+
+  @override
+  String get profileEditName => 'Edit my name';
+
+  @override
+  String get profileSave => 'Save';
 }

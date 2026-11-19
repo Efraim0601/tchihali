@@ -713,4 +713,151 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get dirNoSlot => '—';
+
+  @override
+  String get homeNoAppointment => 'Aucun rendez-vous prévu';
+
+  @override
+  String get homeBookNow => 'Prendre rendez-vous';
+
+  @override
+  String get homePending => 'En attente de validation';
+
+  @override
+  String get journalEmpty => 'Aucun repas enregistré ce jour-là.';
+
+  @override
+  String get journalAddMeal => 'Ajouter un repas';
+
+  @override
+  String get journalDeleteMeal => 'Supprimer ce repas';
+
+  @override
+  String get mealBreakfast => 'Petit-déjeuner';
+
+  @override
+  String get mealLunch => 'Déjeuner';
+
+  @override
+  String get mealSnack => 'Collation';
+
+  @override
+  String get mealDinner => 'Dîner';
+
+  @override
+  String get addMealTitle => 'Ajouter un repas';
+
+  @override
+  String get addMealPhoto => 'Photo du repas';
+
+  @override
+  String get photoCamera => 'Prendre une photo';
+
+  @override
+  String get photoGallery => 'Choisir dans la galerie';
+
+  @override
+  String get photoRemove => 'Retirer la photo';
+
+  @override
+  String get addMealType => 'Repas';
+
+  @override
+  String get addMealName => 'Nom du plat';
+
+  @override
+  String get addMealKcal => 'Calories (kcal)';
+
+  @override
+  String get addMealProtein => 'Protéines (g)';
+
+  @override
+  String get addMealCarbs => 'Glucides (g)';
+
+  @override
+  String get addMealFat => 'Lipides (g)';
+
+  @override
+  String get addMealSave => 'Enregistrer le repas';
+
+  @override
+  String get addMealInvalid => 'Indiquez le nom du plat et les calories.';
+
+  @override
+  String progSinceWeeks(int n) {
+    return 'en $n sem.';
+  }
+
+  @override
+  String get progNoData =>
+      'Pas encore de mesures. Ajoutez votre poids pour suivre votre évolution.';
+
+  @override
+  String get progAddMeasure => 'Ajouter une mesure';
+
+  @override
+  String get progWeightLabel => 'Poids (kg)';
+
+  @override
+  String get progWaistLabel => 'Tour de taille (cm)';
+
+  @override
+  String get progSave => 'Enregistrer';
+
+  @override
+  String get progMeasureInvalid => 'Indiquez au moins une mesure valide.';
+
+  @override
+  String get recNoSession => 'Aucun compte rendu pour le moment.';
+
+  @override
+  String get recNoPlan => 'Pas encore de plan alimentaire.';
+
+  @override
+  String get recNoDocs => 'Aucun document.';
+
+  @override
+  String get recOpenError => 'Impossible d\'ouvrir le document.';
+
+  @override
+  String recSessionLabel(int n, String mode) {
+    return 'Séance $n · $mode';
+  }
+
+  @override
+  String get notifTitle => 'Notifications';
+
+  @override
+  String get notifEmpty => 'Aucune notification.';
+
+  @override
+  String notifAppointmentConfirmed(String date, String dietitian) {
+    return 'Votre rendez-vous du $date avec $dietitian est confirmé.';
+  }
+
+  @override
+  String notifAppointmentRefused(String date) {
+    return 'Votre demande du $date n\'a pas pu être acceptée. Choisissez un autre créneau.';
+  }
+
+  @override
+  String notifReportSent(int n) {
+    return 'Votre compte rendu de la séance $n est disponible dans votre carnet.';
+  }
+
+  @override
+  String notifNewMessage(String who) {
+    return 'Nouveau message de $who.';
+  }
+
+  @override
+  String notifAppointmentRequest(String who, String date) {
+    return 'Nouvelle demande de $who pour le $date.';
+  }
+
+  @override
+  String get profileEditName => 'Modifier mon nom';
+
+  @override
+  String get profileSave => 'Enregistrer';
 }

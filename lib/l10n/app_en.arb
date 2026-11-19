@@ -281,5 +281,107 @@
   "errorCode": "Wrong or expired code.",
   "errorTooMany": "Too many attempts. Try again in a few minutes.",
   "retry": "Retry",
-  "dirNoSlot": "—"
+  "dirNoSlot": "—",
+  "homeNoAppointment": "No appointment scheduled",
+  "homeBookNow": "Book an appointment",
+  "homePending": "Awaiting confirmation",
+  "journalEmpty": "No meal logged for this day.",
+  "journalAddMeal": "Add a meal",
+  "journalDeleteMeal": "Delete this meal",
+  "mealBreakfast": "Breakfast",
+  "mealLunch": "Lunch",
+  "mealSnack": "Snack",
+  "mealDinner": "Dinner",
+  "addMealTitle": "Add a meal",
+  "addMealPhoto": "Meal photo",
+  "photoCamera": "Take a photo",
+  "photoGallery": "Choose from gallery",
+  "photoRemove": "Remove photo",
+  "addMealType": "Meal",
+  "addMealName": "Dish name",
+  "addMealKcal": "Calories (kcal)",
+  "addMealProtein": "Protein (g)",
+  "addMealCarbs": "Carbs (g)",
+  "addMealFat": "Fat (g)",
+  "addMealSave": "Save meal",
+  "addMealInvalid": "Enter the dish name and calories.",
+  "progSinceWeeks": "in {n} wks",
+  "progNoData": "No measurements yet. Add your weight to track your progress.",
+  "progAddMeasure": "Add a measurement",
+  "progWeightLabel": "Weight (kg)",
+  "progWaistLabel": "Waist (cm)",
+  "progSave": "Save",
+  "progMeasureInvalid": "Enter at least one valid measurement.",
+  "recNoSession": "No report yet.",
+  "recNoPlan": "No meal plan yet.",
+  "recNoDocs": "No documents.",
+  "recOpenError": "Could not open the document.",
+  "recSessionLabel": "Session {n} · {mode}",
+  "notifTitle": "Notifications",
+  "notifEmpty": "No notifications.",
+  "notifAppointmentConfirmed": "Your appointment on {date} with {dietitian} is confirmed.",
+  "notifAppointmentRefused": "Your request for {date} could not be accepted. Please pick another slot.",
+  "notifReportSent": "Your report for session {n} is available in your record.",
+  "notifNewMessage": "New message from {who}.",
+  "notifAppointmentRequest": "New request from {who} for {date}.",
+  "profileEditName": "Edit my name",
+  "profileSave": "Save",
+  "@progSinceWeeks": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@recSessionLabel": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      },
+      "mode": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentConfirmed": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      },
+      "dietitian": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentRefused": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifReportSent": {
+    "placeholders": {
+      "n": {
+        "type": "int"
+      }
+    }
+  },
+  "@notifNewMessage": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      }
+    }
+  },
+  "@notifAppointmentRequest": {
+    "placeholders": {
+      "who": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  }
 }
