@@ -46,3 +46,21 @@ def login(client):
         return {"Authorization": f"Bearer {data['access_token']}"}, data
 
     return _login
+
+
+def _login_phone(client, phone, name=""):
+    code = client.post("/v1/auth/request-code", json={"phone": phone, "name": name}).json()["dev_code"]
+    data = client.post("/v1/auth/verify", json={"phone": phone, "code": code}).json()
+    return {"Authorization": f"Bearer {data['access_token']}"}, data
+
+
+@pytest.fixture(scope="session")
+def pro(client):
+    """Estelle (diététicienne liée à la fiche « estelle ») et Serge (autre diététicien)."""
+    from app import admin
+
+    out = {}
+    for did, phone in (("estelle", "+237699000001"), ("serge", "+237699000002")):
+        admin.link_dietitian(phone, did)
+        out[did] = _login_phone(client, phone)[0]
+    return out

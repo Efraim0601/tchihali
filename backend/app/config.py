@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     dev_return_code: bool = False
     payment_provider: str = "simulated"
     cors_origins: str = ""
+    files_dir: str = "./data/files"
+    max_upload_mb: int = 5
+    daily_kcal_target: int = 1700
 
     def check_production(self) -> None:
         """Refuse de démarrer en production avec une configuration dangereuse."""

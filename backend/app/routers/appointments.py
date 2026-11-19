@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from ..config import settings
 from ..db import audit, get_conn
 from ..deps import current_user
+from ..notify import notify
 from .dietitians import day_slots
 
 router = APIRouter(prefix="/appointments", tags=["appointments"])
@@ -68,6 +69,10 @@ def book(body: BookingRequest, user=Depends(current_user), conn=Depends(get_conn
         (appt["id"], body.method, price, body.phone, settings.payment_provider, "SIMULATED"),
     )
     audit(conn, user["id"], "create", "appointment")
+    owner = conn.execute("select user_id from dietitians where id = %s", (body.dietitian_id,)).fetchone()
+    if owner and owner["user_id"]:
+        notify(conn, owner["user_id"], "appointment_request",
+               {"patient": user["full_name"], "starts_at": starts_at.isoformat()})
     return _appt(appt)
 
 

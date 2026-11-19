@@ -133,10 +133,14 @@ def test_booking_requires_mobile_number_and_valid_slot(client, login):
 def test_health_profile_roundtrip_and_isolation(client, login):
     h1, _ = login()
     h2, _ = login()
-    assert client.get("/v1/me/health", headers=h1).json() == {"goal": None, "conditions": [], "allergies": []}
-    r = client.put("/v1/me/health", json={"goal": 1, "conditions": [0, 2], "allergies": [3]}, headers=h1)
+    empty = client.get("/v1/me/health", headers=h1).json()
+    assert empty["goal"] is None and empty["conditions"] == [] and empty["height_cm"] is None
+    r = client.put("/v1/me/health", json={"goal": 1, "conditions": [0, 2], "allergies": [3],
+                                          "height_cm": 165, "goal_weight_kg": 75}, headers=h1)
     assert r.status_code == 200
-    assert client.get("/v1/me/health", headers=h1).json() == {"goal": 1, "conditions": [0, 2], "allergies": [3]}
+    got = client.get("/v1/me/health", headers=h1).json()
+    assert got["goal"] == 1 and got["conditions"] == [0, 2] and got["allergies"] == [3]
+    assert got["height_cm"] == 165 and got["goal_weight_kg"] == 75.0
     assert client.get("/v1/me/health", headers=h2).json()["goal"] is None
     assert client.put("/v1/me/health", json={"goal": 9}, headers=h1).status_code == 422
 

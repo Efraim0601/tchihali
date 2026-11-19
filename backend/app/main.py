@@ -5,7 +5,20 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
 from .config import settings
-from .routers import appointments, auth, dietitians, me, messages, recipes
+from .routers import (
+    appointments,
+    auth,
+    dietitians,
+    files,
+    me,
+    meals,
+    messages,
+    notifications,
+    pro,
+    progress,
+    record,
+    recipes,
+)
 from .sms import get_sms
 
 
@@ -28,7 +41,10 @@ if settings.cors_origins:
         allow_headers=["*"],
     )
 
-for r in (auth.router, me.router, dietitians.router, appointments.router, recipes.router, messages.router):
+for r in (
+    auth.router, me.router, dietitians.router, appointments.router, recipes.router, messages.router,
+    files.router, meals.router, progress.router, notifications.router, record.router, pro.router,
+):
     app.include_router(r, prefix="/v1")
 
 
