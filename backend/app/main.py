@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from . import db
@@ -32,6 +33,24 @@ async def lifespan(_: FastAPI):
 
 
 app = FastAPI(title="Tchihali API", version="0.1.0", lifespan=lifespan, docs_url="/docs" if settings.env == "dev" else None, redoc_url=None, openapi_url="/openapi.json" if settings.env == "dev" else None)
+
+MAX_BODY = (settings.max_upload_mb + 1) * 1024 * 1024
+
+
+@app.middleware("http")
+async def security(request: Request, call_next):
+    size = request.headers.get("content-length")
+    if size and size.isdigit() and int(size) > MAX_BODY:
+        return JSONResponse({"detail": "Requête trop volumineuse"}, status_code=413)
+    response = await call_next(request)
+    response.headers.setdefault("X-Content-Type-Options", "nosniff")
+    response.headers.setdefault("Referrer-Policy", "no-referrer")
+    response.headers.setdefault("X-Frame-Options", "DENY")
+    # Les réponses de l'API contiennent des données de santé : jamais mises en cache (sauf photos, déjà privées).
+    if request.url.path.startswith("/v1") and "cache-control" not in response.headers:
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
 
 if settings.cors_origins:
     app.add_middleware(

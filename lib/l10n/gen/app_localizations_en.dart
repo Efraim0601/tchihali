@@ -934,4 +934,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get proSaveFailed => 'Could not save. Please try again.';
+
+  @override
+  String get legalTermsTitle => 'Terms of use';
+
+  @override
+  String get legalPrivacyTitle => 'Privacy policy';
+
+  @override
+  String get legalLinkTerms => 'Read the terms';
+
+  @override
+  String get legalLinkPrivacy => 'Privacy';
+
+  @override
+  String get profileExport => 'Export my data';
+
+  @override
+  String get profileDelete => 'Delete my account';
+
+  @override
+  String get profileDeleteTitle => 'Delete your account?';
+
+  @override
+  String get profileDeleteText =>
+      'All your data (meals, measurements, messages, appointments) will be permanently erased. This cannot be undone.';
+
+  @override
+  String get profileDeleteConfirm => 'Delete permanently';
+
+  @override
+  String get profileExportError => 'Could not export your data.';
+
+  @override
+  String get profileMyData => 'My data';
 }

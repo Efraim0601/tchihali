@@ -28,7 +28,11 @@ class AuthUser {
 
 /// Connexion par code SMS (pas de mot de passe).
 abstract class AuthRepository {
-  Future<void> requestCode({required String phone, required String name});
+  Future<void> requestCode({
+    required String phone,
+    required String name,
+    String? termsVersion,
+  });
   Future<AuthUser> verify({required String phone, required String code});
   Future<AuthUser?> restore();
   Future<void> signOut();
@@ -43,6 +47,7 @@ class MockAuthRepository implements AuthRepository {
   Future<void> requestCode({
     required String phone,
     required String name,
+    String? termsVersion,
   }) async {}
 
   @override
@@ -67,10 +72,11 @@ class ApiAuthRepository implements AuthRepository {
   Future<void> requestCode({
     required String phone,
     required String name,
+    String? termsVersion,
   }) async {
     await _api.post(
       '/auth/request-code',
-      body: {'phone': phone, 'name': name},
+      body: {'phone': phone, 'name': name, 'terms_version': ?termsVersion},
       auth: false,
     );
   }

@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:open_filex/open_filex.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../app/locale_provider.dart';
@@ -78,6 +82,90 @@ class ProfileScreen extends ConsumerWidget {
     } on ApiException catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
     }
+  }
+
+  Future<void> _exportData(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      final bytes = await ref.read(profileRepositoryProvider).exportData();
+      final dir = await getTemporaryDirectory();
+      final file = File('${dir.path}/tchihali-donnees.json');
+      await file.writeAsBytes(bytes, flush: true);
+      final res = await OpenFilex.open(file.path);
+      if (res.type != ResultType.done) {
+        messenger.showSnackBar(SnackBar(content: Text(l.profileExportError)));
+      }
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l.profileExportError)));
+    }
+  }
+
+  Future<void> _deleteAccount(BuildContext context, WidgetRef ref) async {
+    final l = AppLocalizations.of(context);
+    final messenger = ScaffoldMessenger.of(context);
+    final confirmed = await showModalBottomSheet<bool>(
+      context: context,
+      useRootNavigator: true,
+      backgroundColor: Tch.surface,
+      barrierColor: const Color(0x732F3437),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+      ),
+      builder: (sheet) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 14, 20, 34),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 44,
+              height: 5,
+              decoration: BoxDecoration(
+                color: Tch.border,
+                borderRadius: BorderRadius.circular(5),
+              ),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l.profileDeleteTitle,
+              textAlign: TextAlign.center,
+              style: Tch.style(20, weight: FontWeight.w700),
+            ),
+            const SizedBox(height: 14),
+            Text(
+              l.profileDeleteText,
+              textAlign: TextAlign.center,
+              style: Tch.style(15, color: Tch.textSecondary, height: 1.5),
+            ),
+            const SizedBox(height: 14),
+            TchButton(
+              label: l.profileDeleteConfirm,
+              style: TchButtonStyle.danger,
+              height: 54,
+              onPressed: () => Navigator.of(sheet).pop(true),
+            ),
+            const SizedBox(height: 14),
+            TchButton(
+              label: l.profileCancel,
+              style: TchButtonStyle.neutral,
+              height: 54,
+              onPressed: () => Navigator.of(sheet).pop(false),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (confirmed != true) return;
+    try {
+      await ref.read(profileRepositoryProvider).deleteAccount();
+      await ref.read(authRepositoryProvider).signOut();
+    } on ApiException catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
+      return;
+    }
+    if (context.mounted) context.go('/onboarding/1');
   }
 
   Future<void> _askLogout(BuildContext context, WidgetRef ref) async {
@@ -289,6 +377,24 @@ class ProfileScreen extends ConsumerWidget {
               onPressed: () => _askLogout(context, ref),
             ),
           ),
+          const SizedBox(height: 20),
+          Text(
+            l.profileMyData,
+            style: Tch.style(
+              13,
+              weight: FontWeight.w600,
+              color: Tch.textSecondary,
+            ),
+          ),
+          const SizedBox(height: 4),
+          _LinkRow(l.profileExport, () => _exportData(context, ref)),
+          _LinkRow(
+            l.profileDelete,
+            () => _deleteAccount(context, ref),
+            danger: true,
+          ),
+          _LinkRow(l.legalTermsTitle, () => context.push('/legal/terms')),
+          _LinkRow(l.legalPrivacyTitle, () => context.push('/legal/privacy')),
         ],
       ),
     );
@@ -428,4 +534,31 @@ class _EditNameSheetState extends State<_EditNameSheet> {
       ),
     );
   }
+}
+
+class _LinkRow extends StatelessWidget {
+  const _LinkRow(this.label, this.onTap, {this.danger = false});
+  final String label;
+  final VoidCallback onTap;
+  final bool danger;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: onTap,
+    child: SizedBox(
+      height: 44,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          label,
+          style: Tch.style(
+            14,
+            weight: FontWeight.w500,
+            color: danger ? Tch.coralText : Tch.text,
+          ),
+        ),
+      ),
+    ),
+  );
 }

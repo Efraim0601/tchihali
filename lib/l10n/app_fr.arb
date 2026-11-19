@@ -449,5 +449,16 @@
         "type": "String"
       }
     }
-  }
+  },
+  "legalTermsTitle": "Conditions d'utilisation",
+  "legalPrivacyTitle": "Politique de confidentialité",
+  "legalLinkTerms": "Lire les conditions",
+  "legalLinkPrivacy": "Confidentialité",
+  "profileExport": "Exporter mes données",
+  "profileDelete": "Supprimer mon compte",
+  "profileDeleteTitle": "Supprimer votre compte ?",
+  "profileDeleteText": "Toutes vos données (repas, mesures, messages, rendez-vous) seront effacées définitivement. Cette action est irréversible.",
+  "profileDeleteConfirm": "Supprimer définitivement",
+  "profileExportError": "Impossible d'exporter vos données.",
+  "profileMyData": "Mes données"
 }

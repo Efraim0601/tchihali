@@ -33,6 +33,7 @@ def _normalize_phone(v: str) -> str:
 class CodeRequest(BaseModel):
     phone: str
     name: str | None = None
+    terms_version: str | None = None  # version acceptée (obligatoire à la création d'un compte)
 
     _phone = field_validator("phone")(_normalize_phone)
 
@@ -86,10 +87,14 @@ def request_code(body: CodeRequest, conn=Depends(get_conn)):
     ).fetchone()["n"]
     if recent >= MAX_CODES_PER_10_MIN:
         raise HTTPException(status.HTTP_429_TOO_MANY_REQUESTS, "Trop de demandes. Réessayez dans quelques minutes.")
+    exists = conn.execute("select 1 from users where phone = %s", (body.phone,)).fetchone() is not None
+    if not exists and body.terms_version != settings.terms_version:
+        raise HTTPException(status.HTTP_422_UNPROCESSABLE_ENTITY,
+                            "Acceptez les conditions d'utilisation pour créer un compte")
     code = new_code()
     conn.execute(
-        "insert into otp_codes (phone, name, code_hash, expires_at) values (%s, %s, %s, %s)",
-        (body.phone, body.name, hash_code(body.phone, code), datetime.now(UTC) + CODE_TTL),
+        "insert into otp_codes (phone, name, code_hash, expires_at, terms_version) values (%s, %s, %s, %s, %s)",
+        (body.phone, body.name, hash_code(body.phone, code), datetime.now(UTC) + CODE_TTL, body.terms_version),
     )
     get_sms().send(body.phone, f"Tchihali : votre code est {code}. Il expire dans 5 minutes.")
     # Le code n'est renvoyé qu'en développement, pour tester sans SMS.
@@ -99,7 +104,7 @@ def request_code(body: CodeRequest, conn=Depends(get_conn)):
 @router.post("/verify")
 def verify(body: VerifyRequest, conn=Depends(get_conn)):
     row = conn.execute(
-        """select id, name, code_hash, attempts from otp_codes
+        """select id, name, code_hash, attempts, terms_version from otp_codes
            where phone = %s and not consumed and expires_at > now()
            order by created_at desc limit 1 for update""",
         (body.phone,),
@@ -120,6 +125,11 @@ def verify(body: VerifyRequest, conn=Depends(get_conn)):
            returning id, phone, full_name, role""",
         (body.phone, row["name"] or ""),
     ).fetchone()
+    if row["terms_version"] == settings.terms_version:
+        conn.execute(
+            "update users set terms_accepted_at = now(), terms_version = %s where id = %s",
+            (row["terms_version"], user["id"]),
+        )
     audit(conn, user["id"], "login", "auth")
     return _issue_tokens(conn, user)
 

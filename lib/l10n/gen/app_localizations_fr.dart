@@ -937,4 +937,38 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get proSaveFailed => 'Enregistrement impossible. Réessayez.';
+
+  @override
+  String get legalTermsTitle => 'Conditions d\'utilisation';
+
+  @override
+  String get legalPrivacyTitle => 'Politique de confidentialité';
+
+  @override
+  String get legalLinkTerms => 'Lire les conditions';
+
+  @override
+  String get legalLinkPrivacy => 'Confidentialité';
+
+  @override
+  String get profileExport => 'Exporter mes données';
+
+  @override
+  String get profileDelete => 'Supprimer mon compte';
+
+  @override
+  String get profileDeleteTitle => 'Supprimer votre compte ?';
+
+  @override
+  String get profileDeleteText =>
+      'Toutes vos données (repas, mesures, messages, rendez-vous) seront effacées définitivement. Cette action est irréversible.';
+
+  @override
+  String get profileDeleteConfirm => 'Supprimer définitivement';
+
+  @override
+  String get profileExportError => 'Impossible d\'exporter vos données.';
+
+  @override
+  String get profileMyData => 'Mes données';
 }

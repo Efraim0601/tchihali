@@ -20,6 +20,7 @@ import '../features/video/waiting_room_screen.dart';
 import '../features/home/home_screen.dart';
 import '../data/recipes.dart';
 import '../features/journal/add_meal_screen.dart';
+import '../features/legal/legal_screen.dart';
 import '../features/journal/journal_screen.dart';
 import '../features/messages/messages_screen.dart';
 import '../features/progress/progress_screen.dart';
@@ -35,7 +36,10 @@ import '../features/onboarding/onboarding_screens.dart';
 String? _guard(BuildContext context, GoRouterState state) {
   if (!ApiConfig.isConfigured) return null;
   final loc = state.uri.path;
-  final isPublic = loc.startsWith('/onboarding') || loc.startsWith('/signup');
+  final isPublic =
+      loc.startsWith('/onboarding') ||
+      loc.startsWith('/signup') ||
+      loc.startsWith('/legal');
   if (!authGate.signedIn) return isPublic ? null : '/onboarding/1';
   // Un diététicien n'utilise que l'espace praticien ; un patient n'y accède pas.
   if (authGate.role == 'dietitian') {
@@ -59,6 +63,14 @@ final router = GoRouter(
     GoRoute(
       path: '/onboarding/3',
       builder: (_, _) => const Onboarding3Screen(),
+    ),
+    GoRoute(
+      path: '/legal/terms',
+      builder: (_, _) => const LegalScreen(kind: LegalKind.terms),
+    ),
+    GoRoute(
+      path: '/legal/privacy',
+      builder: (_, _) => const LegalScreen(kind: LegalKind.privacy),
     ),
     GoRoute(path: '/signup', builder: (_, _) => const SignupScreen()),
     GoRoute(path: '/signup/code', builder: (_, _) => const SmsCodeScreen()),

@@ -449,5 +449,16 @@
         "type": "String"
       }
     }
-  }
+  },
+  "legalTermsTitle": "Terms of use",
+  "legalPrivacyTitle": "Privacy policy",
+  "legalLinkTerms": "Read the terms",
+  "legalLinkPrivacy": "Privacy",
+  "profileExport": "Export my data",
+  "profileDelete": "Delete my account",
+  "profileDeleteTitle": "Delete your account?",
+  "profileDeleteText": "All your data (meals, measurements, messages, appointments) will be permanently erased. This cannot be undone.",
+  "profileDeleteConfirm": "Delete permanently",
+  "profileExportError": "Could not export your data.",
+  "profileMyData": "My data"
 }

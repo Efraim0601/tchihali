@@ -528,11 +528,24 @@ final nextAppointmentProvider = FutureProvider.autoDispose<Appointment?>((
 // ======================= Profil =======================
 abstract class ProfileRepository {
   Future<void> updateName(String name);
+
+  /// Toutes les données du compte (JSON) : droit d'accès et de portabilité.
+  Future<Uint8List> exportData();
+
+  /// Suppression définitive du compte et de ses données.
+  Future<void> deleteAccount();
 }
 
 class MockProfileRepository implements ProfileRepository {
   @override
   Future<void> updateName(String name) async {}
+
+  @override
+  Future<Uint8List> exportData() async =>
+      Uint8List.fromList('{"demo": true}'.codeUnits);
+
+  @override
+  Future<void> deleteAccount() async {}
 }
 
 class ApiProfileRepository implements ProfileRepository {
@@ -542,6 +555,14 @@ class ApiProfileRepository implements ProfileRepository {
   @override
   Future<void> updateName(String name) async {
     await _api.patch('/me', body: {'full_name': name});
+  }
+
+  @override
+  Future<Uint8List> exportData() => _api.getBytes('/me/export');
+
+  @override
+  Future<void> deleteAccount() async {
+    await _api.delete('/me', query: {'confirm': 'yes'});
   }
 }
 

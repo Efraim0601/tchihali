@@ -33,7 +33,7 @@ def test_login_flow_and_profile(client, login):
 
 def test_wrong_code_then_lockout(client):
     phone = "+237600099001"
-    client.post("/v1/auth/request-code", json={"phone": phone})
+    client.post("/v1/auth/request-code", json={"phone": phone, "terms_version": "2026-11"})
     for _ in range(5):
         assert client.post("/v1/auth/verify", json={"phone": phone, "code": "000000"}).status_code in (400,)
     # après 5 essais ratés, même un code quelconque est refusé
@@ -42,14 +42,14 @@ def test_wrong_code_then_lockout(client):
 
 def test_code_is_single_use(client):
     phone = "+237600099002"
-    code = client.post("/v1/auth/request-code", json={"phone": phone}).json()["dev_code"]
+    code = client.post("/v1/auth/request-code", json={"phone": phone, "terms_version": "2026-11"}).json()["dev_code"]
     assert client.post("/v1/auth/verify", json={"phone": phone, "code": code}).status_code == 200
     assert client.post("/v1/auth/verify", json={"phone": phone, "code": code}).status_code == 400
 
 
 def test_code_rate_limit(client):
     phone = "+237600099003"
-    codes = [client.post("/v1/auth/request-code", json={"phone": phone}).status_code for _ in range(4)]
+    codes = [client.post("/v1/auth/request-code", json={"phone": phone, "terms_version": "2026-11"}).status_code for _ in range(4)]
     assert codes == [202, 202, 202, 429]
 
 

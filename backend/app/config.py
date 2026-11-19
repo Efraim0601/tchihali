@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     files_dir: str = "./data/files"
     max_upload_mb: int = 5
     daily_kcal_target: int = 1700
+    # À incrémenter quand les conditions ou la politique de confidentialité changent.
+    terms_version: str = "2026-11"
 
     def check_production(self) -> None:
         """Refuse de démarrer en production avec une configuration dangereuse."""

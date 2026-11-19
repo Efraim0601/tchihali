@@ -1849,6 +1849,72 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Enregistrement impossible. Réessayez.'**
   String get proSaveFailed;
+
+  /// No description provided for @legalTermsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Conditions d\'utilisation'**
+  String get legalTermsTitle;
+
+  /// No description provided for @legalPrivacyTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Politique de confidentialité'**
+  String get legalPrivacyTitle;
+
+  /// No description provided for @legalLinkTerms.
+  ///
+  /// In fr, this message translates to:
+  /// **'Lire les conditions'**
+  String get legalLinkTerms;
+
+  /// No description provided for @legalLinkPrivacy.
+  ///
+  /// In fr, this message translates to:
+  /// **'Confidentialité'**
+  String get legalLinkPrivacy;
+
+  /// No description provided for @profileExport.
+  ///
+  /// In fr, this message translates to:
+  /// **'Exporter mes données'**
+  String get profileExport;
+
+  /// No description provided for @profileDelete.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer mon compte'**
+  String get profileDelete;
+
+  /// No description provided for @profileDeleteTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer votre compte ?'**
+  String get profileDeleteTitle;
+
+  /// No description provided for @profileDeleteText.
+  ///
+  /// In fr, this message translates to:
+  /// **'Toutes vos données (repas, mesures, messages, rendez-vous) seront effacées définitivement. Cette action est irréversible.'**
+  String get profileDeleteText;
+
+  /// No description provided for @profileDeleteConfirm.
+  ///
+  /// In fr, this message translates to:
+  /// **'Supprimer définitivement'**
+  String get profileDeleteConfirm;
+
+  /// No description provided for @profileExportError.
+  ///
+  /// In fr, this message translates to:
+  /// **'Impossible d\'exporter vos données.'**
+  String get profileExportError;
+
+  /// No description provided for @profileMyData.
+  ///
+  /// In fr, this message translates to:
+  /// **'Mes données'**
+  String get profileMyData;
 }
 
 class _AppLocalizationsDelegate

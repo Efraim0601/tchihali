@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../app/theme.dart';
 import '../../app/auth_gate.dart';
+import '../../app/legal_config.dart';
 import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_back_button.dart';
@@ -128,7 +129,11 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     try {
       await ref
           .read(authRepositoryProvider)
-          .requestCode(phone: toE164(_phone.text), name: _name.text.trim());
+          .requestCode(
+            phone: toE164(_phone.text),
+            name: _name.text.trim(),
+            termsVersion: LegalConfig.termsVersion,
+          );
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _busy = false);
@@ -226,7 +231,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 18),
+          Padding(
+            padding: const EdgeInsets.only(left: 34),
+            child: Wrap(
+              spacing: 16,
+              children: [
+                _LegalLink(
+                  l.legalLinkTerms,
+                  () => context.push('/legal/terms'),
+                ),
+                _LegalLink(
+                  l.legalLinkPrivacy,
+                  () => context.push('/legal/privacy'),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 8),
           TchButton(
             label: l.signupCta,
             onPressed: _valid && !_busy ? _submit : null,
@@ -297,7 +318,11 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
     try {
       await ref
           .read(authRepositoryProvider)
-          .requestCode(phone: toE164(signup.phone), name: signup.name);
+          .requestCode(
+            phone: toE164(signup.phone),
+            name: signup.name,
+            termsVersion: LegalConfig.termsVersion,
+          );
     } on ApiException catch (e) {
       messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e))));
     }
@@ -384,4 +409,30 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
       ),
     );
   }
+}
+
+class _LegalLink extends StatelessWidget {
+  const _LegalLink(this.label, this.onTap);
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) => GestureDetector(
+    behavior: HitTestBehavior.opaque,
+    onTap: onTap,
+    child: SizedBox(
+      height: 44,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          label,
+          style: Tch.style(
+            13,
+            weight: FontWeight.w500,
+            color: Tch.greenDark2,
+          ).copyWith(decoration: TextDecoration.underline),
+        ),
+      ),
+    ),
+  );
 }

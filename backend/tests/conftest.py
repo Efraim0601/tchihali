@@ -38,7 +38,7 @@ def login(client):
     def _login(name="Patiente Test"):
         _counter["n"] += 1
         phone = f"+2376000{_counter['n']:05d}"
-        r = client.post("/v1/auth/request-code", json={"phone": phone, "name": name})
+        r = client.post("/v1/auth/request-code", json={"phone": phone, "name": name, "terms_version": "2026-11"})
         assert r.status_code == 202, r.text
         r = client.post("/v1/auth/verify", json={"phone": phone, "code": r.json()["dev_code"]})
         assert r.status_code == 200, r.text
@@ -49,7 +49,7 @@ def login(client):
 
 
 def _login_phone(client, phone, name=""):
-    code = client.post("/v1/auth/request-code", json={"phone": phone, "name": name}).json()["dev_code"]
+    code = client.post("/v1/auth/request-code", json={"phone": phone, "name": name, "terms_version": "2026-11"}).json()["dev_code"]
     data = client.post("/v1/auth/verify", json={"phone": phone, "code": code}).json()
     return {"Authorization": f"Bearer {data['access_token']}"}, data
 
