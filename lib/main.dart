@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'
-    show GlobalWidgetsLocalizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'app/locale_provider.dart';
@@ -13,6 +12,8 @@ import 'l10n/gen/app_localizations.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // Poppins est fournie avec l'application (dossier google_fonts/) : aucun téléchargement, même hors ligne.
+  GoogleFonts.config.allowRuntimeFetching = false;
   await initializeDateFormatting();
   final container = ProviderContainer();
   // Reprend la session enregistrée sur le téléphone (mode API) avant d'afficher le premier écran.
@@ -50,10 +51,10 @@ class _TchihaliAppState extends ConsumerState<TchihaliApp> {
       theme: Tch.theme(),
       locale: locale,
       supportedLocales: AppLocalizations.supportedLocales,
-      localizationsDelegates: const [
+      localizationsDelegates: [
         AppLocalizations.delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
+        // Matériel + Cupertino + widgets (la version au pluriel les regroupe tous).
+        ...GlobalMaterialLocalizations.delegates,
       ],
       routerConfig: router,
     );

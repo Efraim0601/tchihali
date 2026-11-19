@@ -12,3 +12,8 @@ GeneratedPluginRegistrant.java
 key.properties
 **/*.keystore
 **/*.jks
+
+# Clés de signature : ne jamais versionner
+key.properties
+*.jks
+*.keystore

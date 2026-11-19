@@ -1,0 +1,5 @@
+# Copier en key.properties (ignoré par git) et remplir avec VOS valeurs.
+storePassword=<mot de passe du keystore>
+keyPassword=<mot de passe de la clé>
+keyAlias=tchihali
+storeFile=/chemin/absolu/vers/tchihali-release.jks

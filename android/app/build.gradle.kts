@@ -29,11 +29,28 @@ android {
         versionName = flutter.versionName
     }
 
+    // Signature de publication : lue dans android/key.properties (jamais versionné, voir RELEASE.md).
+    // Sans ce fichier, la version « release » est signée avec la clé de debug (test seulement,
+    // refusée par le Play Store).
+    val keyProps = java.util.Properties()
+    val keyFile = rootProject.file("key.properties")
+    if (keyFile.exists()) keyFile.inputStream().use { keyProps.load(it) }
+
+    signingConfigs {
+        if (keyFile.exists()) {
+            create("release") {
+                keyAlias = keyProps.getProperty("keyAlias")
+                keyPassword = keyProps.getProperty("keyPassword")
+                storeFile = file(keyProps.getProperty("storeFile"))
+                storePassword = keyProps.getProperty("storePassword")
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // TODO: Add your own signing config for the release build.
-            // Signing with the debug keys for now, so `flutter run --release` works.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = if (keyFile.exists()) signingConfigs.getByName("release")
+                            else signingConfigs.getByName("debug")
         }
     }
 }
