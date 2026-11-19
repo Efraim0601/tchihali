@@ -19,7 +19,10 @@ String toLocalPhone(String e164) {
 class SignupNotifier extends Notifier<SignupData> {
   @override
   SignupData build() => const SignupData();
-  void set(String name, String phone) => state = SignupData(name: name, phone: phone);
+  void set(String name, String phone) =>
+      state = SignupData(name: name, phone: phone);
 }
 
-final signupProvider = NotifierProvider<SignupNotifier, SignupData>(SignupNotifier.new);
+final signupProvider = NotifierProvider<SignupNotifier, SignupData>(
+  SignupNotifier.new,
+);

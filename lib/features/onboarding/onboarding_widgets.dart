@@ -1,5 +1,6 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_button.dart';
@@ -60,19 +61,32 @@ class OnboardingLayout extends StatelessWidget {
                     ],
                     FadeSlideIn(
                       index: 1,
-                      child: Text(title,
-                          style: Tch.style(30, weight: FontWeight.w700, height: 1.2)),
+                      child: Text(
+                        title,
+                        style: Tch.style(
+                          30,
+                          weight: FontWeight.w700,
+                          height: 1.2,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     FadeSlideIn(
                       index: 2,
-                      child: Text(text,
-                          style: Tch.style(16,
-                              color: Tch.textSecondary, height: 1.55)),
+                      child: Text(
+                        text,
+                        style: Tch.style(
+                          16,
+                          color: Tch.textSecondary,
+                          height: 1.55,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 32),
                     FadeSlideIn(
-                        index: 3, child: TchButton(label: cta, onPressed: onCta)),
+                      index: 3,
+                      child: TchButton(label: cta, onPressed: onCta),
+                    ),
                     ?below,
                   ],
                 ),
@@ -93,36 +107,40 @@ class ProgressDots extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Row(
-        children: [
-          for (var i = 0; i < count; i++)
-            AnimatedContainer(
-              duration: Tch.selectDuration,
-              margin: EdgeInsets.only(right: i == count - 1 ? 0 : 8),
-              width: i == active ? 28 : 8,
-              height: 8,
-              decoration: BoxDecoration(
-                color: i == active ? Tch.green : const Color(0xFFD5DED2),
-                borderRadius: BorderRadius.circular(8),
-              ),
-            ),
-        ],
-      );
+    children: [
+      for (var i = 0; i < count; i++)
+        AnimatedContainer(
+          duration: Tch.selectDuration,
+          margin: EdgeInsets.only(right: i == count - 1 ? 0 : 8),
+          width: i == active ? 28 : 8,
+          height: 8,
+          decoration: BoxDecoration(
+            color: i == active ? Tch.green : const Color(0xFFD5DED2),
+            borderRadius: BorderRadius.circular(8),
+          ),
+        ),
+    ],
+  );
 }
 
 /// Pastille ronde de 280 px derrière les illustrations.
 class IllustrationCircle extends StatelessWidget {
-  const IllustrationCircle({super.key, required this.color, required this.child});
+  const IllustrationCircle({
+    super.key,
+    required this.color,
+    required this.child,
+  });
   final Color color;
   final Widget child;
 
   @override
   Widget build(BuildContext context) => Container(
-        width: 280,
-        height: 280,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-        child: child,
-      );
+    width: 280,
+    height: 280,
+    alignment: Alignment.center,
+    decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+    child: child,
+  );
 }
 
 const _illuShadow = [
@@ -147,9 +165,8 @@ class PlateIllustration extends StatelessWidget {
 </svg>''';
 
   @override
-  Widget build(BuildContext context) => Float(
-        child: SvgPicture.string(_svg, width: 280, height: 280),
-      );
+  Widget build(BuildContext context) =>
+      Float(child: SvgPicture.string(_svg, width: 280, height: 280));
 }
 
 /// Petite assiette (carte photo de l'écran 2).
@@ -176,99 +193,121 @@ class PhotoCardIllustration extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => IllustrationCircle(
-        color: Tch.peachLight,
-        child: Float(
-          child: Container(
-            width: 180,
-            height: 200,
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Tch.surface,
-              borderRadius: BorderRadius.circular(28),
-              boxShadow: _illuShadow,
-            ),
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  height: 130,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Tch.greenLight,
-                    borderRadius: BorderRadius.circular(18),
-                  ),
-                  child: const SmallPlate(),
-                ),
-                const SizedBox(height: 12),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  decoration: BoxDecoration(
-                    color: Tch.greenLight,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(kcal,
-                      style: Tch.style(13,
-                          weight: FontWeight.w600, color: Tch.greenDark)),
-                ),
-              ],
-            ),
-          ),
+    color: Tch.peachLight,
+    child: Float(
+      child: Container(
+        width: 180,
+        height: 200,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Tch.surface,
+          borderRadius: BorderRadius.circular(28),
+          boxShadow: _illuShadow,
         ),
-      );
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 130,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Tch.greenLight,
+                borderRadius: BorderRadius.circular(18),
+              ),
+              child: const SmallPlate(),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: Tch.greenLight,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                kcal,
+                style: Tch.style(
+                  13,
+                  weight: FontWeight.w600,
+                  color: Tch.greenDark,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }
 
 /// Carte flottante de l'écran 3 : rendez-vous confirmé.
 class AppointmentCardIllustration extends StatelessWidget {
-  const AppointmentCardIllustration(
-      {super.key, required this.label, required this.confirmed});
+  const AppointmentCardIllustration({
+    super.key,
+    required this.label,
+    required this.confirmed,
+  });
   final String label;
   final String confirmed;
 
   @override
   Widget build(BuildContext context) => IllustrationCircle(
-        color: Tch.greenLight,
-        child: Float(
-          child: Container(
-            width: 190,
-            padding: const EdgeInsets.all(18),
-            decoration: BoxDecoration(
-              color: Tch.surface,
-              borderRadius: BorderRadius.circular(26),
-              boxShadow: _illuShadow,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  alignment: Alignment.center,
-                  decoration: const BoxDecoration(
-                      color: Tch.peach, shape: BoxShape.circle),
-                  child: Text('EM',
-                      style: Tch.style(16,
-                          weight: FontWeight.w700, color: const Color(0xFF7A3522))),
-                ),
-                const SizedBox(height: 12),
-                Text(label,
-                    textAlign: TextAlign.center,
-                    style: Tch.style(14, weight: FontWeight.w600)),
-                const SizedBox(height: 12),
-                Container(
-                  width: double.infinity,
-                  height: 40,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: Tch.green,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(confirmed,
-                      style: Tch.style(13,
-                          weight: FontWeight.w600, color: Colors.white)),
-                ),
-              ],
-            ),
-          ),
+    color: Tch.greenLight,
+    child: Float(
+      child: Container(
+        width: 190,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Tch.surface,
+          borderRadius: BorderRadius.circular(26),
+          boxShadow: _illuShadow,
         ),
-      );
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              alignment: Alignment.center,
+              decoration: const BoxDecoration(
+                color: Tch.peach,
+                shape: BoxShape.circle,
+              ),
+              child: Text(
+                'EM',
+                style: Tch.style(
+                  16,
+                  weight: FontWeight.w700,
+                  color: const Color(0xFF7A3522),
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              label,
+              textAlign: TextAlign.center,
+              style: Tch.style(14, weight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Container(
+              width: double.infinity,
+              height: 40,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color: Tch.green,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                confirmed,
+                style: Tch.style(
+                  13,
+                  weight: FontWeight.w600,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
 }

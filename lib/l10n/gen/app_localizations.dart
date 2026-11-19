@@ -1717,6 +1717,138 @@ abstract class AppLocalizations {
   /// In fr, this message translates to:
   /// **'Enregistrer'**
   String get profileSave;
+
+  /// No description provided for @proAddSlotTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un créneau'**
+  String get proAddSlotTitle;
+
+  /// No description provided for @proSlotAdd.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter ce créneau'**
+  String get proSlotAdd;
+
+  /// No description provided for @proSlotPick.
+  ///
+  /// In fr, this message translates to:
+  /// **'Choisir l\'heure'**
+  String get proSlotPick;
+
+  /// No description provided for @proSlotNone.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun créneau ce jour-là'**
+  String get proSlotNone;
+
+  /// No description provided for @proSlotRemove.
+  ///
+  /// In fr, this message translates to:
+  /// **'Retirer le créneau {time}'**
+  String proSlotRemove(String time);
+
+  /// No description provided for @proSlotAdded.
+  ///
+  /// In fr, this message translates to:
+  /// **'Créneau ajouté.'**
+  String get proSlotAdded;
+
+  /// No description provided for @proPatientsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Patients'**
+  String get proPatientsTitle;
+
+  /// No description provided for @proReportsTitle.
+  ///
+  /// In fr, this message translates to:
+  /// **'Comptes rendus'**
+  String get proReportsTitle;
+
+  /// No description provided for @proNoPatients.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucun patient pour le moment.'**
+  String get proNoPatients;
+
+  /// No description provided for @proMessages.
+  ///
+  /// In fr, this message translates to:
+  /// **'Messages'**
+  String get proMessages;
+
+  /// No description provided for @proNoConversations.
+  ///
+  /// In fr, this message translates to:
+  /// **'Aucune conversation.'**
+  String get proNoConversations;
+
+  /// No description provided for @proWriteTo.
+  ///
+  /// In fr, this message translates to:
+  /// **'Écrire à {name}'**
+  String proWriteTo(String name);
+
+  /// No description provided for @proReportSendFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Le résumé est obligatoire pour envoyer le compte rendu.'**
+  String get proReportSendFailed;
+
+  /// No description provided for @proNoteSaved.
+  ///
+  /// In fr, this message translates to:
+  /// **'Note enregistrée.'**
+  String get proNoteSaved;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In fr, this message translates to:
+  /// **'Hier'**
+  String get yesterday;
+
+  /// No description provided for @proPatientInfo.
+  ///
+  /// In fr, this message translates to:
+  /// **'{info} · Suivi(e) depuis le {date}'**
+  String proPatientInfo(String info, String date);
+
+  /// No description provided for @proGoalLabel.
+  ///
+  /// In fr, this message translates to:
+  /// **'Objectif {value}'**
+  String proGoalLabel(String value);
+
+  /// No description provided for @proUnknown.
+  ///
+  /// In fr, this message translates to:
+  /// **'—'**
+  String get proUnknown;
+
+  /// No description provided for @proReportContext.
+  ///
+  /// In fr, this message translates to:
+  /// **'{name} · Séance {n} · {date}'**
+  String proReportContext(String name, int n, String date);
+
+  /// No description provided for @proGoalPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Ajouter un objectif…'**
+  String get proGoalPlaceholder;
+
+  /// No description provided for @proMealPlaceholder.
+  ///
+  /// In fr, this message translates to:
+  /// **'Repas'**
+  String get proMealPlaceholder;
+
+  /// No description provided for @proSaveFailed.
+  ///
+  /// In fr, this message translates to:
+  /// **'Enregistrement impossible. Réessayez.'**
+  String get proSaveFailed;
 }
 
 class _AppLocalizationsDelegate

@@ -1,11 +1,16 @@
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'tch_icons.dart';
 
 /// Barre du bas : Accueil, Agenda, Journal, Messages, Profil.
 class TchBottomNav extends StatelessWidget {
-  const TchBottomNav({super.key, required this.currentIndex, required this.onTap});
+  const TchBottomNav({
+    super.key,
+    required this.currentIndex,
+    required this.onTap,
+  });
   final int currentIndex;
   final ValueChanged<int> onTap;
 
@@ -21,7 +26,11 @@ class TchBottomNav extends StatelessWidget {
     ];
     return Container(
       padding: EdgeInsets.fromLTRB(
-          6, 8, 6, 8 + MediaQuery.of(context).padding.bottom.clamp(0, 16)),
+        6,
+        8,
+        6,
+        8 + MediaQuery.of(context).padding.bottom.clamp(0, 16),
+      ),
       decoration: const BoxDecoration(
         color: Tch.surface,
         border: Border(top: BorderSide(color: Tch.borderLight)),
@@ -75,9 +84,14 @@ class _NavItem extends StatelessWidget {
               child: TchIcon(icon, color: color),
             ),
             const SizedBox(height: 3),
-            Text(label,
-                style: Tch.style(11,
-                    weight: active ? FontWeight.w700 : FontWeight.w500, color: color)),
+            Text(
+              label,
+              style: Tch.style(
+                11,
+                weight: active ? FontWeight.w700 : FontWeight.w500,
+                color: color,
+              ),
+            ),
           ],
         ),
       ),

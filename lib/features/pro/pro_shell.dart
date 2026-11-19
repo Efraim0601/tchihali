@@ -2,12 +2,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/locale_provider.dart';
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_avatar.dart';
 import '../../core/widgets/tch_icons.dart';
 import '../../core/widgets/tch_pill_switch.dart';
+import '../../data/auth_repository.dart';
 import '../../l10n/gen/app_localizations.dart';
 
 /// Largeur à partir de laquelle le menu passe à gauche (sinon au-dessus du contenu).
@@ -25,38 +27,40 @@ class ProShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Tch.background,
-        body: LayoutBuilder(
-          builder: (context, box) {
-            final wide = box.maxWidth >= proWideBreakpoint;
-            if (wide) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  SizedBox(
-                    width: 240,
-                    child: SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(minHeight: box.maxHeight),
-                        child: IntrinsicHeight(child: _Sidebar(location: location, wide: true)),
-                      ),
+    backgroundColor: Tch.background,
+    body: LayoutBuilder(
+      builder: (context, box) {
+        final wide = box.maxWidth >= proWideBreakpoint;
+        if (wide) {
+          return Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                width: 240,
+                child: SingleChildScrollView(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: box.maxHeight),
+                    child: IntrinsicHeight(
+                      child: _Sidebar(location: location, wide: true),
                     ),
                   ),
-                  Expanded(child: SingleChildScrollView(child: child)),
-                ],
-              );
-            }
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  _Sidebar(location: location, wide: false),
-                  child,
-                ],
+                ),
               ),
-            );
-          },
-        ),
-      );
+              Expanded(child: SingleChildScrollView(child: child)),
+            ],
+          );
+        }
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              _Sidebar(location: location, wide: false),
+              child,
+            ],
+          ),
+        );
+      },
+    ),
+  );
 }
 
 class _Sidebar extends ConsumerWidget {
@@ -70,12 +74,17 @@ class _Sidebar extends ConsumerWidget {
     final lang = ref.watch(localeProvider).languageCode;
     final items = [
       (TchIcons.agenda, l.proAgenda, '/pro/agenda', '/pro/agenda'),
-      (TchIcons.patients, l.proPatients, '/pro/patients/nadege', '/pro/patients'),
-      (TchIcons.report, l.proReports, '/pro/reports/nadege', '/pro/reports'),
+      (TchIcons.patients, l.proPatients, '/pro/patients', '/pro/patients'),
+      (TchIcons.report, l.proReports, '/pro/reports', '/pro/reports'),
+      (TchIcons.messages, l.proMessages, '/pro/messages', '/pro/messages'),
     ];
     return Container(
       padding: EdgeInsets.fromLTRB(
-          20, wide ? 28 : MediaQuery.of(context).padding.top + 20, 20, 28),
+        20,
+        wide ? 28 : MediaQuery.of(context).padding.top + 20,
+        20,
+        28,
+      ),
       decoration: const BoxDecoration(
         color: Tch.surface,
         border: Border(right: BorderSide(color: Tch.borderLight)),
@@ -90,8 +99,14 @@ class _Sidebar extends ConsumerWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l.appName, style: Tch.style(15, weight: FontWeight.w700)),
-                  Text(l.proSpace, style: Tch.style(12, color: Tch.textSecondary)),
+                  Text(
+                    l.appName,
+                    style: Tch.style(15, weight: FontWeight.w700),
+                  ),
+                  Text(
+                    l.proSpace,
+                    style: Tch.style(12, color: Tch.textSecondary),
+                  ),
                 ],
               ),
             ],
@@ -112,8 +127,9 @@ class _Sidebar extends ConsumerWidget {
             expand: true,
             labels: const ['Français', 'English'],
             selectedIndex: lang == 'fr' ? 0 : 1,
-            onChanged: (i) =>
-                ref.read(localeProvider.notifier).set(Locale(i == 0 ? 'fr' : 'en')),
+            onChanged: (i) => ref
+                .read(localeProvider.notifier)
+                .set(Locale(i == 0 ? 'fr' : 'en')),
           ),
           const SizedBox(height: 10),
           Container(
@@ -130,20 +146,33 @@ class _Sidebar extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Estelle Mbarga',
-                          style: Tch.style(14, weight: FontWeight.w600)),
-                      Text(l.proRole, style: Tch.style(12, color: Tch.textSecondary)),
+                      Text(
+                        'Estelle Mbarga',
+                        style: Tch.style(14, weight: FontWeight.w600),
+                      ),
+                      Text(
+                        l.proRole,
+                        style: Tch.style(12, color: Tch.textSecondary),
+                      ),
                     ],
                   ),
                 ),
                 PressScale(
                   semanticLabel: l.profileLogout,
-                  onTap: () => context.go('/onboarding/1'),
+                  onTap: () async {
+                    await ref.read(authRepositoryProvider).signOut();
+                    if (context.mounted) context.go('/onboarding/1');
+                  },
                   child: const SizedBox(
                     width: 44,
                     height: 44,
                     child: Center(
-                        child: TchIcon(TchIcons.logout, size: 20, color: Tch.coralText)),
+                      child: TchIcon(
+                        TchIcons.logout,
+                        size: 20,
+                        color: Tch.coralText,
+                      ),
+                    ),
                   ),
                 ),
               ],
@@ -156,8 +185,12 @@ class _Sidebar extends ConsumerWidget {
 }
 
 class _NavLink extends StatelessWidget {
-  const _NavLink(
-      {required this.icon, required this.label, required this.active, required this.onTap});
+  const _NavLink({
+    required this.icon,
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
   final String icon;
   final String label;
   final bool active;
@@ -181,9 +214,14 @@ class _NavLink extends StatelessWidget {
           children: [
             TchIcon(icon, size: 20, color: color),
             const SizedBox(width: 12),
-            Text(label,
-                style: Tch.style(15,
-                    weight: active ? FontWeight.w600 : FontWeight.w500, color: color)),
+            Text(
+              label,
+              style: Tch.style(
+                15,
+                weight: active ? FontWeight.w600 : FontWeight.w500,
+                color: color,
+              ),
+            ),
           ],
         ),
       ),

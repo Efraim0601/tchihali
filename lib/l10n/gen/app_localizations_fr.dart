@@ -860,4 +860,81 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileSave => 'Enregistrer';
+
+  @override
+  String get proAddSlotTitle => 'Ajouter un créneau';
+
+  @override
+  String get proSlotAdd => 'Ajouter ce créneau';
+
+  @override
+  String get proSlotPick => 'Choisir l\'heure';
+
+  @override
+  String get proSlotNone => 'Aucun créneau ce jour-là';
+
+  @override
+  String proSlotRemove(String time) {
+    return 'Retirer le créneau $time';
+  }
+
+  @override
+  String get proSlotAdded => 'Créneau ajouté.';
+
+  @override
+  String get proPatientsTitle => 'Patients';
+
+  @override
+  String get proReportsTitle => 'Comptes rendus';
+
+  @override
+  String get proNoPatients => 'Aucun patient pour le moment.';
+
+  @override
+  String get proMessages => 'Messages';
+
+  @override
+  String get proNoConversations => 'Aucune conversation.';
+
+  @override
+  String proWriteTo(String name) {
+    return 'Écrire à $name';
+  }
+
+  @override
+  String get proReportSendFailed =>
+      'Le résumé est obligatoire pour envoyer le compte rendu.';
+
+  @override
+  String get proNoteSaved => 'Note enregistrée.';
+
+  @override
+  String get yesterday => 'Hier';
+
+  @override
+  String proPatientInfo(String info, String date) {
+    return '$info · Suivi(e) depuis le $date';
+  }
+
+  @override
+  String proGoalLabel(String value) {
+    return 'Objectif $value';
+  }
+
+  @override
+  String get proUnknown => '—';
+
+  @override
+  String proReportContext(String name, int n, String date) {
+    return '$name · Séance $n · $date';
+  }
+
+  @override
+  String get proGoalPlaceholder => 'Ajouter un objectif…';
+
+  @override
+  String get proMealPlaceholder => 'Repas';
+
+  @override
+  String get proSaveFailed => 'Enregistrement impossible. Réessayez.';
 }

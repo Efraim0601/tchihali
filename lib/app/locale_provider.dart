@@ -19,9 +19,14 @@ class LocaleNotifier extends Notifier<Locale> {
   Future<void> set(Locale locale) async {
     state = locale;
     try {
-      await (await SharedPreferences.getInstance()).setString(_key, locale.languageCode);
+      await (await SharedPreferences.getInstance()).setString(
+        _key,
+        locale.languageCode,
+      );
     } catch (_) {}
   }
 }
 
-final localeProvider = NotifierProvider<LocaleNotifier, Locale>(LocaleNotifier.new);
+final localeProvider = NotifierProvider<LocaleNotifier, Locale>(
+  LocaleNotifier.new,
+);

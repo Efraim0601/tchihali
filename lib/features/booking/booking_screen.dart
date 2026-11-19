@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/format.dart';
 import '../../core/widgets/animations.dart';
@@ -14,7 +15,6 @@ import '../../data/dietitian_repository.dart';
 import '../../data/models.dart';
 import '../../l10n/gen/app_localizations.dart';
 import 'booking_state.dart';
-
 
 // Jours fériés fixes au Cameroun (mois, jour).
 const _holidays = {(1, 1), (2, 11), (5, 1), (5, 20), (8, 15), (12, 25)};
@@ -51,7 +51,10 @@ class BookingScreen extends ConsumerWidget {
     // Deux mois consultables : le mois en cours et le suivant.
     final base = DateTime(today.year, today.month);
     final months = [base, DateTime(base.year, base.month + 1)];
-    final monthIndex = (b.day.year == months[1].year && b.day.month == months[1].month) ? 1 : 0;
+    final monthIndex =
+        (b.day.year == months[1].year && b.day.month == months[1].month)
+        ? 1
+        : 0;
     final month = months[monthIndex];
 
     void goMonth(int i) {
@@ -60,13 +63,18 @@ class BookingScreen extends ConsumerWidget {
     }
 
     final open = _isOpen(b.day, today);
-    final slotsAsync = ref.watch(slotsProvider((id: b.dietitian.id, day: b.day)));
-    final slotOk = (slotsAsync.value ?? const <Slot>[]).any((s) => s.time == b.slot && !s.taken);
+    final slotsAsync = ref.watch(
+      slotsProvider((id: b.dietitian.id, day: b.day)),
+    );
+    final slotOk = (slotsAsync.value ?? const <Slot>[]).any(
+      (s) => s.time == b.slot && !s.taken,
+    );
     final dayLabel = open
         ? l.bookSlotsOf(formatLongDay(b.day, locale))
         : l.bookSlotsNone;
     final modeLabel = b.mode == ConsultMode.video ? l.modeVideo : l.modeOffice;
-    final summary = '${formatSummaryDay(b.day, locale)} · ${b.slot} · $modeLabel';
+    final summary =
+        '${formatSummaryDay(b.day, locale)} · ${b.slot} · $modeLabel';
     final initials = l.weekdayInitials.split(',');
 
     return Scaffold(
@@ -76,7 +84,11 @@ class BookingScreen extends ConsumerWidget {
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(
-                  Tch.pagePadding, Tch.topInset(context) - 4, Tch.pagePadding, 16),
+                Tch.pagePadding,
+                Tch.topInset(context) - 4,
+                Tch.pagePadding,
+                16,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -89,10 +101,14 @@ class BookingScreen extends ConsumerWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(l.bookWith,
-                                  style: Tch.style(13, color: Tch.textSecondary)),
-                              Text(b.dietitian.name,
-                                  style: Tch.style(17, weight: FontWeight.w700)),
+                              Text(
+                                l.bookWith,
+                                style: Tch.style(13, color: Tch.textSecondary),
+                              ),
+                              Text(
+                                b.dietitian.name,
+                                style: Tch.style(17, weight: FontWeight.w700),
+                              ),
                             ],
                           ),
                         ),
@@ -137,7 +153,9 @@ class BookingScreen extends ConsumerWidget {
                     index: 2,
                     child: _Calendar(
                       month: month,
-                      title: capitalize(DateFormat('MMMM y', locale).format(month)),
+                      title: capitalize(
+                        DateFormat('MMMM y', locale).format(month),
+                      ),
                       weekdays: initials,
                       today: today,
                       selected: b.day,
@@ -156,25 +174,32 @@ class BookingScreen extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(dayLabel, style: Tch.style(15, weight: FontWeight.w600)),
+                        Text(
+                          dayLabel,
+                          style: Tch.style(15, weight: FontWeight.w600),
+                        ),
                         const SizedBox(height: 8),
                         AsyncView<List<Slot>>(
                           value: slotsAsync,
-                          onRetry: () =>
-                              ref.invalidate(slotsProvider((id: b.dietitian.id, day: b.day))),
+                          onRetry: () => ref.invalidate(
+                            slotsProvider((id: b.dietitian.id, day: b.day)),
+                          ),
                           builder: (slots) => GridView(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3,
-                              mainAxisSpacing: 8,
-                              crossAxisSpacing: 8,
-                              mainAxisExtent: 46,
-                            ),
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 3,
+                                  mainAxisSpacing: 8,
+                                  crossAxisSpacing: 8,
+                                  mainAxisExtent: 46,
+                                ),
                             shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
                             children: [
                               for (final s in slots)
                                 _SlotButton(
-                                  label: s.taken ? '${s.time} · ${l.bookFull}' : s.time,
+                                  label: s.taken
+                                      ? '${s.time} · ${l.bookFull}'
+                                      : s.time,
                                   selected: s.time == b.slot && !s.taken,
                                   full: s.taken,
                                   onTap: () => n.setSlot(s.time),
@@ -191,12 +216,20 @@ class BookingScreen extends ConsumerWidget {
           ),
           Container(
             padding: EdgeInsets.fromLTRB(
-                20, 14, 20, 14 + MediaQuery.of(context).padding.bottom.clamp(16, 40)),
+              20,
+              14,
+              20,
+              14 + MediaQuery.of(context).padding.bottom.clamp(16, 40),
+            ),
             decoration: const BoxDecoration(
               color: Tch.surface,
               borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
               boxShadow: [
-                BoxShadow(color: Color(0x0F2F3437), blurRadius: 20, offset: Offset(0, -6))
+                BoxShadow(
+                  color: Color(0x0F2F3437),
+                  blurRadius: 20,
+                  offset: Offset(0, -6),
+                ),
               ],
             ),
             child: Row(
@@ -205,12 +238,16 @@ class BookingScreen extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(summary,
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: Tch.style(13, color: Tch.textSecondary)),
-                      Text(formatFcfa(b.price, locale),
-                          style: Tch.style(20, weight: FontWeight.w700)),
+                      Text(
+                        summary,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: Tch.style(13, color: Tch.textSecondary),
+                      ),
+                      Text(
+                        formatFcfa(b.price, locale),
+                        style: Tch.style(20, weight: FontWeight.w700),
+                      ),
                     ],
                   ),
                 ),
@@ -219,7 +256,9 @@ class BookingScreen extends ConsumerWidget {
                   label: l.bookContinue,
                   height: 54,
                   expand: false,
-                  onPressed: open && slotOk ? () => context.go('/booking/payment') : null,
+                  onPressed: open && slotOk
+                      ? () => context.go('/booking/payment')
+                      : null,
                 ),
               ],
             ),
@@ -257,16 +296,24 @@ class _ModeButton extends StatelessWidget {
           decoration: BoxDecoration(
             color: on ? Tch.greenLight : Tch.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: on ? Tch.green : Tch.borderLight, width: 2),
+            border: Border.all(
+              color: on ? Tch.green : Tch.borderLight,
+              width: 2,
+            ),
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               TchIcon(icon, size: 20, color: fg),
               const SizedBox(width: 8),
-              Text(label,
-                  style: Tch.style(15,
-                      weight: on ? FontWeight.w600 : FontWeight.w500, color: fg)),
+              Text(
+                label,
+                style: Tch.style(
+                  15,
+                  weight: on ? FontWeight.w600 : FontWeight.w500,
+                  color: fg,
+                ),
+              ),
             ],
           ),
         ),
@@ -314,7 +361,11 @@ class _Calendar extends StatelessWidget {
         color: Tch.surface,
         borderRadius: BorderRadius.circular(22),
         boxShadow: const [
-          BoxShadow(color: Color(0x0D2F3437), blurRadius: 16, offset: Offset(0, 4))
+          BoxShadow(
+            color: Color(0x0D2F3437),
+            blurRadius: 16,
+            offset: Offset(0, 4),
+          ),
         ],
       ),
       child: Column(
@@ -323,16 +374,18 @@ class _Calendar extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               _MonthArrow(
-                  icon: TchIcons.chevronLeft,
-                  label: prevLabel,
-                  enabled: canPrev,
-                  onTap: onPrev),
+                icon: TchIcons.chevronLeft,
+                label: prevLabel,
+                enabled: canPrev,
+                onTap: onPrev,
+              ),
               Text(title, style: Tch.style(16, weight: FontWeight.w600)),
               _MonthArrow(
-                  icon: TchIcons.chevronRight,
-                  label: nextLabel,
-                  enabled: canNext,
-                  onTap: onNext),
+                icon: TchIcons.chevronRight,
+                label: nextLabel,
+                enabled: canNext,
+                onTap: onNext,
+              ),
             ],
           ),
           const SizedBox(height: 2),
@@ -341,9 +394,14 @@ class _Calendar extends StatelessWidget {
               for (final w in weekdays)
                 Expanded(
                   child: Center(
-                    child: Text(w,
-                        style: Tch.style(12,
-                            weight: FontWeight.w500, color: Tch.textSecondary)),
+                    child: Text(
+                      w,
+                      style: Tch.style(
+                        12,
+                        weight: FontWeight.w500,
+                        color: Tch.textSecondary,
+                      ),
+                    ),
                   ),
                 ),
             ],
@@ -356,7 +414,8 @@ class _Calendar extends StatelessWidget {
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 7,
               crossAxisSpacing: 3,
-              mainAxisExtent: 44, // 38 visibles + 3 px de marge : zone tactile de 44
+              mainAxisExtent:
+                  44, // 38 visibles + 3 px de marge : zone tactile de 44
             ),
             itemBuilder: (_, i) {
               if (i < lead) return const SizedBox.shrink();
@@ -378,8 +437,12 @@ class _Calendar extends StatelessWidget {
 }
 
 class _MonthArrow extends StatelessWidget {
-  const _MonthArrow(
-      {required this.icon, required this.label, required this.enabled, required this.onTap});
+  const _MonthArrow({
+    required this.icon,
+    required this.label,
+    required this.enabled,
+    required this.onTap,
+  });
   final String icon;
   final String label;
   final bool enabled;
@@ -387,24 +450,26 @@ class _MonthArrow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Semantics(
-        button: true,
-        enabled: enabled,
-        label: label,
-        child: GestureDetector(
-          behavior: HitTestBehavior.opaque,
-          onTap: enabled ? onTap : null,
-          child: SizedBox(
-            width: 44,
-            height: 44,
-            child: Center(
-              child: TchIcon(icon,
-                  size: 20,
-                  strokeWidth: 2.2,
-                  color: enabled ? Tch.text : const Color(0xFFD5D0C6)),
-            ),
+    button: true,
+    enabled: enabled,
+    label: label,
+    child: GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: enabled ? onTap : null,
+      child: SizedBox(
+        width: 44,
+        height: 44,
+        child: Center(
+          child: TchIcon(
+            icon,
+            size: 20,
+            strokeWidth: 2.2,
+            color: enabled ? Tch.text : const Color(0xFFD5D0C6),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 class _DayCell extends StatelessWidget {
@@ -459,7 +524,10 @@ class _DayCell extends StatelessWidget {
                   ? Border.all(color: Tch.green, width: 1.5)
                   : null,
             ),
-            child: Text('$day', style: Tch.style(14, weight: weight, color: fg)),
+            child: Text(
+              '$day',
+              style: Tch.style(14, weight: weight, color: fg),
+            ),
           ),
         ),
       ),
@@ -481,33 +549,41 @@ class _SlotButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: full ? null : onTap,
-        child: AnimatedContainer(
-          duration: Tch.selectDuration,
-          alignment: Alignment.center,
-          decoration: BoxDecoration(
-            color: selected ? Tch.green : (full ? Colors.transparent : Tch.surface),
-            borderRadius: BorderRadius.circular(14),
-            border: selected
-                ? null
-                : Border.all(
-                    color: full ? const Color(0xFFDCD5CA) : Tch.borderLight, width: 1.5),
-          ),
-          child: full
-              ? CustomPaint(
-                  painter: _DashedBorder(),
-                  child: Center(
-                    child: Text(label,
-                        style: Tch.style(14, color: const Color(0xFFA7AAA6))),
-                  ),
-                )
-              : Text(label,
-                  style: Tch.style(14,
-                      weight: selected ? FontWeight.w600 : FontWeight.w500,
-                      color: selected ? Colors.white : Tch.text)),
-        ),
-      );
+    behavior: HitTestBehavior.opaque,
+    onTap: full ? null : onTap,
+    child: AnimatedContainer(
+      duration: Tch.selectDuration,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        color: selected ? Tch.green : (full ? Colors.transparent : Tch.surface),
+        borderRadius: BorderRadius.circular(14),
+        border: selected
+            ? null
+            : Border.all(
+                color: full ? const Color(0xFFDCD5CA) : Tch.borderLight,
+                width: 1.5,
+              ),
+      ),
+      child: full
+          ? CustomPaint(
+              painter: _DashedBorder(),
+              child: Center(
+                child: Text(
+                  label,
+                  style: Tch.style(14, color: const Color(0xFFA7AAA6)),
+                ),
+              ),
+            )
+          : Text(
+              label,
+              style: Tch.style(
+                14,
+                weight: selected ? FontWeight.w600 : FontWeight.w500,
+                color: selected ? Colors.white : Tch.text,
+              ),
+            ),
+    ),
+  );
 }
 
 /// Bordure en pointillés (créneau complet).
@@ -519,8 +595,9 @@ class _DashedBorder extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.5;
     final path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-          Offset.zero & size, const Radius.circular(14)));
+      ..addRRect(
+        RRect.fromRectAndRadius(Offset.zero & size, const Radius.circular(14)),
+      );
     for (final m in path.computeMetrics()) {
       var d = 0.0;
       while (d < m.length) {

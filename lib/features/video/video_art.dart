@@ -33,17 +33,20 @@ const _scene = '''
 class SelfCamArt extends StatelessWidget {
   const SelfCamArt({super.key});
   @override
-  Widget build(BuildContext context) => SvgPicture.string(_selfCam, fit: BoxFit.cover);
+  Widget build(BuildContext context) =>
+      SvgPicture.string(_selfCam, fit: BoxFit.cover);
 }
 
 class SelfThumbArt extends StatelessWidget {
   const SelfThumbArt({super.key});
   @override
-  Widget build(BuildContext context) => SvgPicture.string(_thumb, fit: BoxFit.cover);
+  Widget build(BuildContext context) =>
+      SvgPicture.string(_thumb, fit: BoxFit.cover);
 }
 
 class DietitianSceneArt extends StatelessWidget {
   const DietitianSceneArt({super.key});
   @override
-  Widget build(BuildContext context) => SvgPicture.string(_scene, fit: BoxFit.cover);
+  Widget build(BuildContext context) =>
+      SvgPicture.string(_scene, fit: BoxFit.cover);
 }

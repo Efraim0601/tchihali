@@ -1,7 +1,9 @@
 import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_avatar.dart';
@@ -50,7 +52,13 @@ class _CallScreenState extends ConsumerState<CallScreen> {
     final c = ref.watch(callControlsProvider);
     final n = ref.read(callControlsProvider.notifier);
     final name = ref.watch(signupProvider).name;
-    final initials = name.trim().split(RegExp(r'\s+')).map((p) => p[0]).take(2).join().toUpperCase();
+    final initials = name
+        .trim()
+        .split(RegExp(r'\s+'))
+        .map((p) => p[0])
+        .take(2)
+        .join()
+        .toUpperCase();
     final bottom = MediaQuery.of(context).padding.bottom;
 
     return Scaffold(
@@ -68,7 +76,10 @@ class _CallScreenState extends ConsumerState<CallScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: const Color(0xB82F3437),
                     borderRadius: BorderRadius.circular(18),
@@ -76,8 +87,14 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Estelle Mbarga',
-                          style: Tch.style(15, weight: FontWeight.w600, color: Colors.white)),
+                      Text(
+                        'Estelle Mbarga',
+                        style: Tch.style(
+                          15,
+                          weight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -89,12 +106,16 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                               width: 8,
                               height: 8,
                               decoration: const BoxDecoration(
-                                  color: Color(0xFFE8775F), shape: BoxShape.circle),
+                                color: Color(0xFFE8775F),
+                                shape: BoxShape.circle,
+                              ),
                             ),
                           ),
                           const SizedBox(width: 6),
-                          Text('${l.callLive} · $_clock',
-                              style: Tch.style(12, color: Colors.white)),
+                          Text(
+                            '${l.callLive} · $_clock',
+                            style: Tch.style(12, color: Colors.white),
+                          ),
                         ],
                       ),
                     ],
@@ -111,7 +132,13 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                   ),
                   child: c.cam
                       ? const SelfThumbArt()
-                      : Center(child: TchAvatar(initials: initials, size: 44, radius: 22)),
+                      : Center(
+                          child: TchAvatar(
+                            initials: initials,
+                            size: 44,
+                            radius: 22,
+                          ),
+                        ),
                 ),
               ],
             ),
@@ -155,8 +182,12 @@ class _CallScreenState extends ConsumerState<CallScreen> {
                       borderRadius: BorderRadius.circular(22),
                     ),
                     child: const Center(
-                      child: TchIcon(TchIcons.phoneDown,
-                          size: 28, color: Colors.white, strokeWidth: 2.2),
+                      child: TchIcon(
+                        TchIcons.phoneDown,
+                        size: 28,
+                        color: Colors.white,
+                        strokeWidth: 2.2,
+                      ),
                     ),
                   ),
                 ),
@@ -184,17 +215,19 @@ class _RoundControl extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PressScale(
-        semanticLabel: label,
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: Tch.selectDuration,
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: on ? const Color(0x992F3437) : Colors.white,
-            borderRadius: BorderRadius.circular(22),
-          ),
-          child: Center(child: TchIcon(icon, color: on ? Colors.white : Tch.danger)),
-        ),
-      );
+    semanticLabel: label,
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: Tch.selectDuration,
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: on ? const Color(0x992F3437) : Colors.white,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Center(
+        child: TchIcon(icon, color: on ? Colors.white : Tch.danger),
+      ),
+    ),
+  );
 }

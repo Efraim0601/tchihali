@@ -1,8 +1,16 @@
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import 'animations.dart';
 
-enum TchButtonStyle { primary, secondary, outlineCoral, outlineSoft, danger, neutral }
+enum TchButtonStyle {
+  primary,
+  secondary,
+  outlineCoral,
+  outlineSoft,
+  danger,
+  neutral,
+}
 
 /// Bouton principal : 56 de haut, rayon 18, fond vert, texte blanc 16–17 px / 600.
 class TchButton extends StatelessWidget {
@@ -29,8 +37,16 @@ class TchButton extends StatelessWidget {
     final (bg, fg, border) = switch (style) {
       TchButtonStyle.primary => (Tch.green, Colors.white, null),
       TchButtonStyle.secondary => (Tch.surface, Tch.greenDark, Tch.border),
-      TchButtonStyle.outlineCoral => (Colors.transparent, Tch.coralText, Tch.coral),
-      TchButtonStyle.outlineSoft => (Tch.surface, Tch.coralText, const Color(0xFFF2C9BB)),
+      TchButtonStyle.outlineCoral => (
+        Colors.transparent,
+        Tch.coralText,
+        Tch.coral,
+      ),
+      TchButtonStyle.outlineSoft => (
+        Tch.surface,
+        Tch.coralText,
+        const Color(0xFFF2C9BB),
+      ),
       TchButtonStyle.danger => (Tch.danger, Colors.white, null),
       TchButtonStyle.neutral => (Tch.surface, Tch.text, Tch.border),
     };
@@ -52,7 +68,10 @@ class TchButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[icon!, const SizedBox(width: 8)],
-            Text(label, style: Tch.style(16.5, weight: FontWeight.w600, color: fg)),
+            Text(
+              label,
+              style: Tch.style(16.5, weight: FontWeight.w600, color: fg),
+            ),
           ],
         ),
       ),

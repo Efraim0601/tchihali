@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 
 /// Carte : fond blanc, rayon 24, ombre douce.
@@ -19,12 +20,12 @@ class TchCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: padding,
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(radius),
-          boxShadow: shadow ? Tch.cardShadow : null,
-        ),
-        child: child,
-      );
+    padding: padding,
+    decoration: BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: shadow ? Tch.cardShadow : null,
+    ),
+    child: child,
+  );
 }

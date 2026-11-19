@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:flutter_localizations/flutter_localizations.dart' show GlobalWidgetsLocalizations;
+import 'package:flutter_localizations/flutter_localizations.dart'
+    show GlobalWidgetsLocalizations;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
+
 import 'app/locale_provider.dart';
 import 'app/router.dart';
 import 'app/theme.dart';
@@ -20,7 +22,9 @@ Future<void> main() async {
         .read(signupProvider.notifier)
         .set(user.fullName, toLocalPhone(user.phone));
   }
-  runApp(UncontrolledProviderScope(container: container, child: const TchihaliApp()));
+  runApp(
+    UncontrolledProviderScope(container: container, child: const TchihaliApp()),
+  );
 }
 
 class TchihaliApp extends ConsumerStatefulWidget {

@@ -383,5 +383,71 @@
         "type": "String"
       }
     }
+  },
+  "proAddSlotTitle": "Ajouter un créneau",
+  "proSlotAdd": "Ajouter ce créneau",
+  "proSlotPick": "Choisir l'heure",
+  "proSlotNone": "Aucun créneau ce jour-là",
+  "proSlotRemove": "Retirer le créneau {time}",
+  "proSlotAdded": "Créneau ajouté.",
+  "proPatientsTitle": "Patients",
+  "proReportsTitle": "Comptes rendus",
+  "proNoPatients": "Aucun patient pour le moment.",
+  "proMessages": "Messages",
+  "proNoConversations": "Aucune conversation.",
+  "proWriteTo": "Écrire à {name}",
+  "proReportSendFailed": "Le résumé est obligatoire pour envoyer le compte rendu.",
+  "proNoteSaved": "Note enregistrée.",
+  "@proSlotRemove": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@proWriteTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterday": "Hier",
+  "proPatientInfo": "{info} · Suivi(e) depuis le {date}",
+  "proGoalLabel": "Objectif {value}",
+  "proUnknown": "—",
+  "@proPatientInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@proGoalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "proReportContext": "{name} · Séance {n} · {date}",
+  "proGoalPlaceholder": "Ajouter un objectif…",
+  "proMealPlaceholder": "Repas",
+  "proSaveFailed": "Enregistrement impossible. Réessayez.",
+  "@proReportContext": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
   }
 }

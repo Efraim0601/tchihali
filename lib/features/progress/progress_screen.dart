@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
@@ -56,7 +57,11 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-          Tch.pagePadding, Tch.topInset(context), Tch.pagePadding, 24),
+        Tch.pagePadding,
+        Tch.topInset(context),
+        Tch.pagePadding,
+        24,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -65,7 +70,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               children: [
                 TchBackButton(onTap: () => context.go('/profile')),
                 const SizedBox(width: 12),
-                Text(l.progTitle, style: Tch.style(24, weight: FontWeight.w700)),
+                Text(
+                  l.progTitle,
+                  style: Tch.style(24, weight: FontWeight.w700),
+                ),
               ],
             ),
           ),
@@ -86,8 +94,9 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
               final points = [p.weight, p.bmi, p.waist][_tab];
               final unit = ['kg', '', 'cm'][_tab];
               final goal = [p.goalWeightKg, p.goalBmi, null][_tab];
-              String fmt(double v) =>
-                  fr ? v.toStringAsFixed(1).replaceAll('.', ',') : v.toStringAsFixed(1);
+              String fmt(double v) => fr
+                  ? v.toStringAsFixed(1).replaceAll('.', ',')
+                  : v.toStringAsFixed(1);
               final u = unit.isEmpty ? '' : ' $unit';
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,25 +109,48 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                           ? Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(l.progNoData,
-                                    style: Tch.style(15,
-                                        color: Tch.textSecondary, height: 1.5)),
+                                Text(
+                                  l.progNoData,
+                                  style: Tch.style(
+                                    15,
+                                    color: Tch.textSecondary,
+                                    height: 1.5,
+                                  ),
+                                ),
                                 const SizedBox(height: 14),
                                 TchButton(
-                                    label: l.progAddMeasure, height: 48, onPressed: _addMeasure),
+                                  label: l.progAddMeasure,
+                                  height: 48,
+                                  onPressed: _addMeasure,
+                                ),
                               ],
                             )
                           : _ChartCard(
                               points: points,
                               unit: unit,
                               goal: goal,
-                              goalLabel: goal == null ? null : '${l.progGoal} ${fmt(goal)}$u',
+                              goalLabel: goal == null
+                                  ? null
+                                  : '${l.progGoal} ${fmt(goal)}$u',
                               fmt: fmt,
                               today: l.today,
-                              since: l.progSinceWeeks(math.max(
-                                  1, points.last.date.difference(points.first.date).inDays ~/ 7)),
-                              start: DateFormat('d MMM', locale).format(points.first.date),
-                              end: DateFormat('d MMM', locale).format(points.last.date),
+                              since: l.progSinceWeeks(
+                                math.max(
+                                  1,
+                                  points.last.date
+                                          .difference(points.first.date)
+                                          .inDays ~/
+                                      7,
+                                ),
+                              ),
+                              start: DateFormat(
+                                'd MMM',
+                                locale,
+                              ).format(points.first.date),
+                              end: DateFormat(
+                                'd MMM',
+                                locale,
+                              ).format(points.last.date),
                               semantic:
                                   '${l.progTitle} — ${[l.progTabWeight, l.progTabBmi, l.progTabWaist][_tab]}',
                               chartKey: ValueKey('$_tab-${points.length}'),
@@ -137,7 +169,10 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                   const SizedBox(height: 16),
                   FadeSlideIn(
                     index: 3,
-                    child: Text(l.progBadges, style: Tch.style(17, weight: FontWeight.w600)),
+                    child: Text(
+                      l.progBadges,
+                      style: Tch.style(17, weight: FontWeight.w600),
+                    ),
                   ),
                   const SizedBox(height: 10),
                   FadeSlideIn(
@@ -145,16 +180,34 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen> {
                     child: Row(
                       children: [
                         Expanded(
-                            child: _Badge(TchIcons.leaf, Tch.greenLight, Tch.greenDark2,
-                                l.progB1, p.firstSession)),
+                          child: _Badge(
+                            TchIcons.leaf,
+                            Tch.greenLight,
+                            Tch.greenDark2,
+                            l.progB1,
+                            p.firstSession,
+                          ),
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                            child: _Badge(TchIcons.flame, Tch.peachLight, Tch.coralText,
-                                l.progB2, p.streak14)),
+                          child: _Badge(
+                            TchIcons.flame,
+                            Tch.peachLight,
+                            Tch.coralText,
+                            l.progB2,
+                            p.streak14,
+                          ),
+                        ),
                         const SizedBox(width: 10),
                         Expanded(
-                            child: _Badge(TchIcons.award, Tch.yellow, const Color(0xFF7A5C00),
-                                l.progB3, p.lost4kg)),
+                          child: _Badge(
+                            TchIcons.award,
+                            Tch.yellow,
+                            const Color(0xFF7A5C00),
+                            l.progB3,
+                            p.lost4kg,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -211,17 +264,23 @@ class _ChartCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(today, style: Tch.style(13, color: Tch.textSecondary)),
-                Text.rich(TextSpan(
-                  text: fmt(last),
-                  style: Tch.style(32, weight: FontWeight.w700, height: 1.1),
-                  children: [
-                    if (unit.isNotEmpty)
-                      TextSpan(
-                        text: ' $unit',
-                        style: Tch.style(15, weight: FontWeight.w500, color: Tch.textSecondary),
-                      ),
-                  ],
-                )),
+                Text.rich(
+                  TextSpan(
+                    text: fmt(last),
+                    style: Tch.style(32, weight: FontWeight.w700, height: 1.1),
+                    children: [
+                      if (unit.isNotEmpty)
+                        TextSpan(
+                          text: ' $unit',
+                          style: Tch.style(
+                            15,
+                            weight: FontWeight.w500,
+                            color: Tch.textSecondary,
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
               ],
             ),
             Container(
@@ -230,8 +289,14 @@ class _ChartCard extends StatelessWidget {
                 color: Tch.greenLight,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Text('$sign${fmt(diff.abs())}$u $since',
-                  style: Tch.style(13, weight: FontWeight.w600, color: Tch.greenDark)),
+              child: Text(
+                '$sign${fmt(diff.abs())}$u $since',
+                style: Tch.style(
+                  13,
+                  weight: FontWeight.w600,
+                  color: Tch.greenDark,
+                ),
+              ),
             ),
           ],
         ),
@@ -270,32 +335,38 @@ class _Badge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Opacity(
-        opacity: earned ? 1 : 0.4,
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
-          decoration: BoxDecoration(
-            color: Tch.surface,
-            borderRadius: BorderRadius.circular(20),
-            boxShadow: const [
-              BoxShadow(color: Color(0x0D2F3437), blurRadius: 10, offset: Offset(0, 2))
-            ],
+    opacity: earned ? 1 : 0.4,
+    child: Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 14),
+      decoration: BoxDecoration(
+        color: Tch.surface,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0D2F3437),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
-          child: Column(
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
-                child: Center(child: TchIcon(icon, color: fg)),
-              ),
-              const SizedBox(height: 8),
-              Text(label,
-                  textAlign: TextAlign.center,
-                  style: Tch.style(12, weight: FontWeight.w500, height: 1.3)),
-            ],
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(color: bg, shape: BoxShape.circle),
+            child: Center(child: TchIcon(icon, color: fg)),
           ),
-        ),
-      );
+          const SizedBox(height: 8),
+          Text(
+            label,
+            textAlign: TextAlign.center,
+            style: Tch.style(12, weight: FontWeight.w500, height: 1.3),
+          ),
+        ],
+      ),
+    ),
+  );
 }
 
 /// Saisie du poids et du tour de taille du jour.
@@ -318,7 +389,8 @@ class _MeasureSheetState extends ConsumerState<_MeasureSheet> {
     super.dispose();
   }
 
-  double? _num(TextEditingController c) => double.tryParse(c.text.trim().replaceAll(',', '.'));
+  double? _num(TextEditingController c) =>
+      double.tryParse(c.text.trim().replaceAll(',', '.'));
 
   Future<void> _save() async {
     final l = AppLocalizations.of(context);
@@ -333,7 +405,9 @@ class _MeasureSheetState extends ConsumerState<_MeasureSheet> {
     }
     setState(() => _saving = true);
     try {
-      await ref.read(progressRepositoryProvider).addMeasurement(weightKg: w, waistCm: c);
+      await ref
+          .read(progressRepositoryProvider)
+          .addMeasurement(weightKg: w, waistCm: c);
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _saving = false);
@@ -349,14 +423,21 @@ class _MeasureSheetState extends ConsumerState<_MeasureSheet> {
     final fmt = [FilteringTextInputFormatter.allow(RegExp(r'[0-9.,]'))];
     return Padding(
       padding: EdgeInsets.fromLTRB(
-          20, 20, 20, 24 + MediaQuery.of(context).viewInsets.bottom),
+        20,
+        20,
+        20,
+        24 + MediaQuery.of(context).viewInsets.bottom,
+      ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(l.progAddMeasure, style: Tch.style(20, weight: FontWeight.w700)),
           const SizedBox(height: 16),
-          Text(l.progWeightLabel, style: Tch.style(13, weight: FontWeight.w600)),
+          Text(
+            l.progWeightLabel,
+            style: Tch.style(13, weight: FontWeight.w600),
+          ),
           const SizedBox(height: 6),
           TchTextField(
             controller: _weight,

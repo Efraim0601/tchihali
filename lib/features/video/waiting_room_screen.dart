@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_avatar.dart';
@@ -28,23 +29,27 @@ class CallToggle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PressScale(
-        semanticLabel: label,
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: Tch.selectDuration,
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            color: on ? Colors.white.withValues(alpha: 0.92) : Tch.danger,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Center(child: TchIcon(icon, color: on ? Tch.text : Colors.white)),
-        ),
-      );
+    semanticLabel: label,
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: Tch.selectDuration,
+      width: 56,
+      height: 56,
+      decoration: BoxDecoration(
+        color: on ? Colors.white.withValues(alpha: 0.92) : Tch.danger,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Center(child: TchIcon(icon, color: on ? Tch.text : Colors.white)),
+    ),
+  );
 }
 
 String _initials(String name) {
-  final p = name.trim().split(RegExp(r'\s+')).where((s) => s.isNotEmpty).toList();
+  final p = name
+      .trim()
+      .split(RegExp(r'\s+'))
+      .where((s) => s.isNotEmpty)
+      .toList();
   if (p.isEmpty) return '';
   return (p.first[0] + (p.length > 1 ? p.last[0] : '')).toUpperCase();
 }
@@ -69,7 +74,11 @@ class WaitingRoomScreen extends ConsumerWidget {
             child: IntrinsicHeight(
               child: Padding(
                 padding: EdgeInsets.fromLTRB(
-                    20, Tch.topInset(context) - 4, 20, 16 + MediaQuery.of(context).padding.bottom.clamp(18, 40)),
+                  20,
+                  Tch.topInset(context) - 4,
+                  20,
+                  16 + MediaQuery.of(context).padding.bottom.clamp(18, 40),
+                ),
                 child: Column(
                   children: [
                     FadeSlideIn(
@@ -90,12 +99,20 @@ class WaitingRoomScreen extends ConsumerWidget {
                                 boxShadow: Tch.cardShadow,
                               ),
                               child: const Center(
-                                  child: TchIcon(TchIcons.close,
-                                      size: 22, color: Tch.text, strokeWidth: 2.2)),
+                                child: TchIcon(
+                                  TchIcons.close,
+                                  size: 22,
+                                  color: Tch.text,
+                                  strokeWidth: 2.2,
+                                ),
+                              ),
                             ),
                           ),
                           const SizedBox(width: 12),
-                          Text(l.waitTitle, style: Tch.style(22, weight: FontWeight.w700)),
+                          Text(
+                            l.waitTitle,
+                            style: Tch.style(22, weight: FontWeight.w700),
+                          ),
                         ],
                       ),
                     ),
@@ -126,9 +143,14 @@ class WaitingRoomScreen extends ConsumerWidget {
                                       radius: 42,
                                     ),
                                     const SizedBox(height: 10),
-                                    Text(l.waitCamOff,
-                                        style: Tch.style(14,
-                                            weight: FontWeight.w500, color: Colors.white)),
+                                    Text(
+                                      l.waitCamOff,
+                                      style: Tch.style(
+                                        14,
+                                        weight: FontWeight.w500,
+                                        color: Colors.white,
+                                      ),
+                                    ),
                                   ],
                                 ),
                               ),
@@ -166,16 +188,30 @@ class WaitingRoomScreen extends ConsumerWidget {
                         padding: const EdgeInsets.all(16),
                         child: Row(
                           children: [
-                            const TchAvatar(initials: 'EM', size: 52, radius: 18),
+                            const TchAvatar(
+                              initials: 'EM',
+                              size: 52,
+                              radius: 18,
+                            ),
                             const SizedBox(width: 14),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(l.waitComing,
-                                      style: Tch.style(16, weight: FontWeight.w600)),
-                                  Text(l.waitEta,
-                                      style: Tch.style(14, color: Tch.textSecondary)),
+                                  Text(
+                                    l.waitComing,
+                                    style: Tch.style(
+                                      16,
+                                      weight: FontWeight.w600,
+                                    ),
+                                  ),
+                                  Text(
+                                    l.waitEta,
+                                    style: Tch.style(
+                                      14,
+                                      color: Tch.textSecondary,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -187,7 +223,9 @@ class WaitingRoomScreen extends ConsumerWidget {
                                 width: 12,
                                 height: 12,
                                 decoration: const BoxDecoration(
-                                    color: Color(0xFFE9B949), shape: BoxShape.circle),
+                                  color: Color(0xFFE9B949),
+                                  shape: BoxShape.circle,
+                                ),
                               ),
                             ),
                           ],

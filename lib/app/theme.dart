@@ -69,10 +69,8 @@ class Tch {
         surface: surface,
       ).copyWith(primary: green, secondary: coral, error: danger),
     );
-    final textTheme = GoogleFonts.poppinsTextTheme(base.textTheme).apply(
-      bodyColor: text,
-      displayColor: text,
-    );
+    final textTheme = GoogleFonts.poppinsTextTheme(base.textTheme)
+        .apply(bodyColor: text, displayColor: text);
     return base.copyWith(
       textTheme: textTheme,
       splashFactory: NoSplash.splashFactory,
@@ -87,11 +85,10 @@ class Tch {
     FontWeight weight = FontWeight.w400,
     Color color = text,
     double? height,
-  }) =>
-      GoogleFonts.poppins(
-        fontSize: size,
-        fontWeight: weight,
-        color: color,
-        height: height,
-      );
+  }) => GoogleFonts.poppins(
+    fontSize: size,
+    fontWeight: weight,
+    color: color,
+    height: height,
+  );
 }

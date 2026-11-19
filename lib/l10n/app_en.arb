@@ -383,5 +383,71 @@
         "type": "String"
       }
     }
+  },
+  "proAddSlotTitle": "Add a slot",
+  "proSlotAdd": "Add this slot",
+  "proSlotPick": "Pick the time",
+  "proSlotNone": "No slot on this day",
+  "proSlotRemove": "Remove the {time} slot",
+  "proSlotAdded": "Slot added.",
+  "proPatientsTitle": "Patients",
+  "proReportsTitle": "Reports",
+  "proNoPatients": "No patients yet.",
+  "proMessages": "Messages",
+  "proNoConversations": "No conversations.",
+  "proWriteTo": "Write to {name}",
+  "proReportSendFailed": "A summary is required to send the report.",
+  "proNoteSaved": "Note saved.",
+  "@proSlotRemove": {
+    "placeholders": {
+      "time": {
+        "type": "String"
+      }
+    }
+  },
+  "@proWriteTo": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "yesterday": "Yesterday",
+  "proPatientInfo": "{info} · Followed since {date}",
+  "proGoalLabel": "Goal {value}",
+  "proUnknown": "—",
+  "@proPatientInfo": {
+    "placeholders": {
+      "info": {
+        "type": "String"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
+  },
+  "@proGoalLabel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "proReportContext": "{name} · Session {n} · {date}",
+  "proGoalPlaceholder": "Add a goal…",
+  "proMealPlaceholder": "Meal",
+  "proSaveFailed": "Could not save. Please try again.",
+  "@proReportContext": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "n": {
+        "type": "int"
+      },
+      "date": {
+        "type": "String"
+      }
+    }
   }
 }

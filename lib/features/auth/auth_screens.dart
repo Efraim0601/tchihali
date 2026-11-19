@@ -2,7 +2,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
+import '../../app/auth_gate.dart';
 import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/tch_back_button.dart';
@@ -31,48 +33,64 @@ class _AuthLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        backgroundColor: Tch.background,
-        body: LayoutBuilder(
-          builder: (context, box) => SingleChildScrollView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: box.maxHeight),
-              child: IntrinsicHeight(
-                child: Padding(
-                  padding: EdgeInsets.fromLTRB(Tch.authPadding,
-                      Tch.topInset(context), Tch.authPadding, 36),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: TchBackButton(onTap: onBack)),
-                      const SizedBox(height: 28),
-                      FadeSlideIn(
-                        index: 1,
-                        child: Text(title,
-                            style: Tch.style(28, weight: FontWeight.w700, height: 1.2)),
-                      ),
-                      const SizedBox(height: 8),
-                      FadeSlideIn(
-                        index: 2,
-                        child: Text(sub,
-                            style: Tch.style(15,
-                                color: Tch.textSecondary, height: 1.5)),
-                      ),
-                      const SizedBox(height: 28),
-                      FadeSlideIn(index: 3, child: body),
-                      const Spacer(),
-                      const SizedBox(height: 18),
-                      footer,
-                    ],
+    backgroundColor: Tch.background,
+    body: LayoutBuilder(
+      builder: (context, box) => SingleChildScrollView(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: box.maxHeight),
+          child: IntrinsicHeight(
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(
+                Tch.authPadding,
+                Tch.topInset(context),
+                Tch.authPadding,
+                36,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: TchBackButton(onTap: onBack),
                   ),
-                ),
+                  const SizedBox(height: 28),
+                  FadeSlideIn(
+                    index: 1,
+                    child: Text(
+                      title,
+                      style: Tch.style(
+                        28,
+                        weight: FontWeight.w700,
+                        height: 1.2,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  FadeSlideIn(
+                    index: 2,
+                    child: Text(
+                      sub,
+                      style: Tch.style(
+                        15,
+                        color: Tch.textSecondary,
+                        height: 1.5,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 28),
+                  FadeSlideIn(index: 3, child: body),
+                  const Spacer(),
+                  const SizedBox(height: 18),
+                  footer,
+                ],
               ),
             ),
           ),
         ),
-      );
+      ),
+    ),
+  );
 }
 
 /// 4. Inscription : nom + téléphone (+237), sans mot de passe.
@@ -108,10 +126,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final messenger = ScaffoldMessenger.of(context);
     setState(() => _busy = true);
     try {
-      await ref.read(authRepositoryProvider).requestCode(
-            phone: toE164(_phone.text),
-            name: _name.text.trim(),
-          );
+      await ref
+          .read(authRepositoryProvider)
+          .requestCode(phone: toE164(_phone.text), name: _name.text.trim());
     } on ApiException catch (e) {
       if (!mounted) return;
       setState(() => _busy = false);
@@ -120,14 +137,17 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     }
     if (!mounted) return;
     setState(() => _busy = false);
-    ref.read(signupProvider.notifier).set(_name.text.trim(), _phone.text.trim());
+    ref
+        .read(signupProvider.notifier)
+        .set(_name.text.trim(), _phone.text.trim());
     context.go('/signup/code');
   }
 
   @override
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
-    Widget label(String s) => Text(s, style: Tch.style(14, weight: FontWeight.w600));
+    Widget label(String s) =>
+        Text(s, style: Tch.style(14, weight: FontWeight.w600));
     return _AuthLayout(
       onBack: () => context.go('/onboarding/3'),
       title: l.signupTitle,
@@ -138,9 +158,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
           label(l.fieldName),
           const SizedBox(height: 8),
           TchTextField(
-              controller: _name,
-              semanticLabel: l.fieldName,
-              onChanged: (_) => setState(() {})),
+            controller: _name,
+            semanticLabel: l.fieldName,
+            onChanged: (_) => setState(() {}),
+          ),
           const SizedBox(height: 18),
           label(l.fieldPhone),
           const SizedBox(height: 8),
@@ -155,7 +176,10 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   borderRadius: BorderRadius.circular(Tch.fieldRadius),
                   border: Border.all(color: Tch.border, width: 1.5),
                 ),
-                child: Text('+237', style: Tch.style(16, weight: FontWeight.w500)),
+                child: Text(
+                  '+237',
+                  style: Tch.style(16, weight: FontWeight.w500),
+                ),
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -163,7 +187,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                   controller: _phone,
                   semanticLabel: l.fieldPhone,
                   keyboardType: TextInputType.phone,
-                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]'))],
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9 ]')),
+                  ],
                   onChanged: (_) => setState(() {}),
                 ),
               ),
@@ -188,15 +214,23 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: Text(l.terms,
-                      style: Tch.style(13,
-                          color: const Color(0xFF4A5054), height: 1.45)),
+                  child: Text(
+                    l.terms,
+                    style: Tch.style(
+                      13,
+                      color: const Color(0xFF4A5054),
+                      height: 1.45,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: 18),
-          TchButton(label: l.signupCta, onPressed: _valid && !_busy ? _submit : null),
+          TchButton(
+            label: l.signupCta,
+            onPressed: _valid && !_busy ? _submit : null,
+          ),
         ],
       ),
     );
@@ -243,12 +277,16 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
         _busy = false;
         _code.clear();
       });
-      messenger.showSnackBar(SnackBar(content: Text(apiErrorMessage(l, e, codeContext: true))));
+      messenger.showSnackBar(
+        SnackBar(content: Text(apiErrorMessage(l, e, codeContext: true))),
+      );
       return;
     }
     if (!mounted) return;
     setState(() => _busy = false);
-    context.go('/questionnaire/1');
+    context.go(
+      authGate.role == 'dietitian' ? '/pro/agenda' : '/questionnaire/1',
+    );
   }
 
   Future<void> _resend() async {
@@ -292,11 +330,14 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
                       color: Tch.surface,
                       borderRadius: BorderRadius.circular(Tch.fieldRadius),
                       border: Border.all(
-                          color: i == value.length ? Tch.green : Tch.border,
-                          width: 1.5),
+                        color: i == value.length ? Tch.green : Tch.border,
+                        width: 1.5,
+                      ),
                     ),
-                    child: Text(i < value.length ? value[i] : '',
-                        style: Tch.style(22, weight: FontWeight.w600)),
+                    child: Text(
+                      i < value.length ? value[i] : '',
+                      style: Tch.style(22, weight: FontWeight.w600),
+                    ),
                   ),
               ],
             ),
@@ -322,7 +363,9 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
         children: [
           TchButton(
             label: l.codeCta,
-            onPressed: value.length == 6 && !_busy ? () => _verify(value) : null,
+            onPressed: value.length == 6 && !_busy
+                ? () => _verify(value)
+                : null,
           ),
           GestureDetector(
             behavior: HitTestBehavior.opaque,
@@ -331,8 +374,10 @@ class _SmsCodeScreenState extends ConsumerState<SmsCodeScreen> {
               height: 48,
               margin: const EdgeInsets.only(top: 8),
               alignment: Alignment.center,
-              child: Text(l.codeResend,
-                  style: Tch.style(15, weight: FontWeight.w500)),
+              child: Text(
+                l.codeResend,
+                style: Tch.style(15, weight: FontWeight.w500),
+              ),
             ),
           ),
         ],

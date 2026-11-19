@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/async_view.dart';
@@ -58,7 +59,9 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
     final title = (r.detailTitle ?? r.name).of(locale);
-    final difficulty = r.difficulty == Difficulty.easy ? l.recipeEasy : l.recipeMedium;
+    final difficulty = r.difficulty == Difficulty.easy
+        ? l.recipeEasy
+        : l.recipeMedium;
     final meta = '${r.time} · ${l.recipeServings(r.servings)} · $difficulty';
     final top = Tch.topInset(context) - 4;
 
@@ -69,14 +72,20 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           Expanded(
             child: Stack(
               children: [
-                SizedBox(height: 270, width: double.infinity, child: RecipeHero(recipe: r)),
+                SizedBox(
+                  height: 270,
+                  width: double.infinity,
+                  child: RecipeHero(recipe: r),
+                ),
                 // Feuille arrondie qui recouvre le bas de l'image de 26 px.
                 Positioned.fill(
                   top: 244,
                   child: Container(
                     decoration: const BoxDecoration(
                       color: Tch.background,
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+                      borderRadius: BorderRadius.vertical(
+                        top: Radius.circular(28),
+                      ),
                     ),
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
@@ -87,10 +96,22 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(title,
-                                    style: Tch.style(24, weight: FontWeight.w700, height: 1.2)),
+                                Text(
+                                  title,
+                                  style: Tch.style(
+                                    24,
+                                    weight: FontWeight.w700,
+                                    height: 1.2,
+                                  ),
+                                ),
                                 const SizedBox(height: 6),
-                                Text(meta, style: Tch.style(14, color: Tch.textSecondary)),
+                                Text(
+                                  meta,
+                                  style: Tch.style(
+                                    14,
+                                    color: Tch.textSecondary,
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -148,24 +169,40 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(l.recipeIngredients,
-                                    style: Tch.style(16, weight: FontWeight.w600)),
+                                Text(
+                                  l.recipeIngredients,
+                                  style: Tch.style(16, weight: FontWeight.w600),
+                                ),
                                 const SizedBox(height: 10),
                                 for (final i in r.ingredients)
                                   Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 10),
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 10,
+                                    ),
                                     decoration: const BoxDecoration(
                                       border: Border(
-                                          bottom: BorderSide(color: Tch.borderLight)),
+                                        bottom: BorderSide(
+                                          color: Tch.borderLight,
+                                        ),
+                                      ),
                                     ),
                                     child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         Expanded(
-                                            child: Text(i.name.of(locale),
-                                                style: Tch.style(15))),
-                                        Text(i.qty.of(locale),
-                                            style: Tch.style(15, weight: FontWeight.w600)),
+                                          child: Text(
+                                            i.name.of(locale),
+                                            style: Tch.style(15),
+                                          ),
+                                        ),
+                                        Text(
+                                          i.qty.of(locale),
+                                          style: Tch.style(
+                                            15,
+                                            weight: FontWeight.w600,
+                                          ),
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -187,8 +224,12 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
                       _RoundButton(
                         label: l.back,
                         onTap: () => context.go('/journal/recipes'),
-                        child: const TchIcon(TchIcons.back,
-                            size: 22, color: Tch.text, strokeWidth: 2.2),
+                        child: const TchIcon(
+                          TchIcons.back,
+                          size: 22,
+                          color: Tch.text,
+                          strokeWidth: 2.2,
+                        ),
                       ),
                       _RoundButton(
                         label: l.recipeFav,
@@ -212,7 +253,11 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
           ),
           Padding(
             padding: EdgeInsets.fromLTRB(
-                20, 14, 20, 14 + MediaQuery.of(context).padding.bottom.clamp(18, 40)),
+              20,
+              14,
+              20,
+              14 + MediaQuery.of(context).padding.bottom.clamp(18, 40),
+            ),
             child: TchButton(
               label: l.recipeAdd,
               onPressed: () => context.go('/journal/add', extra: r),
@@ -225,25 +270,29 @@ class _RecipeDetailScreenState extends ConsumerState<RecipeDetailScreen> {
 }
 
 class _RoundButton extends StatelessWidget {
-  const _RoundButton({required this.label, required this.onTap, required this.child});
+  const _RoundButton({
+    required this.label,
+    required this.onTap,
+    required this.child,
+  });
   final String label;
   final VoidCallback onTap;
   final Widget child;
 
   @override
   Widget build(BuildContext context) => PressScale(
-        semanticLabel: label,
-        onTap: onTap,
-        child: Container(
-          width: 44,
-          height: 44,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(14),
-          ),
-          child: Center(child: child),
-        ),
-      );
+    semanticLabel: label,
+    onTap: onTap,
+    child: Container(
+      width: 44,
+      height: 44,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Center(child: child),
+    ),
+  );
 }
 
 class _Tile extends StatelessWidget {
@@ -264,21 +313,28 @@ class _Tile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: bg,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: shadow
-              ? const [
-                  BoxShadow(color: Color(0x0D2F3437), blurRadius: 10, offset: Offset(0, 2))
-                ]
-              : null,
+    padding: const EdgeInsets.symmetric(vertical: 12),
+    decoration: BoxDecoration(
+      color: bg,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: shadow
+          ? const [
+              BoxShadow(
+                color: Color(0x0D2F3437),
+                blurRadius: 10,
+                offset: Offset(0, 2),
+              ),
+            ]
+          : null,
+    ),
+    child: Column(
+      children: [
+        Text(
+          value,
+          style: Tch.style(17, weight: FontWeight.w700, color: valueColor),
         ),
-        child: Column(
-          children: [
-            Text(value, style: Tch.style(17, weight: FontWeight.w700, color: valueColor)),
-            Text(label, style: Tch.style(11, color: labelColor)),
-          ],
-        ),
-      );
+        Text(label, style: Tch.style(11, color: labelColor)),
+      ],
+    ),
+  );
 }

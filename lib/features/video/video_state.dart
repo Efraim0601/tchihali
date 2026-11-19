@@ -16,4 +16,6 @@ class CallControlsNotifier extends Notifier<CallControls> {
 }
 
 final callControlsProvider =
-    NotifierProvider<CallControlsNotifier, CallControls>(CallControlsNotifier.new);
+    NotifierProvider<CallControlsNotifier, CallControls>(
+      CallControlsNotifier.new,
+    );

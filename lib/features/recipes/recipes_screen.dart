@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
 import '../../core/widgets/async_view.dart';
@@ -25,12 +26,21 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
   Widget build(BuildContext context) {
     final l = AppLocalizations.of(context);
     final locale = Localizations.localeOf(context).toString();
-    final filters = [l.recipesAll, l.recipesSlim, l.recipesDiabetes, l.recipesVeg];
+    final filters = [
+      l.recipesAll,
+      l.recipesSlim,
+      l.recipesDiabetes,
+      l.recipesVeg,
+    ];
     final recipes = ref.watch(recipesProvider);
 
     return SingleChildScrollView(
       padding: EdgeInsets.fromLTRB(
-          Tch.pagePadding, Tch.topInset(context), Tch.pagePadding, 24),
+        Tch.pagePadding,
+        Tch.topInset(context),
+        Tch.pagePadding,
+        24,
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -39,7 +49,10 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
               children: [
                 TchBackButton(onTap: () => context.go('/journal')),
                 const SizedBox(width: 12),
-                Text(l.recipesTitle, style: Tch.style(24, weight: FontWeight.w700)),
+                Text(
+                  l.recipesTitle,
+                  style: Tch.style(24, weight: FontWeight.w700),
+                ),
               ],
             ),
           ),
@@ -68,36 +81,46 @@ class _RecipesScreenState extends ConsumerState<RecipesScreen> {
             value: recipes,
             onRetry: () => ref.invalidate(recipesProvider),
             builder: (all) {
-              final list = all.where((r) => _filter == 0 || r.tags.contains(_filter)).toList();
-              return Column(children: [
-          for (var i = 0; i < list.length; i += 2) ...[
-            if (i > 0) const SizedBox(height: 12),
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+              final list = all
+                  .where((r) => _filter == 0 || r.tags.contains(_filter))
+                  .toList();
+              return Column(
                 children: [
-                  Expanded(
-                    child: FadeSlideIn(
-                      key: ValueKey(list[i].id),
-                      index: 2 + i,
-                      child: _RecipeCard(recipe: list[i], locale: locale),
+                  for (var i = 0; i < list.length; i += 2) ...[
+                    if (i > 0) const SizedBox(height: 12),
+                    IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: FadeSlideIn(
+                              key: ValueKey(list[i].id),
+                              index: 2 + i,
+                              child: _RecipeCard(
+                                recipe: list[i],
+                                locale: locale,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: i + 1 < list.length
+                                ? FadeSlideIn(
+                                    key: ValueKey(list[i + 1].id),
+                                    index: 3 + i,
+                                    child: _RecipeCard(
+                                      recipe: list[i + 1],
+                                      locale: locale,
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: i + 1 < list.length
-                        ? FadeSlideIn(
-                            key: ValueKey(list[i + 1].id),
-                            index: 3 + i,
-                            child: _RecipeCard(recipe: list[i + 1], locale: locale),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
+                  ],
                 ],
-              ),
-            ),
-          ],
-              ]);
+              );
             },
           ),
         ],
@@ -113,45 +136,53 @@ class _RecipeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PressScale(
-        onTap: () => context.go('/journal/recipes/${recipe.id}'),
-        child: Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(
-            color: Tch.surface,
-            borderRadius: BorderRadius.circular(22),
-            boxShadow: const [
-              BoxShadow(color: Color(0x0F2F3437), blurRadius: 16, offset: Offset(0, 4))
-            ],
+    onTap: () => context.go('/journal/recipes/${recipe.id}'),
+    child: Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Tch.surface,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0F2F3437),
+            blurRadius: 16,
+            offset: Offset(0, 4),
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                height: 124,
-                width: double.infinity,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: recipe.tint,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: RecipePlate(recipe: recipe),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(recipe.name.of(locale),
-                        style: Tch.style(14, weight: FontWeight.w600, height: 1.3)),
-                    const SizedBox(height: 4),
-                    Text('${recipe.kcal} kcal · ${recipe.time}',
-                        style: Tch.style(12, color: Tch.textSecondary)),
-                  ],
-                ),
-              ),
-            ],
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 124,
+            width: double.infinity,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: recipe.tint,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: RecipePlate(recipe: recipe),
           ),
-        ),
-      );
+          const SizedBox(height: 8),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 0, 4, 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  recipe.name.of(locale),
+                  style: Tch.style(14, weight: FontWeight.w600, height: 1.3),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${recipe.kcal} kcal · ${recipe.time}',
+                  style: Tch.style(12, color: Tch.textSecondary),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/locale_provider.dart';
 import '../../app/theme.dart';
 import '../../core/widgets/animations.dart';
@@ -33,7 +34,10 @@ class WelcomeScreen extends ConsumerWidget {
             height: 48,
             margin: const EdgeInsets.only(top: 8),
             alignment: Alignment.center,
-            child: Text(l.onb1Login, style: Tch.style(15, weight: FontWeight.w500)),
+            child: Text(
+              l.onb1Login,
+              style: Tch.style(15, weight: FontWeight.w500),
+            ),
           ),
         ),
       ),
@@ -55,19 +59,22 @@ class _TopBar extends ConsumerWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(children: [
-          SvgPicture.string(_logo, width: 30, height: 30),
-          const SizedBox(width: 8),
-          Text(l.appName, style: Tch.style(18, weight: FontWeight.w700)),
-        ]),
+        Row(
+          children: [
+            SvgPicture.string(_logo, width: 30, height: 30),
+            const SizedBox(width: 8),
+            Text(l.appName, style: Tch.style(18, weight: FontWeight.w700)),
+          ],
+        ),
         TchPillSwitch(
           semanticLabel: l.langLabel,
           labels: const ['FR', 'EN'],
           selectedIndex: lang == 'fr' ? 0 : 1,
           horizontalPadding: 14,
           activeWeight: FontWeight.w700,
-          onChanged: (i) =>
-              ref.read(localeProvider.notifier).set(Locale(i == 0 ? 'fr' : 'en')),
+          onChanged: (i) => ref
+              .read(localeProvider.notifier)
+              .set(Locale(i == 0 ? 'fr' : 'en')),
         ),
       ],
     );
@@ -111,8 +118,10 @@ class Onboarding3Screen extends StatelessWidget {
         alignment: Alignment.centerLeft,
         child: TchBackButton(onTap: () => context.go('/onboarding/2')),
       ),
-      illustration:
-          AppointmentCardIllustration(label: l.onb3Card, confirmed: l.onb3Confirmed),
+      illustration: AppointmentCardIllustration(
+        label: l.onb3Card,
+        confirmed: l.onb3Confirmed,
+      ),
       dots: 2,
       title: l.onb3Title,
       text: l.onb3Text,
@@ -128,14 +137,16 @@ class _SkipLink extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: () => context.go('/signup'),
-        child: Container(
-          constraints: const BoxConstraints(minHeight: 44),
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          alignment: Alignment.center,
-          child: Text(label,
-              style: Tch.style(15, weight: FontWeight.w500, color: Tch.textSecondary)),
-        ),
-      );
+    behavior: HitTestBehavior.opaque,
+    onTap: () => context.go('/signup'),
+    child: Container(
+      constraints: const BoxConstraints(minHeight: 44),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      alignment: Alignment.center,
+      child: Text(
+        label,
+        style: Tch.style(15, weight: FontWeight.w500, color: Tch.textSecondary),
+      ),
+    ),
+  );
 }

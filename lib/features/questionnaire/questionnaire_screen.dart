@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../app/theme.dart';
 import '../../core/api_errors.dart';
 import '../../core/widgets/animations.dart';
@@ -13,7 +14,11 @@ import '../../l10n/gen/app_localizations.dart';
 
 /// Réponses : objectif (choix unique), santé et allergies (choix multiples).
 class QuestionnaireState {
-  const QuestionnaireState({this.goal = 0, this.health = const {}, this.allergies = const {}});
+  const QuestionnaireState({
+    this.goal = 0,
+    this.health = const {},
+    this.allergies = const {},
+  });
   final int goal;
   final Set<int> health;
   final Set<int> allergies;
@@ -23,8 +28,11 @@ class QuestionnaireNotifier extends Notifier<QuestionnaireState> {
   @override
   QuestionnaireState build() => const QuestionnaireState();
 
-  void pickGoal(int i) =>
-      state = QuestionnaireState(goal: i, health: state.health, allergies: state.allergies);
+  void pickGoal(int i) => state = QuestionnaireState(
+    goal: i,
+    health: state.health,
+    allergies: state.allergies,
+  );
 
   // La dernière option (« Aucun ») est exclusive.
   Set<int> _toggle(Set<int> set, int i) {
@@ -35,14 +43,22 @@ class QuestionnaireNotifier extends Notifier<QuestionnaireState> {
     return next;
   }
 
-  void toggleHealth(int i) => state =
-      QuestionnaireState(goal: state.goal, health: _toggle(state.health, i), allergies: state.allergies);
-  void toggleAllergy(int i) => state =
-      QuestionnaireState(goal: state.goal, health: state.health, allergies: _toggle(state.allergies, i));
+  void toggleHealth(int i) => state = QuestionnaireState(
+    goal: state.goal,
+    health: _toggle(state.health, i),
+    allergies: state.allergies,
+  );
+  void toggleAllergy(int i) => state = QuestionnaireState(
+    goal: state.goal,
+    health: state.health,
+    allergies: _toggle(state.allergies, i),
+  );
 }
 
 final questionnaireProvider =
-    NotifierProvider<QuestionnaireNotifier, QuestionnaireState>(QuestionnaireNotifier.new);
+    NotifierProvider<QuestionnaireNotifier, QuestionnaireState>(
+      QuestionnaireNotifier.new,
+    );
 
 const _tints = [
   (Tch.greenLight, Tch.greenDark),
@@ -84,18 +100,23 @@ class QuestionnaireScreen extends ConsumerWidget {
     final (title, sub, labels, paths) = switch (step) {
       1 => (l.q1Title, l.q1Sub, [l.q1o1, l.q1o2, l.q1o3, l.q1o4], _goalPaths),
       2 => (l.q2Title, l.q2Sub, [l.q2o1, l.q2o2, l.q2o3, l.q2o4], _healthPaths),
-      _ => (l.q3Title, l.q3Sub, [l.q3o1, l.q3o2, l.q3o3, l.q3o4], _allergyPaths),
+      _ => (
+        l.q3Title,
+        l.q3Sub,
+        [l.q3o1, l.q3o2, l.q3o3, l.q3o4],
+        _allergyPaths,
+      ),
     };
     bool selected(int i) => switch (step) {
-          1 => q.goal == i,
-          2 => q.health.contains(i),
-          _ => q.allergies.contains(i),
-        };
+      1 => q.goal == i,
+      2 => q.health.contains(i),
+      _ => q.allergies.contains(i),
+    };
     void pick(int i) => switch (step) {
-          1 => n.pickGoal(i),
-          2 => n.toggleHealth(i),
-          _ => n.toggleAllergy(i),
-        };
+      1 => n.pickGoal(i),
+      2 => n.toggleHealth(i),
+      _ => n.toggleAllergy(i),
+    };
 
     return Scaffold(
       backgroundColor: Tch.background,
@@ -105,37 +126,62 @@ class QuestionnaireScreen extends ConsumerWidget {
             constraints: BoxConstraints(minHeight: box.maxHeight),
             child: IntrinsicHeight(
               child: Padding(
-                padding: EdgeInsets.fromLTRB(Tch.authPadding,
-                    Tch.topInset(context), Tch.authPadding, 36),
+                padding: EdgeInsets.fromLTRB(
+                  Tch.authPadding,
+                  Tch.topInset(context),
+                  Tch.authPadding,
+                  36,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Row(
                       children: [
                         TchBackButton(
-                            onTap: () => context.go(
-                                step == 1 ? '/signup/code' : '/questionnaire/${step - 1}')),
+                          onTap: () => context.go(
+                            step == 1
+                                ? '/signup/code'
+                                : '/questionnaire/${step - 1}',
+                          ),
+                        ),
                         const SizedBox(width: 12),
                         Expanded(child: _ProgressBar(fraction: step / 3)),
                         const SizedBox(width: 12),
-                        Text('$step / 3',
-                            style: Tch.style(13,
-                                weight: FontWeight.w600, color: Tch.textSecondary)),
+                        Text(
+                          '$step / 3',
+                          style: Tch.style(
+                            13,
+                            weight: FontWeight.w600,
+                            color: Tch.textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 28),
                     FadeSlideIn(
                       key: ValueKey('t$step'),
                       index: 1,
-                      child: Text(title,
-                          style: Tch.style(26, weight: FontWeight.w700, height: 1.25)),
+                      child: Text(
+                        title,
+                        style: Tch.style(
+                          26,
+                          weight: FontWeight.w700,
+                          height: 1.25,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 8),
                     FadeSlideIn(
                       key: ValueKey('s$step'),
                       index: 2,
-                      child: Text(sub,
-                          style: Tch.style(15, color: Tch.textSecondary, height: 1.5)),
+                      child: Text(
+                        sub,
+                        style: Tch.style(
+                          15,
+                          color: Tch.textSecondary,
+                          height: 1.5,
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 22),
                     for (var i = 0; i < 4; i++) ...[
@@ -164,14 +210,17 @@ class QuestionnaireScreen extends ConsumerWidget {
                         }
                         final messenger = ScaffoldMessenger.of(context);
                         try {
-                          await ref.read(healthRepositoryProvider).save(
+                          await ref
+                              .read(healthRepositoryProvider)
+                              .save(
                                 goal: q.goal,
                                 conditions: q.health,
                                 allergies: q.allergies,
                               );
                         } on ApiException catch (e) {
                           messenger.showSnackBar(
-                              SnackBar(content: Text(apiErrorMessage(l, e))));
+                            SnackBar(content: Text(apiErrorMessage(l, e))),
+                          );
                           return;
                         }
                         if (context.mounted) context.go('/directory');
@@ -243,45 +292,53 @@ class _OptionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PressScale(
-        onTap: onTap,
-        child: AnimatedContainer(
-          duration: Tch.selectDuration,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-          decoration: BoxDecoration(
-            color: Tch.surface,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: on ? Tch.green : Tch.borderLight, width: 2),
-            boxShadow: const [
-              BoxShadow(color: Color(0x0A2F3437), blurRadius: 10, offset: Offset(0, 2))
-            ],
+    onTap: onTap,
+    child: AnimatedContainer(
+      duration: Tch.selectDuration,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      decoration: BoxDecoration(
+        color: Tch.surface,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: on ? Tch.green : Tch.borderLight, width: 2),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x0A2F3437),
+            blurRadius: 10,
+            offset: Offset(0, 2),
           ),
-          child: Row(
-            children: [
-              Container(
-                width: 46,
-                height: 46,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: tint.$1,
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                child: TchIcon('<path d="$path"/>', color: tint.$2),
-              ),
-              const SizedBox(width: 14),
-              Expanded(child: Text(label, style: Tch.style(16, weight: FontWeight.w600))),
-              AnimatedContainer(
-                duration: Tch.selectDuration,
-                width: 24,
-                height: 24,
-                decoration: BoxDecoration(
-                  shape: multi ? BoxShape.rectangle : BoxShape.circle,
-                  borderRadius: multi ? BorderRadius.circular(8) : null,
-                  border: Border.all(
-                      color: on ? Tch.green : Tch.checkBorder, width: on ? 7 : 2),
-                ),
-              ),
-            ],
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 46,
+            height: 46,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: tint.$1,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: TchIcon('<path d="$path"/>', color: tint.$2),
           ),
-        ),
-      );
+          const SizedBox(width: 14),
+          Expanded(
+            child: Text(label, style: Tch.style(16, weight: FontWeight.w600)),
+          ),
+          AnimatedContainer(
+            duration: Tch.selectDuration,
+            width: 24,
+            height: 24,
+            decoration: BoxDecoration(
+              shape: multi ? BoxShape.rectangle : BoxShape.circle,
+              borderRadius: multi ? BorderRadius.circular(8) : null,
+              border: Border.all(
+                color: on ? Tch.green : Tch.checkBorder,
+                width: on ? 7 : 2,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 }

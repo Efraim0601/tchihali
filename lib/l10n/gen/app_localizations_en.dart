@@ -858,4 +858,80 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get profileSave => 'Save';
+
+  @override
+  String get proAddSlotTitle => 'Add a slot';
+
+  @override
+  String get proSlotAdd => 'Add this slot';
+
+  @override
+  String get proSlotPick => 'Pick the time';
+
+  @override
+  String get proSlotNone => 'No slot on this day';
+
+  @override
+  String proSlotRemove(String time) {
+    return 'Remove the $time slot';
+  }
+
+  @override
+  String get proSlotAdded => 'Slot added.';
+
+  @override
+  String get proPatientsTitle => 'Patients';
+
+  @override
+  String get proReportsTitle => 'Reports';
+
+  @override
+  String get proNoPatients => 'No patients yet.';
+
+  @override
+  String get proMessages => 'Messages';
+
+  @override
+  String get proNoConversations => 'No conversations.';
+
+  @override
+  String proWriteTo(String name) {
+    return 'Write to $name';
+  }
+
+  @override
+  String get proReportSendFailed => 'A summary is required to send the report.';
+
+  @override
+  String get proNoteSaved => 'Note saved.';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String proPatientInfo(String info, String date) {
+    return '$info · Followed since $date';
+  }
+
+  @override
+  String proGoalLabel(String value) {
+    return 'Goal $value';
+  }
+
+  @override
+  String get proUnknown => '—';
+
+  @override
+  String proReportContext(String name, int n, String date) {
+    return '$name · Session $n · $date';
+  }
+
+  @override
+  String get proGoalPlaceholder => 'Add a goal…';
+
+  @override
+  String get proMealPlaceholder => 'Meal';
+
+  @override
+  String get proSaveFailed => 'Could not save. Please try again.';
 }

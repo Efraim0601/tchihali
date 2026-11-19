@@ -1,5 +1,6 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:material_ui/material_ui.dart';
+
 import '../../core/widgets/tch_icons.dart';
 import '../../data/recipes.dart';
 
@@ -11,15 +12,15 @@ class RecipePlate extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SvgPicture.string(
-        '''
+    '''
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">
 <circle cx="55" cy="55" r="46" fill="#FFFFFF"/><circle cx="55" cy="55" r="36" fill="#F7F3EC"/>
 <ellipse cx="46" cy="48" rx="18" ry="14" fill="${colorHex(recipe.c1)}"/>
 <ellipse cx="66" cy="62" rx="15" ry="9" fill="${colorHex(recipe.c2)}" transform="rotate(-20 66 62)"/>
 <circle cx="46" cy="70" r="8" fill="${colorHex(recipe.c3)}"/><circle cx="68" cy="40" r="6" fill="#E8775F"/></svg>''',
-        width: size,
-        height: size,
-      );
+    width: size,
+    height: size,
+  );
 }
 
 const _ndoleHero = '''

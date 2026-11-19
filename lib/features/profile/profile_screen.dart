@@ -268,7 +268,7 @@ class ProfileScreen extends ConsumerWidget {
                       tint: _menuTints[i],
                       last: i == labels.length - 1,
                       badge: i == 3 ? unread : 0,
-                  onTap: () => context.go(_menuRoutes[i]),
+                      onTap: () => context.go(_menuRoutes[i]),
                     ),
                 ],
               ),
@@ -357,7 +357,11 @@ class _MenuRow extends StatelessWidget {
               ),
               child: Text(
                 '$badge',
-                style: Tch.style(12, weight: FontWeight.w600, color: Colors.white),
+                style: Tch.style(
+                  12,
+                  weight: FontWeight.w600,
+                  color: Colors.white,
+                ),
               ),
             ),
           const TchIcon(
