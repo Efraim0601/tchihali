@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
@@ -32,7 +34,7 @@ android {
     // Signature de publication : lue dans android/key.properties (jamais versionné, voir RELEASE.md).
     // Sans ce fichier, la version « release » est signée avec la clé de debug (test seulement,
     // refusée par le Play Store).
-    val keyProps = java.util.Properties()
+    val keyProps = Properties()
     val keyFile = rootProject.file("key.properties")
     if (keyFile.exists()) keyFile.inputStream().use { keyProps.load(it) }
 
