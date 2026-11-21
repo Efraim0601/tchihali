@@ -1,0 +1,7 @@
+# Surcouche TEST : connexion avec le code fixe (TCHIHALI_DEV_FIXED_CODE), sans fournisseur SMS.
+# Données fictives uniquement. À retirer avant d'accueillir de vrais patients.
+services:
+  api:
+    environment:
+      TCHIHALI_ENV: dev
+      TCHIHALI_DEV_RETURN_CODE: "true"

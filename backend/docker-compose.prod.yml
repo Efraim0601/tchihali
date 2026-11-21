@@ -53,7 +53,7 @@ services:
 
 secrets:
   db_password:
-    file: ./secrets/db_password.txt
+    file: ./secrets/db_password.txt   # hexadécimal, propriétaire 10001:70, mode 440 (voir DEPLOY.md)
 
 volumes:
   tchihali_pg:
