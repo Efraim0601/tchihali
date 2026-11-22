@@ -1,0 +1,18 @@
+# Surcouche : version web de l'application sur son propre domaine (voir DEPLOY.md).
+# À combiner avec docker-compose.prod.yml. Exige TCHIHALI_DOMAIN (API) et TCHIHALI_WEB_DOMAIN.
+services:
+  web:
+    build:
+      context: ..
+      dockerfile: backend/web/Dockerfile
+      args:
+        API_BASE_URL: https://${TCHIHALI_DOMAIN:?indiquez le domaine de l'API}
+    restart: unless-stopped
+    networks: [internal]
+
+  caddy:
+    environment:
+      TCHIHALI_WEB_DOMAIN: ${TCHIHALI_WEB_DOMAIN:?indiquez le domaine de la version web, ex. app.exemple.cm}
+    volumes:
+      - ./web/site.caddy:/etc/caddy/sites/web.caddy:ro
+    depends_on: [api, web]

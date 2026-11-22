@@ -9,3 +9,6 @@
 	}
 	reverse_proxy api:8080
 }
+
+# Sites supplémentaires (ex. version web, voir docker-compose.web.yml). Aucun fichier = rien à charger.
+import /etc/caddy/sites/*.caddy

@@ -1,0 +1,12 @@
+# Contexte de compilation de la version web (backend/web/Dockerfile) :
+# liste blanche, pour ne jamais envoyer secrets, .env ou base de données dans une image.
+*
+!lib/
+!web/
+!assets/
+!google_fonts/
+!pubspec.yaml
+!pubspec.lock
+!l10n.yaml
+!analysis_options.yaml
+!backend/web/nginx.conf

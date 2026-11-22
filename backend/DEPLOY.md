@@ -48,6 +48,16 @@ docker compose -f docker-compose.prod.yml -f docker-compose.test.yml up -d --bui
 ```
 Tout le monde peut alors se connecter avec n'importe quel numéro et le code fixe : **données fictives uniquement**. Retirer la surcouche (et vider `TCHIHALI_DEV_FIXED_CODE`) avant d'accueillir de vrais patients.
 
+## 2 ter. Version web de l'application
+La surcouche `docker-compose.web.yml` compile l'application Flutter pour le web (Flutter officiel, branche stable, dans Docker : rien à installer sur le serveur) et la sert sur un second domaine, derrière le même Caddy.
+- Domaine : un second enregistrement DNS (ex. `app.exemple.cm`) ; avec sslip.io, `app.203-0-113-10.sslip.io` fonctionne directement.
+- Dans `.env` : `TCHIHALI_CORS_ORIGINS=https://app.exemple.cm`, sinon le navigateur bloque les appels à l'API.
+```bash
+export TCHIHALI_DOMAIN=api.exemple.cm TCHIHALI_WEB_DOMAIN=app.exemple.cm
+docker compose -f docker-compose.prod.yml -f docker-compose.web.yml up -d --build
+```
+La première compilation prend quelques minutes. L'adresse de l'API est intégrée à la compilation : la relancer (`--build`) après chaque mise à jour du code ou changement de domaine. Le contexte de compilation est filtré par `/.dockerignore` (liste blanche) : aucun secret n'entre dans l'image.
+
 ## 3. Comptes diététiciens
 Un diététicien se connecte comme un patient (code SMS). Pour lui donner son rôle et le lier à sa fiche :
 ```bash
